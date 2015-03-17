@@ -1,19 +1,38 @@
 Plannings = new Meteor.Collection('plannings');
 
 Meteor.methods({
+  addDay: function(dayName) {
+    var planning = Plannings.findOne({name: 'Périgueux'});
+    var days = planning.days;
+    days.push({_id: guid(), name: dayName});
+    Plannings.update(planning._id, {$set: {days: days}});
+  },
+  updateDayName: function(day, newName) {
+    var planning = Plannings.findOne({name: 'Périgueux'});
+    Plannings.update(
+     { _id: planning._id, days: { $elemMatch: {_id: day._id} } },
+     { $set: { "days.$.name" : newName } }
+    )
+  },
   addPerson: function(day, task, person) {
     var planning = Plannings.findOne({name: 'Périgueux'});
     var duties = planning.duties;
     var people = getPeople(duties, day, task);
     if (!people) people = [];
-    if (people.indexOf(person) != -1)
-      throw new Error('Person already added on this cell !');
-    people.push(person);
+    if (!people.find({id: person._id}))
+      people.push(person);
+      var set = {};
+      set['duties.' + k(day) + ',' + k(task)] = people;
+      Plannings.update(planning._id, {$set: set});
+  },
+  removePerson: function(day, task, person) {
+    var planning = Plannings.findOne({name: 'Périgueux'});
+    var duties = planning.duties;
+    var people = getPeople(duties, day, task);
+    people.remove({_id: person._id});
     var set = {};
     set['duties.' + k(day) + ',' + k(task)] = people;
-    Plannings.update(planning._id, {
-      $set: set
-    });
+    Plannings.update(planning._id, {$set: set});
   },
   clearDuties: function() {
     var planning = Plannings.findOne({name: 'Périgueux'});
@@ -140,11 +159,11 @@ var DayName = React.createClass({
   },
   updateDayName: function(dayName) {
     this.hideForm();
-    // TODO
+    Meteor.call('updateDayName', this.props.day, dayName);
   },
   render: function() {
     if (this.state.formIsVisible)
-      return <DayForm onSubmit={this.updateDayName} onCancel={this.hideForm} />;
+      return <DayForm originalValue={this.props.day.name} onSubmit={this.updateDayName} onCancel={this.hideForm} />;
     else
       return <strong onClick={this.showForm} title="Cliquez pour modifier">{this.props.day.name}</strong>;
   }
@@ -152,11 +171,14 @@ var DayName = React.createClass({
 
 var ScheduleCell = React.createClass({
   handlePersonDrop: function(person) {
+    var cell = person.scheduleCell;
+    person.scheduleCell = null; // Remove the schedule cell so it's not serialized to be sent to Meteor
     Meteor.call('addPerson', this.props.day, this.props.task, person);
-    if (person.scheduleCell)
+    if (cell)
       Meteor.call('removePerson', cell.props.day, cell.props.task, person);
   },
   removePerson: function(person)  {
+    person.scheduleCell = null; // Remove the schedule cell so it's not serialized to be sent to Meteor
     Meteor.call('removePerson', this.props.day, this.props.task, person);
   },
   mixins: [DragDropMixin],
@@ -202,9 +224,9 @@ var Person = React.createClass({
             };
           },
           endDrag(component, effect) {
-            if (!effect) { // If throwing away
-              component.props.onThrowAway(component.props.person);
-            }
+            if (!effect) // If throwing away
+              if (component.props.onThrowAway)
+                component.props.onThrowAway(component.props.person);
           }
         }
       });
@@ -232,7 +254,7 @@ var AddDayCell = React.createClass({
   },
   addDay: function(dayName) {
     this.hideForm();
-    this.props.onAddDay(dayName);
+    Meteor.call('addDay', dayName);
   },
   render: function() {
     if (this.state.formIsVisible)
@@ -244,7 +266,10 @@ var AddDayCell = React.createClass({
 
 var DayForm = React.createClass({
   componentDidMount: function() {
-    this.refs.dayName.getDOMNode().focus();
+    domNode = this.refs.dayName.getDOMNode()
+    if (this.props.originalValue)
+      domNode.value = this.props.originalValue;
+    domNode.select();
   },
   handleSubmit: function(e) {
     e.preventDefault();
@@ -265,11 +290,34 @@ var DayForm = React.createClass({
 })
 
 var PeopleList = React.createClass({
+  filterBySearchTerm: function(term) {
+    this.setState({
+      people: this.props.people.findAll({
+        name: new RegExp(term, 'i')
+      })
+    });
+  },
   render: function() {
-    var people = this.props.people.map(function(person) {
+    var people = this.state ? this.state.people : this.props.people; // Hack, seems that getInitialState gets called the first time when everything is empty, and not the second time when it's filled
+    var people_lis = people.map(function(person) {
       return <li><Person person={person}/></li>;
     });
-    return <ul className="list-unstyled">{people}</ul>;
+    return (<div>
+      <PeopleFilters onChange={this.filterBySearchTerm} />
+      <ul className="list-unstyled">{people_lis}</ul>
+    </div>);
+  }
+});
+
+var PeopleFilters = React.createClass({
+  handleChange: function() {
+    this.props.onChange(this.refs.name.getDOMNode().value.trim());
+  },
+  render: function() {
+    return (<div className="form-group form-inline">
+      <label className="control-label">Nom</label>
+      <input type="text" ref="name" onChange={this.handleChange} className="form-control" />
+    </div>);
   }
 });
 
@@ -278,19 +326,19 @@ if (Meteor.isServer) {
   Meteor.startup(function () {
     if (!Plannings.findOne({name: 'Périgueux'})) {
       var days = [
-        {id: guid(), name: "Samedi 7 Mars 2015"},
-        {id: guid(), name: "Dimanche 8 Mars 2015"},
-        {id: guid(), name: "Samedi 14 Mars 2015"},
-        {id: guid(), name: "Dimanche 15 Mars 2015"}
+        {_id: guid(), name: "Samedi 7 Mars 2015"},
+        {_id: guid(), name: "Dimanche 8 Mars 2015"},
+        {_id: guid(), name: "Samedi 14 Mars 2015"},
+        {_id: guid(), name: "Dimanche 15 Mars 2015"}
       ];
       var tasks = [
-        {id: guid(), name: "Banque alimentaire"},
-        {id: guid(), name: "Médiateur, responsable d'équipe"},
-        {id: guid(), name: "Chercher pain"}
+        {_id: guid(), name: "Banque alimentaire"},
+        {_id: guid(), name: "Médiateur, responsable d'équipe"},
+        {_id: guid(), name: "Chercher pain"}
       ];
       var people = [
-        {name: 'Anne'},
-        {name: 'Jérémy'}
+        {_id: guid(), name: "Anne"},
+        {_id: guid(), name: "Jérémy"}
       ];
       Plannings.insert({
         name: 'Périgueux',
@@ -317,7 +365,7 @@ if (Meteor.isClient) {
 }
 
 var k = function(object) {
-  var key = object.id;
+  var key = object._id;
   return key;
 }
 
