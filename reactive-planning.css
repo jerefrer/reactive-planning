@@ -1,0 +1,11 @@
+td.hover {
+  background: lightGray !important;
+}
+
+form {
+  margin-bottom: 5px;
+}
+
+.form-inline .control-label {
+  margin-right: 5px;
+}
