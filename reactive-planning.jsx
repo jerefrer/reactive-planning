@@ -1,44 +1,45 @@
 Plannings = new Meteor.Collection('plannings');
 
-Meteor.methods({
-  addDay: function(dayName) {
-    var planning = Plannings.findOne({name: 'Périgueux'});
-    var days = planning.days;
-    days.push({_id: guid(), name: dayName});
-    Plannings.update(planning._id, {$set: {days: days}});
-  },
-  updateDayName: function(day, newName) {
-    var planning = Plannings.findOne({name: 'Périgueux'});
-    Plannings.update(
-     { _id: planning._id, days: { $elemMatch: {_id: day._id} } },
-     { $set: { "days.$.name" : newName } }
-    )
-  },
-  addPerson: function(day, task, person) {
-    var planning = Plannings.findOne({name: 'Périgueux'});
-    var duties = planning.duties;
-    var people = getPeople(duties, day, task);
-    if (!people) people = [];
-    if (!people.find({id: person._id}))
-      people.push(person);
+if (Meteor.isServer) {
+  Meteor.methods({
+    addDay: function(planningId, dayName) {
+      var planning = Plannings.findOne({_id: planningId});
+      var days = planning.days;
+      days.push({_id: guid(), name: dayName});
+      Plannings.update(planning._id, {$set: {days: days}});
+    },
+    updateDayName: function(planningId, day, newName) {
+      Plannings.update(
+       { _id: planningId, days: { $elemMatch: {_id: day._id} } },
+       { $set: { "days.$.name" : newName } }
+      )
+    },
+    addPerson: function(planningId, day, task, person) {
+      var planning = Plannings.findOne({_id: planningId});
+      var duties = planning.duties;
+      var people = getPeople(duties, day, task);
+      debugger;
+      if (!people) people = [];
+      if (!people.find({_id: person._id}))
+        people.push(person);
+        var set = {};
+        set['duties.' + k(day) + ',' + k(task)] = people;
+        Plannings.update(planning._id, {$set: set});
+    },
+    removePerson: function(planningId, day, task, person) {
+      var planning = Plannings.findOne({_id: planningId});
+      var duties = planning.duties;
+      var people = getPeople(duties, day, task);
+      people.remove({_id: person._id});
       var set = {};
       set['duties.' + k(day) + ',' + k(task)] = people;
       Plannings.update(planning._id, {$set: set});
-  },
-  removePerson: function(day, task, person) {
-    var planning = Plannings.findOne({name: 'Périgueux'});
-    var duties = planning.duties;
-    var people = getPeople(duties, day, task);
-    people.remove({_id: person._id});
-    var set = {};
-    set['duties.' + k(day) + ',' + k(task)] = people;
-    Plannings.update(planning._id, {$set: set});
-  },
-  clearDuties: function() {
-    var planning = Plannings.findOne({name: 'Périgueux'});
-    Plannings.update(planning._id, {$set: {duties: {}}})
-  }
-});
+    },
+    clearDuties: function(planningId) {
+      Plannings.update(planningId, {$set: {duties: {}}})
+    }
+  });
+}
 
 var DragDropMixin = ReactDND.DragDropMixin,
     ItemTypes = { PERSON: 'person' };
@@ -49,13 +50,12 @@ var Scheduler = React.createClass({
     Meteor.subscribe('plannings');
   },
   getMeteorState: function() {
-    var planning = Plannings.findOne({name: 'Périgueux'});
-    if (planning)
+    if (this.props.planning)
       return {
-        days: planning.days,
-        tasks: planning.tasks,
-        people: planning.people,
-        duties: planning.duties
+        days: this.props.planning.days,
+        tasks: this.props.planning.tasks,
+        people: this.props.planning.people,
+        duties: this.props.planning.duties
       };
     else
       return {
@@ -67,7 +67,7 @@ var Scheduler = React.createClass({
   },
   clearDuties: function(e) {
     e.preventDefault();
-    Meteor.call('clearDuties');
+    Meteor.call('clearDuties', this.props.planning._id);
   },
   render: function() {
     return (
@@ -76,7 +76,7 @@ var Scheduler = React.createClass({
           <h2>
             Planning - <a href="#" className="small" onClick={this.clearDuties}>Tout effacer</a>
           </h2>
-          <Schedule tasks={this.state.tasks} days={this.state.days} duties={this.state.duties} />
+          <Schedule planningId={this.props.planning._id} tasks={this.state.tasks} days={this.state.days} duties={this.state.duties} />
         </div>
         <div className="col-md-3">
           <h2>Bénévoles</h2>
@@ -92,8 +92,9 @@ var Schedule = React.createClass({
     var lines = []
     var tasks = this.props.tasks;
     var duties = this.props.duties;
+    var planningId = this.props.planningId;
     this.props.days.forEach(function(day) {
-      lines.push(<ScheduleLine tasks={tasks} day={day} duties={duties} />);
+      lines.push(<ScheduleLine planningId={planningId} tasks={tasks} day={day} duties={duties} />);
     });
     return (
       <table className="table table-striped table-bordered">
@@ -103,7 +104,7 @@ var Schedule = React.createClass({
         <tbody>
           {lines}
           <tr>
-            <td><AddDayCell onAddDay={this.handleAddDay} /></td>
+            <td><AddDayCell planningId={planningId} onAddDay={this.handleAddDay} /></td>
             <td colSpan="5000"></td>
           </tr>
         </tbody>
@@ -129,15 +130,16 @@ var ScheduleHeader = React.createClass({
 
 var ScheduleLine = React.createClass({
   render: function() {
+    var planningId = this.props.planningId;
     var day = this.props.day;
     var duties = this.props.duties;
     var cells = [];
     this.props.tasks.forEach(function(task) {
-      cells.push(<ScheduleCell day={day} task={task} duties={duties} />);
+      cells.push(<ScheduleCell planningId={planningId} day={day} task={task} duties={duties} />);
     });
     return (
       <tr>
-        <td><DayName day={day} /></td>
+        <td><DayName planningId={planningId} day={day} /></td>
         {cells}
       </tr>
     );
@@ -156,7 +158,7 @@ var DayName = React.createClass({
   },
   updateDayName: function(dayName) {
     this.hideForm();
-    Meteor.call('updateDayName', this.props.day, dayName);
+    Meteor.call('updateDayName', this.props.planningId, this.props.day, dayName);
   },
   render: function() {
     if (this.state.formIsVisible)
@@ -170,13 +172,13 @@ var ScheduleCell = React.createClass({
   handlePersonDrop: function(person) {
     var cell = person.scheduleCell;
     person.scheduleCell = null; // Remove the schedule cell so it's not serialized to be sent to Meteor
-    Meteor.call('addPerson', this.props.day, this.props.task, person);
+    Meteor.call('addPerson', this.props.planningId, this.props.day, this.props.task, person);
     if (cell)
-      Meteor.call('removePerson', cell.props.day, cell.props.task, person);
+      Meteor.call('removePerson', this.props.planningId, cell.props.day, cell.props.task, person);
   },
   removePerson: function(person)  {
     person.scheduleCell = null; // Remove the schedule cell so it's not serialized to be sent to Meteor
-    Meteor.call('removePerson', this.props.day, this.props.task, person);
+    Meteor.call('removePerson', this.props.planningId, this.props.day, this.props.task, person);
   },
   mixins: [DragDropMixin],
   statics: {
@@ -251,7 +253,7 @@ var AddDayCell = React.createClass({
   },
   addDay: function(dayName) {
     this.hideForm();
-    Meteor.call('addDay', dayName);
+    Meteor.call('addDay', this.props.planningId, dayName);
   },
   render: function() {
     if (this.state.formIsVisible)
@@ -339,6 +341,7 @@ if (Meteor.isServer) {
       ];
       Plannings.insert({
         name: 'Périgueux',
+        slug: 'perigueux',
         days: days,
         tasks: tasks,
         people: people,
@@ -352,14 +355,40 @@ if (Meteor.isServer) {
   });
 }
 
-if (Meteor.isClient) {
-  Meteor.startup(function() {
-    React.render(
-      <Scheduler />,
-      document.getElementById('content')
-    );
-  });
-}
+Router.configure({
+  layoutTemplate: 'Layout',
+  loadingTemplate: 'Loading',
+  notFoundTemplate: 'NotFound',
+});
+Router.onBeforeAction('loading');
+
+Router.route('Home', { path: '/' });
+Router.route('Plannings', {
+  path: '/plannings',
+  waitOn: function () {
+    return Meteor.subscribe('plannings');
+  },
+  data: {
+    plannings: function() { return Plannings.find().fetch() }
+  }
+});
+Router.route('Planning', {
+  path: '/planning/:slug',
+  waitOn: function () {
+    return Meteor.subscribe('plannings');
+  },
+  action: function () {
+    var planning = Plannings.findOne({slug: this.params.slug});
+    Session.set('currentPlanning', planning);
+    this.render('Planning', {planning: planning});
+    setTimeout(function() {
+      React.render(
+        <Scheduler planning={planning} />,
+        document.getElementById('planning')
+      );
+    }, 100);
+  }
+});
 
 var k = function(object) {
   var key = object._id;

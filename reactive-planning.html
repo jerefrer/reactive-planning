@@ -2,8 +2,72 @@
   <title>reactive-planning</title>
 </head>
 
-<body>
+<body></body>
+
+<template name="Layout">
   <div class="container">
-    <div id="content"></div>
+    {{> Nav}}
+    {{> yield}}
   </div>
-</body>
+</template>
+
+<template name="Home">
+  <h1>Accueil</h1>
+  <div class="jumbotron">
+    Bienvenue !
+  </div>
+</template>
+
+<template name="Test">
+  {{omg}}
+</template>
+
+<template name="Plannings">
+  <h1>Liste des plannings</h1>
+  <ul>
+    {{#each plannings}}
+      <li><a href="/planning/{{slug}}">{{name}}</a></li>
+    {{/each}}
+  </ul>
+</template>
+
+<template name="Planning">
+  <h1>{{planning.name}}</h1>
+  <div id="planning"></div>
+</template>
+
+<template name="Nav">
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#menu-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="/">Plannings Maison 24</a>
+      </div>
+
+      <div class="collapse navbar-collapse" id="menu-collapse">
+        <ul class="nav navbar-nav">
+          <li><a href="/plannings">Plannings</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</template>
+
+<template name="Loading">
+  <div class="spinner">
+    <div class="rect1"></div>
+    <div class="rect2"></div>
+    <div class="rect3"></div>
+    <div class="rect4"></div>
+    <div class="rect5"></div>
+  </div>
+</template>
+
+<template name="NotFound">
+  Page inconnue !
+</template>
