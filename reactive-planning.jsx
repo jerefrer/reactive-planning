@@ -57,33 +57,30 @@ var Scheduler = React.createClass({
         people: planning.people,
         duties: planning.duties
       };
+    else
+      return {
+        days: [],
+        tasks: [],
+        people: [],
+        duties: []
+      }
   },
   clearDuties: function(e) {
     e.preventDefault();
     Meteor.call('clearDuties');
   },
   render: function() {
-    var days = [],
-        tasks = [],
-        people = [],
-        duties = [];
-    if (this.state) {
-      days = this.state.days;
-      tasks = this.state.tasks;
-      people = this.state.people;
-      duties = this.state.duties;
-    }
     return (
       <div className="row">
         <div className="col-md-9">
           <h2>
             Planning - <a href="#" className="small" onClick={this.clearDuties}>Tout effacer</a>
           </h2>
-          <Schedule tasks={tasks} days={days} duties={duties} />
+          <Schedule tasks={this.state.tasks} days={this.state.days} duties={this.state.duties} />
         </div>
         <div className="col-md-3">
           <h2>Bénévoles</h2>
-          <PeopleList people={people} />
+          <PeopleList people={this.state.people} />
         </div>
       </div>
     );
