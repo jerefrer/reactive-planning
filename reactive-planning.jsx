@@ -37,7 +37,66 @@ if (Meteor.isServer) {
     },
     clearDuties: function(planningId) {
       Plannings.update(planningId, {$set: {duties: {}}})
-    }
+    },
+    sendNotifications: function(planningId) {
+      var user = { name: 'Jérémy', phone: '+33628055409'},
+          task = { name: "Médiateur, response d'équipe", short_name: 'Médiateur' },
+          day =  { name: 'Samedi 28 Septembre 2015' },
+          ACCOUNT_SID = 'AC3869695257d0b4105a8286c9bf868c24',
+          AUTH_TOKEN = 'f4bd037ce0f2f7e9338b819af6aae578';
+          twilio_number = '+15005550006';
+          twilio = Twilio(ACCOUNT_SID, AUTH_TOKEN);
+      Object.keys(planning.duties).each(function(key) {
+        var dayId  = key.split(',')[0],
+            taskId = key.split(',')[1],
+            day  = planning.days.find({_id: dayId}),
+            task = planning.tasks.find({_id: taskId}),
+            duty = planning.duties[dayId+','+taskId],
+            people = duty.people;
+        people.each(function(person) {
+          twilio.sendSms({
+            to: person.phone,
+            from: twilio_number,
+            body: 'Bonjour ' + person.name + ",\n" +
+                  'Tu as été désigné pour \"' + task.short_name + '\" le ' + day.name + ".\n" +
+                  "1 pour confirmer,\n" +
+                  "0 pour décliner."
+          });
+        });
+      }, function(err, responseData) {
+        console.log(err);
+        console.log(responseData);
+        if (!err) {
+          console.log(responseData.from); // outputs "+14506667788"
+          console.log(responseData.body); // outputs "word to your mother."
+        }
+      });
+    },
+    answerNotification: function(planningId, dayId, taskId, personId, positive) {
+      var planning = Plannings.findOne({_id: planningId});
+      var duties = planning.duties;
+      var key = dayId+','+taskId;
+      var people = duties[key];
+      var person = people.find({_id: personId});
+      var set = {};
+      person.positive = positive;
+      set['duties.' + key] = people;
+      Plannings.update(planning._id, {$set: set});
+    },
+    cycleStatus: function(planningId, dayId, taskId, personId) {
+      var planning = Plannings.findOne({_id: planningId});
+      var duties = planning.duties;
+      var key = dayId+','+taskId;
+      var people = duties[key];
+      var person = people.find({_id: personId});
+      var set = {};
+      if      (person.positive === undefined) person.positive = true;
+      else if (person.positive === true)      person.positive = false;
+      else if (person.positive === false)     delete person.positive;
+      set['duties.' + key] = people;
+      Plannings.update(planning._id, {$set: set});
+    },
+
   });
 }
 
@@ -69,12 +128,18 @@ var Scheduler = React.createClass({
     e.preventDefault();
     Meteor.call('clearDuties', this.props.planning._id);
   },
+  sendNotifications: function(e) {
+    e.preventDefault();
+    Meteor.call('sendNotifications', this.props.planning._id);
+  },
   render: function() {
     return (
       <div className="row">
         <div className="col-md-9">
           <h2>
-            Planning - <a href="#" className="small" onClick={this.clearDuties}>Tout effacer</a>
+            Planning{' - '}
+            <button className="btn btn-danger" onClick={this.clearDuties}>Tout effacer</button>{' - '}
+            <button className="btn btn-primary" onClick={this.sendNotifications}>Envoyer les SMS</button>
           </h2>
           <Schedule planningId={this.props.planning._id} tasks={this.state.tasks} days={this.state.days} duties={this.state.duties} />
         </div>
@@ -97,7 +162,7 @@ var Schedule = React.createClass({
       lines.push(<ScheduleLine planningId={planningId} tasks={tasks} day={day} duties={duties} />);
     });
     return (
-      <table className="table table-striped table-bordered">
+      <table id="schedule" className="table table-striped table-bordered">
         <thead>
           <ScheduleHeader tasks={tasks} />
         </thead>
@@ -231,11 +296,35 @@ var Person = React.createClass({
       });
     }
   },
+  cycleStatus: function() {
+    var cell = this.props.scheduleCell;
+    Meteor.call('cycleStatus', cell.props.planningId, cell.props.day._id, cell.props.task._id, this.props.person._id);
+  },
   render: function() {
+    var that = this;
+    var personDiv = function(alertType) {
+      var className = "alert alert-"+ alertType + " text-center";
+      return (
+        <div className={className}
+             {...that.dragSourceFor(ItemTypes.PERSON)} >
+          {that.props.person.name}
+        </div>
+      );
+    };
+    var positive = this.props.person.positive,
+        alertType = positive ? "success" : "danger",
+        answered = positive !== undefined ? "answered" : "",
+        className = "flip-container " + answered;
     return (
-      <div className="alert alert-info text-center"
-           {...this.dragSourceFor(ItemTypes.PERSON)} >
-        {this.props.person.name}
+      <div className={className} onDoubleClick={this.cycleStatus}>
+        <div className="flipper">
+          <div className="flip-front">
+            {personDiv('info')}
+          </div>
+          <div className="flip-back">
+            {personDiv(alertType)}
+          </div>
+        </div>
       </div>
      );
   }
@@ -301,10 +390,12 @@ var PeopleList = React.createClass({
     var people_lis = people.map(function(person) {
       return <li><Person person={person}/></li>;
     });
-    return (<div>
-      <PeopleFilters onChange={this.filterBySearchTerm} />
-      <ul className="list-unstyled">{people_lis}</ul>
-    </div>);
+    return (
+      <div id="people-list">
+        <PeopleFilters onChange={this.filterBySearchTerm} />
+        <ul className="list-unstyled">{people_lis}</ul>
+      </div>
+    );
   }
 });
 

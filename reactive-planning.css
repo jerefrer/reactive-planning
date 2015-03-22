@@ -9,3 +9,18 @@ form {
 .form-inline .control-label {
   margin-right: 5px;
 }
+
+#schedule .flip-container {
+  float: left;
+  margin-right: 10px;
+}
+
+#people-list .flip-container {
+  margin-bottom: 10px;
+}
+
+#people-list .flip-container,
+#people-list .flip-front,
+#people-list .flip-back {
+  width: 100%;
+}
