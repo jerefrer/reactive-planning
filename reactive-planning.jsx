@@ -1,6 +1,20 @@
 Plannings = new Meteor.Collection('plannings');
 
 if (Meteor.isServer) {
+  eachDuty = function(planningId, callback) {
+    var planning = Plannings.findOne({_id: planningId});
+    Object.keys(planning.duties).each(function(key) {
+      var dayId  = key.split(',')[0],
+          taskId = key.split(',')[1],
+          day  = planning.days.find({_id: dayId}),
+          task = planning.tasks.find({_id: taskId}),
+          people = planning.duties[dayId+','+taskId];
+      people.each(function(person) {
+        callback(planning, day, task, person);
+      });
+    });
+  }
+
   Meteor.methods({
     addDay: function(planningId, dayName) {
       var planning = Plannings.findOne({_id: planningId});
@@ -38,42 +52,48 @@ if (Meteor.isServer) {
     clearDuties: function(planningId) {
       Plannings.update(planningId, {$set: {duties: {}}})
     },
-    sendNotifications: function(planningId) {
-      var user = { name: 'Jérémy', phone: '+33628055409'},
+    sendEmailNotifications: function(planningId) {
+      this.unblock();
+
+      // var person = { name: 'Jérémy', phone: '+33628055409'},
+      //     task = { name: "Médiateur, response d'équipe", short_name: 'Médiateur' },
+      //     day = { name: 'Samedi 28 Septembre 2015' },
+      //     planning = Plannings.findOne({_id: planningId});
+
+      eachDuty(planningId, function(planning, day, task, person) {
+        Email.send({
+          to: person.email,
+          from: 'admin@planning-24.com',
+          subject: "Êtes-vous disponible ?",
+          text: 'Bonjour ' + person.name + ",<br />" +
+                'Tu as été désigné pour \"' + task.short_name + '\" le ' + day.name + ".<br />" +
+                "<a href='" + Meteor.absoluteUrl('planning/' + planning.slug + '/confirm/' + day._id + '/' + task._id + '/' + person._id) + "'>Clique ici pour confirmer</a><br />" +
+                "<a href='" + Meteor.absoluteUrl('planning/' + planning.slug + '/decline/' + day._id + '/' + task._id + '/' + person._id) + "'>Clique ici pour décliner</a><br />"
+        });
+      });
+    },
+    sendSMSNotifications: function(planningId) {
+      var person = { name: 'Jérémy', phone: '+33628055409'},
           task = { name: "Médiateur, response d'équipe", short_name: 'Médiateur' },
-          day =  { name: 'Samedi 28 Septembre 2015' },
+          day = { name: 'Samedi 28 Septembre 2015' },
           ACCOUNT_SID = 'AC3869695257d0b4105a8286c9bf868c24',
           AUTH_TOKEN = 'f4bd037ce0f2f7e9338b819af6aae578';
           twilio_number = '+15005550006';
           twilio = Twilio(ACCOUNT_SID, AUTH_TOKEN);
-      Object.keys(planning.duties).each(function(key) {
-        var dayId  = key.split(',')[0],
-            taskId = key.split(',')[1],
-            day  = planning.days.find({_id: dayId}),
-            task = planning.tasks.find({_id: taskId}),
-            duty = planning.duties[dayId+','+taskId],
-            people = duty.people;
-        people.each(function(person) {
-          twilio.sendSms({
-            to: person.phone,
-            from: twilio_number,
-            body: 'Bonjour ' + person.name + ",\n" +
-                  'Tu as été désigné pour \"' + task.short_name + '\" le ' + day.name + ".\n" +
-                  "1 pour confirmer,\n" +
-                  "0 pour décliner."
-          });
+      eachDuty(planningId, function(planning, day, task, person) {
+        twilio.sendSms({
+          to: person.phone,
+          from: twilio_number,
+          body: 'Bonjour ' + person.name + ",\n" +
+                'Tu as été désigné pour \"' + task.short_name + '\" le ' + day.name + ".\n" +
+                "1 pour confirmer,\n" +
+                "0 pour décliner."
+        }, function(err, responseData) {
         });
-      }, function(err, responseData) {
-        console.log(err);
-        console.log(responseData);
-        if (!err) {
-          console.log(responseData.from); // outputs "+14506667788"
-          console.log(responseData.body); // outputs "word to your mother."
-        }
       });
     },
-    answerNotification: function(planningId, dayId, taskId, personId, positive) {
-      var planning = Plannings.findOne({_id: planningId});
+    answerNotification: function(planningSlug, dayId, taskId, personId, positive) {
+      var planning = Plannings.findOne({slug: planningSlug});
       var duties = planning.duties;
       var key = dayId+','+taskId;
       var people = duties[key];
@@ -130,7 +150,7 @@ var Scheduler = React.createClass({
   },
   sendNotifications: function(e) {
     e.preventDefault();
-    Meteor.call('sendNotifications', this.props.planning._id);
+    Meteor.call('sendEmailNotifications', this.props.planning._id);
   },
   render: function() {
     return (
@@ -139,7 +159,7 @@ var Scheduler = React.createClass({
           <h2>
             Planning{' - '}
             <button className="btn btn-danger" onClick={this.clearDuties}>Tout effacer</button>{' - '}
-            <button className="btn btn-primary" onClick={this.sendNotifications}>Envoyer les SMS</button>
+            <button className="btn btn-primary" onClick={this.sendNotifications}>Envoyer les E-mails</button>
           </h2>
           <Schedule planningId={this.props.planning._id} tasks={this.state.tasks} days={this.state.days} duties={this.state.duties} />
         </div>
@@ -427,8 +447,8 @@ if (Meteor.isServer) {
         {_id: guid(), name: "Chercher pain"}
       ];
       var people = [
-        {_id: guid(), name: "Anne"},
-        {_id: guid(), name: "Jérémy"}
+        {_id: guid(), name: "Anne",   email: 'anne.benson@gmail.com'},
+        {_id: guid(), name: "Jérémy", email: 'frere.jeremy@gmail.com'}
       ];
       Plannings.insert({
         name: 'Périgueux',
@@ -478,6 +498,26 @@ Router.route('Planning', {
         document.getElementById('planning')
       );
     }, 100);
+  }
+});
+Router.route('ConfirmDuty', {
+  path: '/planning/:slug/confirm/:dayId/:taskId/:personId',
+  waitOn: function () {
+    return Meteor.subscribe('plannings');
+  },
+  action: function () {
+    Meteor.call('answerNotification', this.params.slug, this.params.dayId, this.params.taskId, this.params.personId, true);
+    this.render('ConfirmDuty');
+  }
+});
+Router.route('DeclineDuty', {
+  path: '/planning/:slug/decline/:dayId/:taskId/:personId',
+  waitOn: function () {
+    return Meteor.subscribe('plannings');
+  },
+  action: function () {
+    Meteor.call('answerNotification', this.params.slug, this.params.dayId, this.params.taskId, this.params.personId, false);
+    this.render('DeclineDuty');
   }
 });
 
