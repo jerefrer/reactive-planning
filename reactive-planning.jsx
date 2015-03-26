@@ -322,28 +322,16 @@ var Person = React.createClass({
   },
   render: function() {
     var that = this;
-    var personDiv = function(alertType) {
-      var className = "alert alert-"+ alertType + " text-center";
-      return (
+    var positive = this.props.person.positive,
+        className = 'alert ';
+    if (positive === undefined)  className += 'neutral background-fade';
+    else if (positive === true)  className += 'good    background-fade hvr-wobble-vertical';
+    else if (positive === false) className += 'bad     background-fade hvr-wobble-horizontal';
+    return (
+      <div onDoubleClick={this.cycleStatus}>
         <div className={className}
              {...that.dragSourceFor(ItemTypes.PERSON)} >
           {that.props.person.name}
-        </div>
-      );
-    };
-    var positive = this.props.person.positive,
-        alertType = positive ? "success" : "danger",
-        answered = positive !== undefined ? "answered" : "",
-        className = "flip-container " + answered;
-    return (
-      <div className={className} onDoubleClick={this.cycleStatus}>
-        <div className="flipper">
-          <div className="flip-front">
-            {personDiv('info')}
-          </div>
-          <div className="flip-back">
-            {personDiv(alertType)}
-          </div>
         </div>
       </div>
      );
