@@ -13,3 +13,5 @@ mrt:bootstrap-3
 iron:router
 accolver:twilio-meteor
 email
+brentjanderson:buzz
+u2622:persistent-session

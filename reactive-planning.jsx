@@ -1,4 +1,5 @@
 Plannings = new Meteor.Collection('plannings');
+SoundsToPlay = new Meteor.Collection('sounds_to_play');
 
 if (Meteor.isServer) {
   eachDuty = function(planningId, callback) {
@@ -102,6 +103,8 @@ if (Meteor.isServer) {
       person.positive = positive;
       set['duties.' + key] = people;
       Plannings.update(planning._id, {$set: set});
+      SoundsToPlay.remove({});
+      SoundsToPlay.insert({filename: positive ? '/success.ogg' : '/failure.ogg'});
     },
     cycleStatus: function(planningId, dayId, taskId, personId) {
       var planning = Plannings.findOne({_id: planningId});
@@ -115,8 +118,7 @@ if (Meteor.isServer) {
       else if (person.positive === false)     delete person.positive;
       set['duties.' + key] = people;
       Plannings.update(planning._id, {$set: set});
-    },
-
+    }
   });
 }
 
@@ -127,6 +129,7 @@ var Scheduler = React.createClass({
   mixins: [ReactMeteor.Mixin],
   startMeteorSubscriptions: function() {
     Meteor.subscribe('plannings');
+    Meteor.subscribe('sounds_to_play');
   },
   getMeteorState: function() {
     if (this.props.planning)
@@ -153,6 +156,20 @@ var Scheduler = React.createClass({
     Meteor.call('sendEmailNotifications', this.props.planning._id);
   },
   render: function() {
+    var sound_to_play = SoundsToPlay.find().fetch()[0];
+    if (sound_to_play) {
+      playedSounds = Session.get('playedSounds');
+      if (playedSounds) {
+        if (playedSounds.indexOf(sound_to_play._id) < 0) {
+          var sound = new buzz.sound(sound_to_play.filename);
+          sound.play();
+          playedSounds.push(sound_to_play._id);
+          Session.setPersistent('playedSounds', playedSounds);
+        }
+      } else {
+        Session.setPersistent('playedSounds', [sound_to_play._id]);
+      }
+    }
     return (
       <div className="row">
         <div className="col-md-9">
@@ -451,6 +468,9 @@ if (Meteor.isServer) {
 
   Meteor.publish("plannings", function() {
     return Plannings.find();
+  });
+  Meteor.publish("sounds_to_play", function() {
+    return SoundsToPlay.find();
   });
 }
 

@@ -1,10 +1,12 @@
 accolver:twilio-meteor@1.10.1
+amplify@1.0.0
 autoupdate@1.2.0
 base64@1.0.3
 binary-heap@1.0.3
 blaze@2.1.0
 blaze-tools@1.0.3
 boilerplate-generator@1.0.3
+brentjanderson:buzz@1.1.9
 callback-hook@1.0.3
 check@1.0.5
 ddp@1.1.0
@@ -55,6 +57,7 @@ spacebars@1.0.6
 spacebars-compiler@1.0.5
 templating@1.1.0
 tracker@1.0.6
+u2622:persistent-session@0.3.1
 ui@1.0.6
 underscore@1.0.3
 url@1.0.4
