@@ -9,7 +9,8 @@ eachDuty = function(planningId, callback) {
         day  = planning.days.find({_id: dayId}),
         task = planning.tasks.find({_id: taskId}),
         people = planning.duties[dayId+','+taskId];
-    people.each(function(person) {
+    people.each(function(personObject) {
+      var person = Meteor.users.findOne({_id: personObject._id});
       callback(planning, day, task, person);
     });
   });
@@ -32,13 +33,13 @@ Meteor.methods({
     var planning = Plannings.findOne({_id: planningId});
     var duties = planning.duties;
     var people = getPeople(duties, day, task);
-    debugger;
     if (!people) people = [];
-    if (!people.find({_id: person._id}))
-      people.push(person);
+    if (!people.find({_id: person._id})) {
+      people.push({_id: person._id});
       var set = {};
       set['duties.' + k(day) + ',' + k(task)] = people;
       Plannings.update(planning._id, {$set: set});
+    }
   },
   removePerson: function(planningId, day, task, person) {
     var planning = Plannings.findOne({_id: planningId});
@@ -62,7 +63,7 @@ Meteor.methods({
 
     eachDuty(planningId, function(planning, day, task, person) {
       Email.send({
-        to: person.email,
+        to: person.emails[0],
         from: 'admin@planning-24.com',
         subject: "Êtes-vous disponible ?",
         text: 'Bonjour ' + person.name + ",<br />" +
@@ -133,20 +134,33 @@ Meteor.startup(function () {
       {_id: guid(), name: "Médiateur, responsable d'équipe"},
       {_id: guid(), name: "Chercher pain"}
     ];
-    var people = [
-      {_id: guid(), name: "Anne",   email: 'anne.benson@gmail.com'},
-      {_id: guid(), name: "Jérémy", email: 'frere.jeremy@gmail.com'}
-    ];
     Plannings.insert({
       name: 'Périgueux',
       slug: 'perigueux',
       days: days,
       tasks: tasks,
-      people: people,
+      presences: {},
       duties: {}
-    })
+    });
+    Accounts.createUser({
+      username: 'Jérémy Frere',
+      email : 'frere.jeremy@gmail.com',
+      password : 'canada',
+      profile  : {
+        //publicly visible fields like firstname goes here
+      }
+    });
+    Accounts.createUser({
+      username: 'Anne Benson',
+      email : 'anne.benson@gmail.com',
+      password : 'canada',
+      profile  : {
+        //publicly visible fields like firstname goes here
+      }
+    });
   }
 });
 
+Meteor.publish("users",          function() { return Meteor.users.find(); });
 Meteor.publish("plannings",      function() { return Plannings.find();    });
 Meteor.publish("sounds_to_play", function() { return SoundsToPlay.find(); });

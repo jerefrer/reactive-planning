@@ -7,24 +7,23 @@ var DragDropMixin = ReactDND.DragDropMixin,
 Scheduler = React.createClass({
   mixins: [ReactMeteor.Mixin],
   startMeteorSubscriptions: function() {
+    Meteor.subscribe('users');
     Meteor.subscribe('plannings');
     Meteor.subscribe('sounds_to_play');
   },
   getMeteorState: function() {
-    if (this.props.planning)
-      return {
-        days: this.props.planning.days,
-        tasks: this.props.planning.tasks,
-        people: this.props.planning.people,
-        duties: this.props.planning.duties
-      };
-    else
-      return {
-        days: [],
-        tasks: [],
-        people: [],
-        duties: []
-      }
+    var state = {
+      days: [],
+      tasks: [],
+      duties: [],
+      people: Meteor.users.find().fetch()
+    }
+    if (this.props.planning) {
+      state.days   = this.props.planning.days
+      state.tasks  = this.props.planning.tasks
+      state.duties = this.props.planning.duties
+    }
+    return state;
   },
   clearDuties: function(e) {
     e.preventDefault();
@@ -175,12 +174,12 @@ var ScheduleCell = React.createClass({
   },
   render: function() {
     var self = this;
-    var peopleList = getPeople(this.props.duties, this.props.day, this.props.task);
-    var people = '';
     var removePerson = this.removePerson;
+    var peopleList = this.props.duties[k(this.props.day)+','+k(this.props.task)];
+    var people;
     if (peopleList) {
-      people = peopleList.map(function(person) {
-        return <Person person={person} scheduleCell={self} onThrowAway={removePerson}/>;
+      people = peopleList.map(function(personObject) {
+        return <Person person={personObject} scheduleCell={self} onThrowAway={removePerson}/>;
       });
     }
     var dropState = this.getDropState(ItemTypes.PERSON);
@@ -212,25 +211,30 @@ var Person = React.createClass({
       });
     }
   },
+  getPerson: function() {
+    return Meteor.users.findOne({_id: this.props.person._id});
+  },
   cycleStatus: function() {
     var cell = this.props.scheduleCell;
     Meteor.call('cycleStatus', cell.props.planningId, cell.props.day._id, cell.props.task._id, this.props.person._id);
   },
   render: function() {
     var that = this;
-    var positive = this.props.person.positive,
-        className = 'alert ';
-    if (positive === undefined)  className += 'neutral background-fade';
-    else if (positive === true)  className += 'good    background-fade hvr-wobble-vertical';
-    else if (positive === false) className += 'bad     background-fade hvr-wobble-horizontal';
-    return (
-      <div onDoubleClick={this.cycleStatus}>
+    var person = this.getPerson();
+    if (person) {
+      var positive = this.props.person.positive,
+          className = 'alert ';
+      if (positive === undefined)  className += 'neutral background-fade';
+      else if (positive === true)  className += 'good    background-fade hvr-wobble-vertical';
+      else if (positive === false) className += 'bad     background-fade hvr-wobble-horizontal';
+      return (
         <div className={className}
-             {...that.dragSourceFor(ItemTypes.PERSON)} >
-          {that.props.person.name}
+             {...that.dragSourceFor(ItemTypes.PERSON)}
+             onDoubleClick={this.cycleStatus} >
+          {person.username}
         </div>
-      </div>
-     );
+       );
+    } else return null;
   }
 })
 
@@ -291,13 +295,13 @@ var PeopleList = React.createClass({
   },
   render: function() {
     var people = this.state ? this.state.people : this.props.people; // Hack, seems that getInitialState gets called the first time when everything is empty, and not the second time when it's filled
-    var people_lis = people.map(function(person) {
+    var people_list = people.map(function(person) {
       return <li><Person person={person}/></li>;
     });
     return (
       <div id="people-list">
         <PeopleFilters onChange={this.filterBySearchTerm} />
-        <ul className="list-unstyled">{people_lis}</ul>
+        <ul className="list-unstyled">{people_list}</ul>
       </div>
     );
   }

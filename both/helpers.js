@@ -13,6 +13,11 @@ guid = function() {
     s4() + '-' + s4() + s4() + s4();
 }
 
-getPeople = function(duties, day, task) {
-  return duties[k(day)+','+k(task)];
+getPeople = function(object, day, task) {
+  var people = object[k(day)+','+k(task)];
+  if (people) {
+    var peopleIds = people.map(function(person) { return person._id; });
+    return Meteor.users.find({_id: {$in: peopleIds}}).fetch();
+  }
+  else return [];
 }
