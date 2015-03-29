@@ -15,3 +15,7 @@ accolver:twilio-meteor
 email
 brentjanderson:buzz
 u2622:persistent-session
+accounts-ui
+accounts-password
+useraccounts:bootstrap
+zimme:iron-router-auth
