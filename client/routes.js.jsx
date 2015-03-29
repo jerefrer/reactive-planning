@@ -18,7 +18,7 @@ Router.route('Plannings', {
   }
 });
 Router.route('Planning', {
-  path: '/planning/:slug',
+  path: '/planning/:slug/admin',
   waitOn: function () {
     return Meteor.subscribe('plannings');
   },
@@ -29,6 +29,23 @@ Router.route('Planning', {
     setTimeout(function() {
       React.render(
         <Scheduler planning={planning} />,
+        document.getElementById('planning')
+      );
+    }, 100);
+  }
+});
+Router.route('UserPlanning', {
+  path: '/planning/:slug',
+  waitOn: function () {
+    return Meteor.subscribe('plannings');
+  },
+  action: function () {
+    var planning = Plannings.findOne({slug: this.params.slug});
+    Session.set('currentPlanning', planning);
+    this.render('Planning', {planning: planning});
+    setTimeout(function() {
+      React.render(
+        <UserPlanning planning={planning} />,
         document.getElementById('planning')
       );
     }, 100);

@@ -18,4 +18,5 @@ u2622:persistent-session
 accounts-ui
 accounts-password
 useraccounts:bootstrap
+fortawesome:fontawesome
 zimme:iron-router-auth

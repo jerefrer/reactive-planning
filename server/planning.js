@@ -118,7 +118,21 @@ Meteor.methods({
     else if (person.positive === false)     delete person.positive;
     set['duties.' + key] = people;
     Plannings.update(planning._id, {$set: set});
-  }
+  },
+  togglePresence: function(planningId, dayId, personId) {
+    var planning = Plannings.findOne({_id: planningId});
+    var presences = planning.presences;
+    var people = presences[dayId];
+    if (!people) people = [];
+    var set = {};
+    if (people.find({_id: personId})) {
+      people.remove({_id: personId});
+    } else {
+      people.push({_id: personId});
+    }
+    set['presences.' + dayId] = people;
+    Plannings.update(planning._id, {$set: set});
+  },
 });
 
 Meteor.startup(function () {

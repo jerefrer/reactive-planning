@@ -2,6 +2,15 @@ td.hover {
   background: lightGray !important;
 }
 
+td .fa {
+  font-size: 30px;
+}
+
+.userPlanning td:hover {
+  cursor: pointer;
+  background: lightGray !important;
+}
+
 form {
   margin-bottom: 5px;
 }
