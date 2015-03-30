@@ -1,5 +1,8 @@
 td.hover {
-  background: lightGray !important;
+  background: #e4f1df !important;
+}
+td.allowed {
+  background: #eee !important;
 }
 
 td .fa {

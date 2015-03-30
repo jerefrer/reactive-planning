@@ -16,12 +16,14 @@ Scheduler = React.createClass({
       days: [],
       tasks: [],
       duties: [],
+      presences: [],
       people: Meteor.users.find().fetch()
     }
     if (this.props.planning) {
       state.days   = this.props.planning.days
       state.tasks  = this.props.planning.tasks
       state.duties = this.props.planning.duties
+      state.presences = this.props.planning.presences
     }
     return state;
   },
@@ -56,7 +58,7 @@ Scheduler = React.createClass({
             <button className="btn btn-danger" onClick={this.clearDuties}>Tout effacer</button>{' - '}
             <button className="btn btn-primary" onClick={this.sendNotifications}>Envoyer les E-mails</button>
           </h2>
-          <Schedule planningId={this.props.planning._id} tasks={this.state.tasks} days={this.state.days} duties={this.state.duties} />
+          <Schedule planningId={this.props.planning._id} tasks={this.state.tasks} days={this.state.days} duties={this.state.duties} presences={this.state.presences} />
         </div>
         <div className="col-md-3">
           <h2>Bénévoles</h2>
@@ -72,9 +74,10 @@ var Schedule = React.createClass({
     var lines = []
     var tasks = this.props.tasks;
     var duties = this.props.duties;
+    var presences = this.props.presences;
     var planningId = this.props.planningId;
     this.props.days.forEach(function(day) {
-      lines.push(<ScheduleLine planningId={planningId} tasks={tasks} day={day} duties={duties} />);
+      lines.push(<ScheduleLine planningId={planningId} tasks={tasks} day={day} duties={duties} presences={presences} />);
     });
     return (
       <table id="schedule" className="table table-striped table-bordered">
@@ -113,9 +116,10 @@ var ScheduleLine = React.createClass({
     var planningId = this.props.planningId;
     var day = this.props.day;
     var duties = this.props.duties;
+    var presences = this.props.presences;
     var cells = [];
     this.props.tasks.forEach(function(task) {
-      cells.push(<ScheduleCell planningId={planningId} day={day} task={task} duties={duties} />);
+      cells.push(<ScheduleCell planningId={planningId} day={day} task={task} duties={duties} presences={presences} />);
     });
     return (
       <tr>
@@ -165,6 +169,12 @@ var ScheduleCell = React.createClass({
     configureDragDrop(register) {
       register(ItemTypes.PERSON, {
         dropTarget: {
+          canDrop(component, person) {
+            var dutiesForDay = getPeople(component.props.duties, component.props.day, component.props.task);
+            var presencesForDay = component.props.presences[component.props.day._id];
+            return (presencesForDay && presencesForDay.find({_id: person._id})) &&
+                   (!dutiesForDay || !dutiesForDay.find({_id: person._id}));
+          },
           acceptDrop(component, person) {
             component.handlePersonDrop(person);
           }
@@ -183,8 +193,8 @@ var ScheduleCell = React.createClass({
       });
     }
     var dropState = this.getDropState(ItemTypes.PERSON);
-    var className = '';
-    if (dropState.isHovering) className = 'hover'
+    var className;
+    if (dropState.isDragging) className = (dropState.isHovering) ? 'hover' : 'allowed';
     return <td {...this.dropTargetFor(ItemTypes.PERSON)} className={className}>{people}</td>;
   }
 });
