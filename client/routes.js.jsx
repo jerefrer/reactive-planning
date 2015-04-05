@@ -13,8 +13,15 @@ Router.route('Plannings', {
   waitOn: function () {
     return Meteor.subscribe('plannings');
   },
-  data: {
-    plannings: function() { return Plannings.find().fetch() }
+  action: function() {
+    var plannings = Plannings.find().fetch();
+    this.render('PlanningsList');
+    setTimeout(function() {
+      React.render(
+        <PlanningsList plannings={plannings} />,
+        document.getElementById('plannings-list')
+      );
+    }, 100);
   }
 });
 Router.route('Planning', {

@@ -22,14 +22,9 @@
   {{omg}}
 </template>
 
-<template name="Plannings">
+<template name="PlanningsList">
   <h1>Liste des plannings</h1>
-  <ul>
-    {{#each plannings}}
-      <li><a href="/planning/{{slug}}">{{name}}</a></li>
-      <li><a href="/planning/{{slug}}/admin">{{name}} Admin</a></li>
-    {{/each}}
-  </ul>
+  <div id="plannings-list" class="row"></div>
 </template>
 
 <template name="Planning">

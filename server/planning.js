@@ -17,6 +17,27 @@ eachDuty = function(planningId, callback) {
 }
 
 Meteor.methods({
+  createPlanning: function(name, days) {
+    if (!days)  days  = [];
+    var tasks = [
+      {_id: guid(), name: "Banque alimentaire"},
+      {_id: guid(), name: "Médiateur, responsable d'équipe"},
+      {_id: guid(), name: "Chercher pain"}
+    ];
+    var slug = getSlug(name);
+    Plannings.insert({
+      name: name,
+      slug: slug,
+      days: days,
+      tasks: tasks,
+      presences: {},
+      duties: {}
+    });
+    return slug;
+  },
+  removePlanning: function(planningId) {
+    Plannings.remove(planningId);
+  },
   addDay: function(planningId, dayName) {
     var planning = Plannings.findOne({_id: planningId});
     var days = planning.days;
@@ -143,19 +164,7 @@ Meteor.startup(function () {
       {_id: guid(), name: "Samedi 14 Mars 2015"},
       {_id: guid(), name: "Dimanche 15 Mars 2015"}
     ];
-    var tasks = [
-      {_id: guid(), name: "Banque alimentaire"},
-      {_id: guid(), name: "Médiateur, responsable d'équipe"},
-      {_id: guid(), name: "Chercher pain"}
-    ];
-    Plannings.insert({
-      name: 'Périgueux',
-      slug: 'perigueux',
-      days: days,
-      tasks: tasks,
-      presences: {},
-      duties: {}
-    });
+    Meteor.call('createPlanning', 'Périgueux', days);
     Accounts.createUser({
       username: 'Jérémy Frere',
       email : 'frere.jeremy@gmail.com',

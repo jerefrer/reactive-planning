@@ -54,7 +54,8 @@ Scheduler = React.createClass({
       <div className="row">
         <div className="col-md-9">
           <h2>
-            Planning{' - '}
+            {this.props.planning.name}
+            {' - '}
             <button className="btn btn-danger" onClick={this.clearDuties}>Tout effacer</button>{' - '}
             <button className="btn btn-primary" onClick={this.sendNotifications}>Envoyer les E-mails</button>
           </h2>
