@@ -18,20 +18,6 @@
   </div>
 </template>
 
-<template name="Test">
-  {{omg}}
-</template>
-
-<template name="PlanningsList">
-  <h1>Liste des plannings</h1>
-  <div id="plannings-list" class="row"></div>
-</template>
-
-<template name="Planning">
-  <h1>{{planning.name}}</h1>
-  <div id="planning"></div>
-</template>
-
 <template name="Nav">
   <nav class="navbar navbar-default">
     <div class="container-fluid">
@@ -48,6 +34,7 @@
       <div class="collapse navbar-collapse" id="menu-collapse">
         <ul class="nav navbar-nav">
           <li><a href="/plannings">Plannings</a></li>
+          <li><a href="/users">Bénévoles</a></li>
         </ul>
         <ul class="nav navbar-nav pull-right">
           <li>{{> loginButtons}}</li>
@@ -55,20 +42,6 @@
       </div>
     </div>
   </nav>
-</template>
-
-<template name="ConfirmDuty">
-  <h1>Présence confirmée !</h1>
-  <div class="alert alert-success">
-    You rock dude !
-  </div>
-</template>
-
-<template name="DeclineDuty">
-  <h1>Proposition déclinée !</h1>
-  <div class="alert alert-danger">
-    Man ... seriously ?!
-  </div>
 </template>
 
 <template name="Loading">
