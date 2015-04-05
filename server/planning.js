@@ -82,7 +82,7 @@ Meteor.methods({
     }
     var mailgun = new Mailgun(options);
     eachDuty(planningId, function(planning, day, task, person) {
-      console.log(mailgun.send({
+      mailgun.send({
         to: person.emails[0].address,
         from: 'Planning 24 <no-reply@planning-24.meteor.com>',
         subject: "Disponible le " + day.name + " ?",
@@ -91,7 +91,7 @@ Meteor.methods({
               "<a href='" + Meteor.absoluteUrl('planning/' + planning.slug + '/confirm/' + day._id + '/' + task._id + '/' + person._id) + "'>Confirmer</a>" +
               " / " +
               "<a href='" + Meteor.absoluteUrl('planning/' + planning.slug + '/decline/' + day._id + '/' + task._id + '/' + person._id) + "'>Décliner</a><br />"
-      }));
+      });
     });
   },
   sendSMSNotifications: function(planningId) {

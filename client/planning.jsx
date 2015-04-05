@@ -31,10 +31,6 @@ Scheduler = React.createClass({
     e.preventDefault();
     Meteor.call('clearDuties', this.props.planning._id);
   },
-  sendNotifications: function(e) {
-    e.preventDefault();
-    Meteor.call('sendEmailNotifications', this.props.planning._id);
-  },
   render: function() {
     var sound_to_play = SoundsToPlay.find().fetch()[0];
     if (sound_to_play) {
@@ -57,7 +53,7 @@ Scheduler = React.createClass({
             {this.props.planning.name}
             {' - '}
             <button className="btn btn-danger" onClick={this.clearDuties}>Tout effacer</button>{' - '}
-            <button className="btn btn-primary" onClick={this.sendNotifications}>Envoyer les E-mails</button>
+            <SendEmailsButton planningId={this.props.planning._id} />
           </h2>
           <Schedule planningId={this.props.planning._id} tasks={this.state.tasks} days={this.state.days} duties={this.state.duties} presences={this.state.presences} />
         </div>
@@ -67,6 +63,35 @@ Scheduler = React.createClass({
         </div>
       </div>
     );
+  }
+});
+
+var SendEmailsButton = React.createClass({
+  getInitialState: function() {
+    return { sending: false, sent: false };
+  },
+  sendNotifications: function(e) {
+    e.preventDefault();
+    var button = this;
+    if (!this.state.sent) {
+      this.setState({sending: true});
+      Meteor.call('sendEmailNotifications', this.props.planningId, function(error, data) {
+        button.setState({sent: true, sending: false});
+      });
+    }
+  },
+  render: function() {
+    var className = "send-emails-button btn "; + ((this.state.sent) ? "btn-success text-success" : "btn-primary");
+    var inner, style;
+    if      (this.state.sent)    { inner = <i className="fa fa-check-circle-o" />
+                                   className += "btn-success with-icon";
+                                   style = {width: '50px'}; }
+    else if (this.state.sending) { inner = <i className="fa fa-spinner fa-spin" />
+                                   className += "btn-primary with-icon";
+                                   style = {width: '50px'}; }
+    else                         { inner = "Envoyer les e-mails";
+                                   className += "btn-primary"; }
+    return <button className={className} style={style} onClick={this.sendNotifications}>{inner}</button>;
   }
 });
 
