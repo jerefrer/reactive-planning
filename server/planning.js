@@ -76,27 +76,27 @@ Meteor.methods({
   },
   sendEmailNotifications: function(planningId) {
     this.unblock();
-
-    // var person = { name: 'Jérémy', phone: '+33628055409'},
-    //     task = { name: "Médiateur, response d'équipe", short_name: 'Médiateur' },
-    //     day = { name: 'Samedi 28 Septembre 2015' },
-    //     planning = Plannings.findOne({_id: planningId});
-
+    var options = {
+        apiKey: 'key-53e598497990b587981fb538556d929e',
+        domain: 'sandboxcca7022b53aa489587e322ab0380c2ae.mailgun.org'
+    }
+    var mailgun = new Mailgun(options);
     eachDuty(planningId, function(planning, day, task, person) {
-      Email.send({
-        to: person.emails[0],
-        from: 'admin@planning-24.com',
-        subject: "Êtes-vous disponible ?",
-        text: 'Bonjour ' + person.name + ",<br />" +
-              'Tu as été désigné pour \"' + task.short_name + '\" le ' + day.name + ".<br />" +
-              "<a href='" + Meteor.absoluteUrl('planning/' + planning.slug + '/confirm/' + day._id + '/' + task._id + '/' + person._id) + "'>Clique ici pour confirmer</a><br />" +
-              "<a href='" + Meteor.absoluteUrl('planning/' + planning.slug + '/decline/' + day._id + '/' + task._id + '/' + person._id) + "'>Clique ici pour décliner</a><br />"
-      });
+      console.log(mailgun.send({
+        to: person.emails[0].address,
+        from: 'Planning 24 <no-reply@planning-24.meteor.com>',
+        subject: "Disponible le " + day.name + " ?",
+        html: 'Bonjour ' + person.profile.firstname + ",<br /><br />" +
+              'Vous avez été désigné(e) pour \"' + task.name + '\" le ' + day.name + ".<br /><br />" +
+              "<a href='" + Meteor.absoluteUrl('planning/' + planning.slug + '/confirm/' + day._id + '/' + task._id + '/' + person._id) + "'>Confirmer</a>" +
+              " / " +
+              "<a href='" + Meteor.absoluteUrl('planning/' + planning.slug + '/decline/' + day._id + '/' + task._id + '/' + person._id) + "'>Décliner</a><br />"
+      }));
     });
   },
   sendSMSNotifications: function(planningId) {
     var person = { name: 'Jérémy', phone: '+33628055409'},
-        task = { name: "Médiateur, response d'équipe", short_name: 'Médiateur' },
+        task = { name: "Médiateur, response d'équipe", name: 'Médiateur' },
         day = { name: 'Samedi 28 Septembre 2015' },
         ACCOUNT_SID = 'AC3869695257d0b4105a8286c9bf868c24',
         AUTH_TOKEN = 'f4bd037ce0f2f7e9338b819af6aae578';
@@ -107,7 +107,7 @@ Meteor.methods({
         to: person.phone,
         from: twilio_number,
         body: 'Bonjour ' + person.name + ",\n" +
-              'Tu as été désigné pour \"' + task.short_name + '\" le ' + day.name + ".\n" +
+              'Tu as été désigné pour \"' + task.name + '\" le ' + day.name + ".\n" +
               "1 pour confirmer,\n" +
               "0 pour décliner."
       }, function(err, responseData) {
@@ -170,7 +170,7 @@ Meteor.startup(function () {
       email : 'frere.jeremy@gmail.com',
       password : 'canada',
       profile  : {
-        //publicly visible fields like firstname goes here
+        firstname: 'Jérémy'
       }
     });
     Accounts.createUser({
@@ -178,7 +178,7 @@ Meteor.startup(function () {
       email : 'anne.benson@gmail.com',
       password : 'canada',
       profile  : {
-        //publicly visible fields like firstname goes here
+        firstname: 'Anne'
       }
     });
   }
