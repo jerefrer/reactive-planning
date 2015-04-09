@@ -244,7 +244,8 @@ DayForm = React.createClass
 
 PeopleList = React.createClass
   filterBySearchTerm: (term) ->
-    @setState people: @props.people.findAll(username: new RegExp(term, 'i'))
+    @setState people: @props.people.findAll (user) ->
+      getSlug(user.username).fuzzy getSlug(term)
   render: ->
     people = if @state then @state.people else @props.people
     # Hack, seems that getInitialState gets called the first time when everything is empty, and not the second time when it's filled
