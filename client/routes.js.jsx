@@ -78,3 +78,10 @@ Router.route('DeclineDuty', {
     this.render('DeclineDuty');
   }
 });
+
+Router.route('Users', {
+  path: '/users',
+  waitOn: function () {
+    return Meteor.subscribe('users');
+  }
+});

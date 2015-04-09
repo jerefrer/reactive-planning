@@ -1,0 +1,14 @@
+<template name="Users">
+  <div class="col-md-8">
+    <h1>
+      Bénévoles
+      {{#if userIsSelected}}
+        <button class="addUser btn btn-primary">Ajouter un bénévole</button>
+      {{/if}}
+    </h1>
+    {{> tabular table=TabularTables.Users class="users-table table table-striped table-bordered table-condensed"}}
+  </div>
+  <div class="col-md-3 col-md-offset-1">
+    {{> UserForm}}
+  </div>
+</template>
