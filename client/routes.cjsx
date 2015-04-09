@@ -36,7 +36,7 @@ Router.route 'Planning',
       )
     ), 100
 
-Router.route 'UserPlanning',
+Router.route 'UserPresence',
   path: '/planning/:slug'
   waitOn: ->
     Meteor.subscribe 'plannings'
@@ -46,7 +46,7 @@ Router.route 'UserPlanning',
     @render 'Planning', planning: planning
     setTimeout (->
       React.render(
-        <UserPlanning planning={planning} />,
+        <UserPresence planning={planning} />,
         document.getElementById('planning')
       )
     ), 100
