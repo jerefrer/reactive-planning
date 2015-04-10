@@ -51,6 +51,21 @@ Router.route 'UserPresence',
       )
     ), 100
 
+Router.route 'UsersPresence',
+  path: '/planning/:slug/presences'
+  waitOn: ->
+    Meteor.subscribe 'plannings'
+  action: ->
+    planning = Plannings.findOne(slug: @params.slug)
+    Session.set 'currentPlanning', planning
+    @render 'Planning', planning: planning
+    setTimeout (->
+      React.render(
+        <UsersPresence planning={planning} />,
+        document.getElementById('planning')
+      )
+    ), 100
+
 Router.route 'ConfirmDuty',
   path: '/planning/:slug/confirm/:dayId/:taskId/:personId'
   waitOn: ->

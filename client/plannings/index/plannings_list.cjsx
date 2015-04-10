@@ -13,6 +13,9 @@ Planning = React.createClass
   openPlanningAdmin: (e) ->
     e.stopPropagation()
     window.location = "/planning/" + @props.slug + "/admin"
+  openPlanningPresences: (e) ->
+    e.stopPropagation()
+    window.location = "/planning/" + @props.slug + "/presences"
   removePlanning: (e) ->
     e.preventDefault()
     e.stopPropagation()
@@ -25,6 +28,8 @@ Planning = React.createClass
           {@props.name}
           <br />
           <a className="btn btn-primary" onClick={@openPlanningAdmin}>Admin</a>
+          <br />
+          <a className="btn btn-primary" onClick={@openPlanningPresences}>Présences</a>
         </div>
       </div>
     </div>
