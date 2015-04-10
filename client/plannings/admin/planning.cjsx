@@ -105,7 +105,7 @@ Schedule = React.createClass
 ScheduleHeader = React.createClass
   render: ->
     tasks = @props.tasks.map (task) ->
-      <td><strong>{task.name}</strong></td>
+      <th><strong>{task.name}</strong></th>
     <tr>
       <td></td>
       {tasks}
