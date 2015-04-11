@@ -38,7 +38,7 @@ ItemTypes = PERSON: 'person'
       else
         Session.setPersistent 'playedSounds', [ sound_to_play._id ]
     <div className="row">
-      <div className="col-md-9">
+      <div className="col-md-9 col-sm-9">
         <h2>
           {@props.planning.name}
           {' - '}
@@ -47,7 +47,7 @@ ItemTypes = PERSON: 'person'
         </h2>
         <Schedule planningId={@props.planning._id} tasks={@state.tasks} days={@state.days} duties={@state.duties} presences={@state.presences} />
       </div>
-      <div className="col-md-3">
+      <div className="col-md-3 col-sm-3">
         <h2>Bénévoles</h2>
         <PeopleList people={@state.people} />
       </div>
@@ -88,19 +88,20 @@ Schedule = React.createClass
   render: ->
     lines = @props.days.map (day) =>
       <ScheduleLine planningId={@props.planningId} tasks={@props.tasks} day={day} duties={@props.duties} presences={@props.presences} />
-    <table id="schedule" className="table table-striped table-bordered">
-      <thead>
-        <ScheduleHeader tasks={@props.tasks} />
-      </thead>
-      <tbody>
-        {lines}
-        <tr>
-          <td><AddDayCell planningId={@props.planningId} onAddDay={@handleAddDay} /></td>
-          <td colSpan="5000"></td>
-        </tr>
-      </tbody>
-    </table>
-
+    <div className="schedule-wrapper">
+      <table id="schedule" className="table table-striped table-bordered">
+        <thead>
+          <ScheduleHeader tasks={@props.tasks} />
+        </thead>
+        <tbody>
+          {lines}
+          <tr>
+            <td><AddDayCell planningId={@props.planningId} onAddDay={@handleAddDay} /></td>
+            <td colSpan="5000"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
 ScheduleHeader = React.createClass
   render: ->
