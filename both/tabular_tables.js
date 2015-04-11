@@ -7,7 +7,7 @@ TabularTables.Users = new Tabular.Table({
   collection: Meteor.users,
   columns: [
     {data: "username", title: "Nom"},
-    {data: "email", title: "E-mail"},
+    {data: "emails[0].address", title: "E-mail"},
     {data: "profile.phone", title: "Téléphone"},
     {data: "createdAt", title: "Ajouté le", render: function(date, type, doc) { return moment(date).format('MM-DD-YYYY à HH:SS') } }
   ],

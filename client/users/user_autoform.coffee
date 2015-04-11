@@ -1,21 +1,25 @@
 Schemas = {}
 Template.registerHelper 'Schemas', Schemas
-Schemas.UserProfile = new SimpleSchema(
+Schemas.UserProfile = new SimpleSchema
   firstname:
     type: String
     label: 'Prénom'
   phone:
     type: String
-    label: 'Téléphone')
-Schemas.User = new SimpleSchema(
+    label: 'Téléphone'
+    optional: true
+Schemas.User = new SimpleSchema
   username:
     type: String
     label: 'Nom complet'
-  email:
-    type: String
-    label: 'E-mail'
-    regEx: SimpleSchema.RegEx.Email
-  profile: type: Schemas.UserProfile)
+  emails:
+      type: [Object]
+  "emails.$.address":
+      type: String
+      regEx: SimpleSchema.RegEx.Email
+      autoform:
+        label: false
+  profile: type: Schemas.UserProfile
 
 Collections = {}
 Template.registerHelper 'Collections', Collections
