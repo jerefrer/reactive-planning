@@ -1,6 +1,5 @@
-accountsUIBootstrap3.setLanguage('fr');
-
 Router.plugin 'auth'
+
 Router.configure
   layoutTemplate: 'Layout'
   loadingTemplate: 'Loading'
