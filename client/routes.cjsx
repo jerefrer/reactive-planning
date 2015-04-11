@@ -87,3 +87,6 @@ Router.route 'Users',
   path: '/users'
   waitOn: ->
     Meteor.subscribe 'users'
+
+Router.route 'login',
+  path: '/connectez-vous'
