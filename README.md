@@ -1,9 +1,9 @@
 ## reactive-planning
 A small Meteor & React app to help build plannings
 
-**If you are interested by this project please contact me
-and I'll make the necessary work to remove any client-specific
-code so we can work together.**
+**If you are interested by this project please file an issue to let me know
+and I'll make the necessary work to remove any client-specific code so we
+can work together.**
 
 ### Installation
 
