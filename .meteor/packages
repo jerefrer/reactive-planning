@@ -15,7 +15,6 @@ accolver:twilio-meteor
 email
 brentjanderson:buzz
 u2622:persistent-session
-accounts-ui
 accounts-password
 useraccounts:bootstrap
 fortawesome:fontawesome
@@ -29,3 +28,4 @@ aldeed:autoform
 aldeed:collection2
 coffeescript
 alanning:roles
+ian:accounts-ui-bootstrap-3
