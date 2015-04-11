@@ -139,14 +139,12 @@ DayName = React.createClass
 ScheduleCell = React.createClass
   handlePersonDrop: (person) ->
     cell = person.scheduleCell
-    person.scheduleCell = null
-    # Remove the schedule cell so it's not serialized to be sent to Meteor
+    person.scheduleCell = null # Remove the schedule cell so it's not sent to Meteor
     Meteor.call 'addPerson', @props.planningId, @props.day, @props.task, person
     if cell
       Meteor.call 'removePerson', @props.planningId, cell.props.day, cell.props.task, person
   removePerson: (person) ->
-    person.scheduleCell = null
-    # Remove the schedule cell so it's not serialized to be sent to Meteor
+    person.scheduleCell = null # Remove the schedule cell so it's not sent to Meteor
     Meteor.call 'removePerson', @props.planningId, @props.day, @props.task, person
   mixins: [ DragDropMixin ]
   statics: configureDragDrop: (register) ->
