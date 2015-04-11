@@ -153,7 +153,7 @@ ScheduleCell = React.createClass
         dutiesForDay = getPeople(component.props.duties, component.props.day, component.props.task)
         presencesForDay = component.props.presences[component.props.day._id]
         havent_answered = !presencesForDay
-        answered_yes = presencesForDay.find(_id: person._id)
+        answered_yes = presencesForDay and presencesForDay.find(_id: person._id)
         already_inserted = dutiesForDay and dutiesForDay.find(_id: person._id)
         havent_answered or (answered_yes and not already_inserted)
       acceptDrop: (component, person) ->
