@@ -11,13 +11,6 @@
   </div>
 </template>
 
-<template name="Home">
-  <h1>Accueil</h1>
-  <div class="jumbotron">
-    Bienvenue !
-  </div>
-</template>
-
 <template name="Nav">
   <nav class="navbar navbar-default">
     <div class="container-fluid">
@@ -37,7 +30,7 @@
       <div class="collapse navbar-collapse" id="menu-collapse">
         <ul class="nav navbar-nav">
           {{#if currentUser}}
-            <li><a href="/plannings">Plannings</a></li>
+            <li><a href="/">Plannings</a></li>
             {{#if isInRole 'admin'}}
               <li><a href="/users">Bénévoles</a></li>
             {{/if}}

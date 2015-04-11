@@ -6,10 +6,8 @@ Router.configure
   notFoundTemplate: 'NotFound'
 Router.onBeforeAction 'loading'
 
-Router.route 'Home', path: '/'
-
 Router.route 'Plannings',
-  path: '/plannings'
+  path: '/'
   waitOn: ->
     Meteor.subscribe 'plannings'
   action: ->
