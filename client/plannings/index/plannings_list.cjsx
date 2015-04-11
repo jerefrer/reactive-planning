@@ -4,7 +4,7 @@
       <Planning id={planning._id} name={planning.name} slug={planning.slug} />
     <div>
       {plannings}
-      <NewPlanning />
+      {<NewPlanning /> if isAdmin()}
     </div>
 
 Planning = React.createClass
@@ -21,15 +21,18 @@ Planning = React.createClass
     e.stopPropagation()
     Meteor.call('removePlanning', @props.id) if confirm('Êtes-vous sûr ?')
   render: ->
+    buttons =
+      <div>
+        <a className="btn btn-primary" onClick={@openPlanningAdmin}>Admin</a>
+        <br />
+        <a className="btn btn-primary" onClick={@openPlanningPresences}>Présences</a>
+      </div>
     <div className="col-md-3" onClick={@openPlanning}>
       <div className="background">
-        <a className="remove fa fa-remove" onClick={@removePlanning}></a>
+        {<a className="remove fa fa-remove" onClick={@removePlanning}></a> if isAdmin()}
         <div className="content">
           {@props.name}
-          <br />
-          <a className="btn btn-primary" onClick={@openPlanningAdmin}>Admin</a>
-          <br />
-          <a className="btn btn-primary" onClick={@openPlanningPresences}>Présences</a>
+          {buttons if isAdmin()}
         </div>
       </div>
     </div>

@@ -7,7 +7,6 @@ Just run `meteor`
 
 ### TODO
 
-* Find out why updates are displayed only after the second action performed.
-* Ask people how they will be available in the next weeks
-  * When dragging someone gray out the cells were he/she is not available
+* Add cell filling by clicking them then clicking a user in the people list
   * When clicking a cell, display on the right only the people available
+* Add proper restrictions for non-admin users

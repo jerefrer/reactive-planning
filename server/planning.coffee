@@ -143,16 +143,21 @@ Meteor.startup ->
       {_id: guid(), name: 'Dimanche 15 Mars 2015'}
     ]
     Meteor.call 'createPlanning', 'Périgueux', days
-    Accounts.createUser
+
+    admin = Accounts.createUser
       username: 'Jérémy Frere'
       email: 'frere.jeremy@gmail.com'
       password: 'canada'
-      profile: firstname: 'Jérémy'
+      profile:
+        firstname: 'Jérémy'
+    Roles.addUsersToRoles(admin, ["admin"]);
+
     Accounts.createUser
       username: 'Anne Benson'
       email: 'anne.benson@gmail.com'
       password: 'canada'
-      profile: firstname: 'Anne'
+      profile:
+        firstname: 'Anne'
 
 Meteor.publish 'users', ->
   Meteor.users.find()

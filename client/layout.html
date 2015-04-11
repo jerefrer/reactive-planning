@@ -34,7 +34,9 @@
       <div class="collapse navbar-collapse" id="menu-collapse">
         <ul class="nav navbar-nav">
           <li><a href="/plannings">Plannings</a></li>
-          <li><a href="/users">Bénévoles</a></li>
+          {{#if isInRole 'admin'}}
+            <li><a href="/users">Bénévoles</a></li>
+          {{/if}}
         </ul>
         <ul class="nav navbar-nav pull-right">
           <li>{{> loginButtons}}</li>

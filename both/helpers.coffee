@@ -14,3 +14,6 @@
     Meteor.users.find(_id: $in: peopleIds).fetch()
   else
     []
+
+@isAdmin = ->
+  Roles.userIsInRole(Meteor.user(), 'admin')
