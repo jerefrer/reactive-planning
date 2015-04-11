@@ -19,10 +19,8 @@
     <div className="userPresence">
       <h2>Planning {planning.name}</h2>
       <div className="row">
-        <div className="col-md-6">
-          <Schedule planningId={@props.planning._id} days={@state.days} presences={@state.presences} />
-        </div>
-        <div className="col-md-6 jumbotron">
+        <Schedule planningId={@props.planning._id} days={@state.days} presences={@state.presences} />
+        <div className="col-md-3 jumbotron">
           Merci de cochez les cases des jours où vous êtes disponible.
         </div>
       </div>
@@ -32,7 +30,7 @@ Schedule = React.createClass
   render: ->
     lines = @props.days.map (day) =>
       <ScheduleLine planningId={@props.planningId} day={day} presences={@props.presences} />
-    <table id="schedule" className="table table-striped table-bordered">
+    <table className="table table-striped table-bordered">
       <thead>
         <tr>
           <th>Jour</th>
@@ -67,6 +65,6 @@ ScheduleCell = React.createClass
     peopleList = @props.presences[@props.day._id]
     present = peopleList && peopleList.find({_id: Meteor.userId()})
     className = if present then "fa fa-check-square-o text-success" else "fa fa-square-o text-muted"
-    <td className="text-center" onClick={@togglePresence}>
+    <td className="presenceCell" onClick={@togglePresence}>
       <i className={className} />
     </td>
