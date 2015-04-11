@@ -94,18 +94,18 @@ Meteor.methods
         from: twilio_number
         body: 'Bonjour ' + person.name + ',\n' + 'Tu as été désigné pour "' + task.name + '" le ' + day.name + '.\n' + '1 pour confirmer,\n' + '0 pour décliner.'
       }, (err, responseData) ->
-  answerNotification: (planningSlug, dayId, taskId, personId, positive) ->
+  answerNotification: (planningSlug, dayId, taskId, personId, confirmation) ->
     planning = Plannings.findOne(slug: planningSlug)
     duties = planning.duties
     key = dayId + ',' + taskId
     people = duties[key]
     person = people.find(_id: personId)
     set = {}
-    person.positive = positive
+    person.confirmation = confirmation
     set['duties.' + key] = people
     Plannings.update planning._id, $set: set
     SoundsToPlay.remove {}
-    SoundsToPlay.insert filename: if positive then '/success.ogg' else '/failure.ogg'
+    SoundsToPlay.insert filename: if confirmation then '/success.ogg' else '/failure.ogg'
   cycleStatus: (planningId, dayId, taskId, personId) ->
     planning = Plannings.findOne(_id: planningId)
     duties = planning.duties
@@ -113,12 +113,12 @@ Meteor.methods
     people = duties[key]
     person = people.find(_id: personId)
     set = {}
-    if person.positive == undefined
-      person.positive = true
-    else if person.positive == true
-      person.positive = false
-    else if person.positive == false
-      delete person.positive
+    if person.confirmation == undefined
+      person.confirmation = true
+    else if person.confirmation == true
+      person.confirmation = false
+    else if person.confirmation == false
+      delete person.confirmation
     set['duties.' + key] = people
     Plannings.update planning._id, $set: set
   togglePresence: (planningId, dayId, personId) ->

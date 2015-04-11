@@ -171,6 +171,12 @@ ScheduleCell = React.createClass
     <td {...@dropTargetFor(ItemTypes.PERSON)} className={className}>{people}</td>
 
 Person = React.createClass
+  getInitialState: ->
+    { wobble: false }
+  componentWillReceiveProps: (nextProps) ->
+    if nextProps.person.confirmation != @props.person.confirmation
+      @setState
+        wobble: nextProps.person.confirmation != undefined
   mixins: [ DragDropMixin ]
   statics: configureDragDrop: (register) ->
     register ItemTypes.PERSON, dragSource:
@@ -191,14 +197,16 @@ Person = React.createClass
   render: ->
     person = @getPerson()
     if person
-      positive = @props.person.positive
+      confirmation = @props.person.confirmation
       className = 'alert '
-      if positive == undefined
+      if confirmation == undefined
         className += 'neutral background-fade'
-      else if positive == true
-        className += 'good background-fade hvr-wobble-vertical'
-      else if positive == false
-        className += 'bad  background-fade hvr-wobble-horizontal'
+      else if confirmation == true
+        className += 'good background-fade '
+        className += 'hvr-wobble-vertical' if @state.wobble
+      else if confirmation == false
+        className += 'bad  background-fade '
+        className += 'hvr-wobble-horizontal' if @state.wobble
       <div className={className}
            {...@dragSourceFor(ItemTypes.PERSON)}
            onDoubleClick={@cycleStatus} >
