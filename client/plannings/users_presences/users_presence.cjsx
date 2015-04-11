@@ -17,18 +17,23 @@
         presences: []
       }
   render: ->
-    <div className="userPlanning">
+    <div className="usersPresence">
       <h2>Planning {planning.name}</h2>
       <Schedule planningId={@props.planning._id} days={@state.days} people={@state.people} presences={@state.presences} />
     </div>
 
 Schedule = React.createClass
+  filterBySearchTerm: (term) ->
+    @setState people: @props.people.findAll (user) ->
+      getSlug(user.username).fuzzy getSlug(term)
   render: ->
-    lines = @props.people.map (person) =>
+    people = if @state then @state.people else @props.people
+    # Hack, seems that getInitialState gets called the first time when everything is empty, and not the second time when it's filled
+    lines = people.map (person) =>
       <ScheduleLine planningId={@props.planningId} days={@props.days} person={person} presences={@props.presences} />
     <table id="schedule" className="table table-striped table-bordered">
       <thead>
-        <ScheduleHeader days={@props.days} />
+        <ScheduleHeader days={@props.days} onFilterChange={@filterBySearchTerm} />
       </thead>
       <tbody>
         {lines}
@@ -40,9 +45,19 @@ ScheduleHeader = React.createClass
     days = @props.days.map (day) ->
       <th><strong>{day.name}</strong></th>
     <tr>
-      <th></th>
+      <th>
+        <PeopleFilter people={@props.people} onChange={@props.onFilterChange} />
+      </th>
       {days}
     </tr>
+
+PeopleFilter = React.createClass
+  handleChange: ->
+    @props.onChange @refs.name.getDOMNode().value.trim()
+  render: ->
+    <div className="form-group form-inline">
+      <input type="text" ref="name" onChange={@handleChange} className="form-control" placeholder="Nom" />
+    </div>
 
 ScheduleLine = React.createClass
   render: ->

@@ -16,7 +16,7 @@
         presences: []
       }
   render: ->
-    <div className="userPlanning">
+    <div className="userPresence">
       <h2>Planning {planning.name}</h2>
       <div className="row">
         <div className="col-md-6">
