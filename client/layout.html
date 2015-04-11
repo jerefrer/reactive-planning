@@ -5,7 +5,7 @@
 <body></body>
 
 <template name="Layout">
-  <div class="container-fluid">
+  <div class="{{containerType}}">
     {{> Nav}}
     {{> yield}}
   </div>
@@ -38,6 +38,14 @@
         </ul>
         <ul class="nav navbar-nav navbar-right">
           {{> loginButtons}}
+          <li class="divider-vertical"></li>
+          <li class="toggleFluid">
+            {{#if isFluid}}
+              <i class="fa fa-compress" title="Réduire"></i>
+            {{else}}
+              <i class="fa fa-expand" title="Plein écran"></i>
+            {{/if}}
+          </li>
         </ul>
       </div>
     </div>
