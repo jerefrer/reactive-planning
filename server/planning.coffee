@@ -19,7 +19,17 @@ Meteor.methods
       days = []
     tasks = [{_id: guid(), name: 'Banque alimentaire'},
              {_id: guid(), name: 'Médiateur, responsable d\'équipe' },
-             {_id: guid(), name: 'Chercher pain'}]
+             {_id: guid(), name: 'Chercher pain'}
+             {_id: guid(), name: 'Ramasse Carrefour Market'},
+             {_id: guid(), name: 'Préparer soupe'},
+             {_id: guid(), name: 'Amener soupe'},
+             {_id: guid(), name: 'Camion'},
+             {_id: guid(), name: 'Chargement'},
+             {_id: guid(), name: 'Accueil & Distribution'},
+             {_id: guid(), name: 'Fourniture comptoir'},
+             {_id: guid(), name: 'Servir café & soupe'},
+             {_id: guid(), name: 'Déchargement & Vaisselle local'},
+             {_id: guid(), name: 'Suppléants'}]
     slug = getSlug(name)
     Plannings.insert
       name: name
