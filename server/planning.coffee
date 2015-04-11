@@ -135,14 +135,26 @@ Meteor.methods
     set['presences.' + dayId] = people
     Plannings.update planning._id, $set: set
 Meteor.startup ->
-  if !Plannings.findOne(name: 'Périgueux')
+  if !Plannings.findOne(name: 'Mai 2015')
     days = [
-      {_id: guid(), name: 'Samedi 7 Mars 2015'},
-      {_id: guid(), name: 'Dimanche 8 Mars 2015'},
-      {_id: guid(), name: 'Samedi 14 Mars 2015'},
-      {_id: guid(), name: 'Dimanche 15 Mars 2015'}
+      {_id: guid(), name: 'Vendredi 1er Mai'}
+      {_id: guid(), name: 'Samedi 2 Mai'}
+      {_id: guid(), name: 'Dimanche 3 Mai'}
+      {_id: guid(), name: 'Vendredi 8 Mai'}
+      {_id: guid(), name: 'Samedi 9 Mai'}
+      {_id: guid(), name: 'Dimanche 10 Mai'}
+      {_id: guid(), name: 'Vendredi 15 Mai'}
+      {_id: guid(), name: 'Samedi 16 Mai'}
+      {_id: guid(), name: 'Dimanche 17 Mai'}
+      {_id: guid(), name: 'Vendredi 22 Mai'}
+      {_id: guid(), name: 'Samedi 23 Mai'}
+      {_id: guid(), name: 'Dimanche 24 Mai'}
+      {_id: guid(), name: 'Vendredi 29 Mai'}
+      {_id: guid(), name: 'Samedi 30 Mai'}
+      {_id: guid(), name: 'Dimanche 31 Mai'}
     ]
-    Meteor.call 'createPlanning', 'Périgueux', days
+    Meteor.call 'createPlanning', 'Mai 2015', days
+    Meteor.call 'createPlanning', 'Juin 2015', []
 
     admin = Accounts.createUser
       username: 'Jérémy Frere'
