@@ -24,7 +24,6 @@ Planning = React.createClass
     buttons =
       <div>
         <a className="btn btn-primary" onClick={@openPlanningAdmin}>Admin</a>
-        <br />
         <a className="btn btn-primary" onClick={@openPlanningPresences}>Présences</a>
       </div>
     <div className="col-md-3" onClick={@openPlanning}>
@@ -50,7 +49,7 @@ NewPlanning = React.createClass
         <div className="content">
           Nouveau planning
           <form onSubmit={@createPlanning}>
-            <input type="text" ref="planningName" placeholder="Nom ?" />
+            <input type="text" ref="planningName" placeholder="Nom ?" className="form-control" />
           </form>
         </div>
       </div>
