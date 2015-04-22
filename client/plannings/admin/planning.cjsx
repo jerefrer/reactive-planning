@@ -137,6 +137,17 @@ DayName = React.createClass
     else
       <strong onClick={@showForm} title="Cliquez pour modifier">{@props.day.name}</strong>
 
+AddPersonModal = React.createClass
+  render: ->
+    <ReactBootstrap.Modal {...@props} bsStyle='primary' title="#{@props.day.name} - #{@props.task.name}" animation>
+      <div className='modal-body'>
+        Elit est explicabo ipsum eaque dolorem blanditiis doloribus sed id ipsam, beatae, rem fuga id earum? Inventore et facilis obcaecati.
+      </div>
+      <div className='modal-footer'>
+        <ReactBootstrap.Button onClick={@props.onRequestHide}>Annuler</ReactBootstrap.Button>
+      </div>
+    </ReactBootstrap.Modal>
+
 ScheduleCell = React.createClass
   handlePersonDrop: (person) ->
     cell = person.scheduleCell
@@ -170,7 +181,14 @@ ScheduleCell = React.createClass
     className = undefined
     if dropState.isDragging
       className = if dropState.isHovering then 'hover' else 'allowed'
-    <td {...@dropTargetFor(ItemTypes.PERSON)} className={className}>{people}</td>
+    <td {...@dropTargetFor(ItemTypes.PERSON)} className={className}>
+      {people}
+      <ReactBootstrap.ModalTrigger modal={<AddPersonModal day={@props.day} task={@props.task} />}>
+        <ReactBootstrap.Button bsStyle='default' bsSize='xsmall'>
+          <i className="fa fa-plus" />
+        </ReactBootstrap.Button>
+      </ReactBootstrap.ModalTrigger>
+    </td>
 
 Person = React.createClass
   getInitialState: ->
