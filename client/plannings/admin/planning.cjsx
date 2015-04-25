@@ -138,7 +138,7 @@ ScheduleCell = React.createClass
     if peopleList
       people = peopleList.map (personObject) =>
         <Person person={personObject} />
-    <ReactBootstrap.ModalTrigger modal={<AddPersonModal planningId={@props.planningId} day={@props.day} task={@props.task} duties={@props.duties} people={@props.people} />}>
+    <ReactBootstrap.ModalTrigger modal={<AddPersonModal planningId={@props.planningId} day={@props.day} task={@props.task} duties={@props.duties} presences={@props.presences} people={@props.people} />}>
       <td>
         {people}
       </td>
@@ -232,7 +232,7 @@ AddPersonModal = React.createClass
     <ReactBootstrap.Modal {...@props} bsStyle='primary' title="#{@props.day.name} - #{@props.task.name}" animation>
       <div className='modal-body'>
         <div className="row same-height-columns">
-          <PeopleList people={@props.people} />
+          <PeopleList people={@props.people} day={@props.day} task={@props.task} duties={@props.duties} presences={@props.presences}/>
           <div className="divider"></div>
           <PeopleForDuty planningId={@props.planningId} day={@props.day} task={@props.task} duties={@props.duties} />
         </div>
@@ -246,10 +246,19 @@ PeopleList = React.createClass
   filterBySearchTerm: (term) ->
     @setState people: @props.people.findAll (user) ->
       getSlug(user.username).fuzzy getSlug(term)
+  availablePeople: ->
+    peopleList = @props.people
+    dutiesForDay = getPeople(@props.duties, @props.day, @props.task)
+    presencesForDay = @props.presences[@props.day._id]
+    debugger
+    peopleList.findAll (person) ->
+      answered_yes = presencesForDay and presencesForDay.find(_id: person._id)
+      already_inserted = dutiesForDay and dutiesForDay.find(_id: person._id)
+      answered_yes and not already_inserted
   render: ->
     people = if @state then @state.people else @props.people
     # Hack, seems that getInitialState gets called the first time when everything is empty, and not the second time when it's filled
-    people_list = people.map (person) ->
+    people_list = @availablePeople().map (person) ->
       <li><Person person={person} avatar={true} /></li>
     <div className="people-list col-md-6">
       <h3>Disponibles</h3>
