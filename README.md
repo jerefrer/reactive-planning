@@ -1,4 +1,5 @@
 ## reactive-planning
+
 A small Meteor & React app to help build plannings
 
 **If you are interested by this project please file an issue to let me know
@@ -11,6 +12,20 @@ Just run `meteor`
 
 ### TODO
 
-* Add cell filling by clicking them then clicking a user in the people list
-  * When clicking a cell, display on the right only the people available
+#### Needed before launch
+
+* Faire que les Days soient vraiment des dates et non des strings pour pouvoir faire des choses en fonction de leur date.
+* Marquer les Duties une fois l'email envoyé pour ne pas ré-envoyer. Ajouter une icône sur chaque Duty pour indiquer si elle va recevoir un email quand on cliquera sur "Envoyer les emails".
+* On ajoute un bouton "Envoyer les emails des mots de passe" qui envoie un email avec un mot de passe auto-généré à chaque utilisateur qui ne l'a pas déjà (ajouter un boolean) en invitant l'utilisateur à le changer immédiatement
+* Ajouter un bouton sur une fiche user "renvoyer l'email de mot de passe".
+
+#### Nice to have
+
+
+* Cronjob pour envoyer un SMS les jours de collecte quelques heures avant à tous les concernés.
+* Bouton "renvoyer la demande" pour ceux qui n'ont pas répondu
+* Bouton "Envoyer un message à tous"
+* Penser à des alertes pour l'admin, par exemple :
+  * Si des cases sont vides X jours avant l'event
+  * Quand quelqu'un refuse => beaucoup de mail, faire un récap journalier, hebdomadaire. Est-ce nécessaire ?
 * Add proper restrictions for non-admin users
