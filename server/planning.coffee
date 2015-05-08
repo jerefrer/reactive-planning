@@ -56,21 +56,19 @@ Meteor.methods
   addPerson: (planningId, day, task, person) ->
     planning = Plannings.findOne(_id: planningId)
     duties = planning.duties
-    people = getPeople(duties, day, task)
-    if !people
-      people = []
+    people = duties[day._id + ',' + task._id] || []
     if !people.find(_id: person._id)
       people.push _id: person._id
       set = {}
-      set['duties.' + k(day) + ',' + k(task)] = people
+      set['duties.' + day._id + ',' + task._id] = people
       Plannings.update planning._id, $set: set
   removePerson: (planningId, day, task, person) ->
     planning = Plannings.findOne(_id: planningId)
     duties = planning.duties
-    people = getPeople(duties, day, task)
+    people = duties[day._id + ',' + task._id]
     people.remove _id: person._id
     set = {}
-    set['duties.' + k(day) + ',' + k(task)] = people
+    set['duties.' + day._id + ',' + task._id] = people
     Plannings.update planning._id, $set: set
   clearDuties: (planningId) ->
     Plannings.update planningId, $set: duties: {}
