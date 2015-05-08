@@ -9,7 +9,6 @@ insecure
 reactjs:react
 jhartma:cjsx
 digilord:sugarjs
-mrt:bootstrap-3
 iron:router
 accolver:twilio-meteor
 email
@@ -29,3 +28,4 @@ aldeed:collection2
 coffeescript
 alanning:roles
 ian:accounts-ui-bootstrap-3
+firfi:meteor-react-bootstrap

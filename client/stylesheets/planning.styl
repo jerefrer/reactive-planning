@@ -6,10 +6,23 @@
 form
   margin-bottom: 5px
 
-#people-list
+.people-list
   .form-inline
+    padding: 10px
+    background: #f6f6f6
     .control-label
       margin-right: 5px
+
+.people-list, .people-for-duty
+  .person
+    display: block
+    text-align: center
+    img
+      width: 45px
+      height: 45px
+      margin-right: 10px
+      margin-top: -10px
+      margin-bottom: -10px
 
 .send-emails-button
   width: 160px
@@ -21,3 +34,20 @@ form
     &.btn-success
       font-size: 23px
       padding: 0 10px
+
+.same-height-columns
+  display: flex
+  flex: 1 0 auto
+  > div
+    flex: 1 0 auto
+  .divider
+    border-right: 1px solid #fafafa
+    border-left: 1px solid #f2f2f2
+
+
+
+.drop-target
+  background: #eee !important
+  border: 5px dashed #ddd
+.drop-hover
+  background: #e4f1df !important

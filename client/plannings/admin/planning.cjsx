@@ -37,20 +37,14 @@ ItemTypes = PERSON: 'person'
           Session.setPersistent 'playedSounds', playedSounds
       else
         Session.setPersistent 'playedSounds', [ sound_to_play._id ]
-    <div className="row">
-      <div className="col-md-9 col-sm-9">
-        <h2>
-          {@props.planning.name}
-          {' - '}
-          <button className="btn btn-danger" onClick={@clearDuties}>Tout effacer</button>{' - '}
-          <SendEmailsButton planningId={@props.planning._id} />
-        </h2>
-        <Schedule planningId={@props.planning._id} tasks={@state.tasks} days={@state.days} duties={@state.duties} presences={@state.presences} />
-      </div>
-      <div className="col-md-3 col-sm-3">
-        <h2>Bénévoles</h2>
-        <PeopleList people={@state.people} />
-      </div>
+    <div>
+      <h2>
+        {@props.planning.name}
+        {' - '}
+        <button className="btn btn-danger" onClick={@clearDuties}>Tout effacer</button>{' - '}
+        <SendEmailsButton planningId={@props.planning._id} />
+      </h2>
+      <Schedule planningId={@props.planning._id} tasks={@state.tasks} days={@state.days} duties={@state.duties} presences={@state.presences} people={@state.people} />
     </div>
 
 SendEmailsButton = React.createClass
@@ -87,7 +81,7 @@ SendEmailsButton = React.createClass
 Schedule = React.createClass
   render: ->
     lines = @props.days.map (day) =>
-      <ScheduleLine planningId={@props.planningId} tasks={@props.tasks} day={day} duties={@props.duties} presences={@props.presences} />
+      <ScheduleLine planningId={@props.planningId} tasks={@props.tasks} day={day} duties={@props.duties} presences={@props.presences} people={@props.people} />
     <div className="schedule-wrapper">
       <table id="schedule" className="table table-striped table-bordered">
         <thead>
@@ -115,7 +109,7 @@ ScheduleHeader = React.createClass
 ScheduleLine = React.createClass
   render: ->
     cells = @props.tasks.map (task) =>
-      <ScheduleCell planningId={@props.planningId} day={@props.day} task={task} duties={@props.duties} presences={@props.presences} />
+      <ScheduleCell planningId={@props.planningId} day={@props.day} task={task} duties={@props.duties} presences={@props.presences} people={@props.people} />
     <tr>
       <td><DayName planningId={@props.planningId} day={@props.day} /></td>
       {cells}
@@ -138,39 +132,17 @@ DayName = React.createClass
       <strong onClick={@showForm} title="Cliquez pour modifier">{@props.day.name}</strong>
 
 ScheduleCell = React.createClass
-  handlePersonDrop: (person) ->
-    cell = person.scheduleCell
-    person.scheduleCell = null # Remove the schedule cell so it's not sent to Meteor
-    Meteor.call 'addPerson', @props.planningId, @props.day, @props.task, person
-    if cell
-      Meteor.call 'removePerson', @props.planningId, cell.props.day, cell.props.task, person
-  removePerson: (person) ->
-    person.scheduleCell = null # Remove the schedule cell so it's not sent to Meteor
-    Meteor.call 'removePerson', @props.planningId, @props.day, @props.task, person
-  mixins: [ DragDropMixin ]
-  statics: configureDragDrop: (register) ->
-    register ItemTypes.PERSON, dropTarget:
-      canDrop: (component, person) ->
-        dutiesForDay = getPeople(component.props.duties, component.props.day, component.props.task)
-        presencesForDay = component.props.presences[component.props.day._id]
-        havent_answered = !presencesForDay
-        answered_yes = presencesForDay and presencesForDay.find(_id: person._id)
-        already_inserted = dutiesForDay and dutiesForDay.find(_id: person._id)
-        havent_answered or (answered_yes and not already_inserted)
-      acceptDrop: (component, person) ->
-        component.handlePersonDrop person
   render: ->
-    removePerson = @removePerson
     peopleList = @props.duties[k(@props.day) + ',' + k(@props.task)]
     people = undefined
     if peopleList
       people = peopleList.map (personObject) =>
-        <Person person={personObject} scheduleCell={@} onThrowAway={removePerson}/>
-    dropState = @getDropState(ItemTypes.PERSON)
-    className = undefined
-    if dropState.isDragging
-      className = if dropState.isHovering then 'hover' else 'allowed'
-    <td {...@dropTargetFor(ItemTypes.PERSON)} className={className}>{people}</td>
+        <Person person={personObject} />
+    <ReactBootstrap.ModalTrigger modal={<AddPersonModal planningId={@props.planningId} day={@props.day} task={@props.task} duties={@props.duties} presences={@props.presences} people={@props.people} />}>
+      <td>
+        {people}
+      </td>
+    </ReactBootstrap.ModalTrigger>
 
 Person = React.createClass
   getInitialState: ->
@@ -196,11 +168,13 @@ Person = React.createClass
   cycleStatus: ->
     cell = @props.scheduleCell
     Meteor.call 'cycleStatus', cell.props.planningId, cell.props.day._id, cell.props.task._id, @props.person._id
+  randomWidth: ->
+    40 + Math.floor(Math.random() * 10)
   render: ->
     person = @getPerson()
     if person
       confirmation = @props.person.confirmation
-      className = 'alert '
+      className = 'person alert '
       if confirmation == undefined
         className += 'neutral background-fade'
       else if confirmation == true
@@ -212,6 +186,7 @@ Person = React.createClass
       <div className={className}
            {...@dragSourceFor(ItemTypes.PERSON)}
            onDoubleClick={@cycleStatus} >
+        {<img src="http://lorempixel.com/#{@randomWidth()}/#{@randomWidth()}/people" className="img-circle" /> if @props.avatar}
         {person.username}
       </div>
     else
@@ -252,16 +227,41 @@ DayForm = React.createClass
       <a href="#" onClick={@props.onCancel} className="pull-right">Annuler</a>
     </div>
 
+AddPersonModal = React.createClass
+  render: ->
+    <ReactBootstrap.Modal {...@props} bsStyle='primary' title="#{@props.day.name} - #{@props.task.name}" animation>
+      <div className='modal-body'>
+        <div className="row same-height-columns">
+          <PeopleList people={@props.people} day={@props.day} task={@props.task} duties={@props.duties} presences={@props.presences}/>
+          <div className="divider"></div>
+          <PeopleForDuty planningId={@props.planningId} day={@props.day} task={@props.task} duties={@props.duties} />
+        </div>
+      </div>
+      <div className='modal-footer'>
+        <ReactBootstrap.Button onClick={@props.onRequestHide}>Fermer</ReactBootstrap.Button>
+      </div>
+    </ReactBootstrap.Modal>
+
 PeopleList = React.createClass
   filterBySearchTerm: (term) ->
     @setState people: @props.people.findAll (user) ->
       getSlug(user.username).fuzzy getSlug(term)
+  availablePeople: ->
+    peopleList = @props.people
+    dutiesForDay = getPeople(@props.duties, @props.day, @props.task)
+    presencesForDay = @props.presences[@props.day._id]
+    debugger
+    peopleList.findAll (person) ->
+      answered_yes = presencesForDay and presencesForDay.find(_id: person._id)
+      already_inserted = dutiesForDay and dutiesForDay.find(_id: person._id)
+      answered_yes and not already_inserted
   render: ->
     people = if @state then @state.people else @props.people
     # Hack, seems that getInitialState gets called the first time when everything is empty, and not the second time when it's filled
-    people_list = people.map (person) ->
-      <li><Person person={person}/></li>
-    <div id="people-list">
+    people_list = @availablePeople().map (person) ->
+      <li><Person person={person} avatar={true} /></li>
+    <div className="people-list col-md-6">
+      <h3>Disponibles</h3>
       <PeopleFilters onChange={@filterBySearchTerm} />
       <ul className="list-unstyled">{people_list}</ul>
     </div>
@@ -273,4 +273,36 @@ PeopleFilters = React.createClass
     <div className="form-group form-inline">
       <label className="control-label">Nom</label>
       <input type="text" ref="name" onChange={@handleChange} className="form-control" />
+    </div>
+
+PeopleForDuty = React.createClass
+  handlePersonDrop: (person) ->
+    cell = person.scheduleCell
+    person.scheduleCell = null # Remove the schedule cell so it's not sent to Meteor
+    Meteor.call 'addPerson', @props.planningId, @props.day, @props.task, person
+    if cell
+      Meteor.call 'removePerson', @props.planningId, cell.props.day, cell.props.task, person
+  removePerson: (person) ->
+    person.scheduleCell = null # Remove the schedule cell so it's not sent to Meteor
+    Meteor.call 'removePerson', @props.planningId, @props.day, @props.task, person
+  mixins: [ DragDropMixin ]
+  statics: configureDragDrop: (register) ->
+    register ItemTypes.PERSON, dropTarget:
+      acceptDrop: (component, person) ->
+        component.handlePersonDrop person
+  render: ->
+    peopleList = @props.duties[k(@props.day) + ',' + k(@props.task)]
+    people = undefined
+    if peopleList
+      people = peopleList.map (personObject) =>
+        <Person person={personObject} scheduleCell={@} onThrowAway={@removePerson} avatar={true}/>
+    dropState = @getDropState(ItemTypes.PERSON)
+    className = React.addons.classSet
+      "people-for-duty": true
+      "col-md-6": true
+      "drop-target": dropState.isDragging
+      "drop-hover": dropState.isHovering
+    <div {...@dropTargetFor(ItemTypes.PERSON)} className={className}>
+      <h3>Désignés</h3>
+      {people}
     </div>
