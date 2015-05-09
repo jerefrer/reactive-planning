@@ -8,10 +8,23 @@ eachDuty = (planningId, callback) ->
     taskId = key.split(',')[1]
     day = planning.days.find(_id: dayId)
     task = planning.tasks.find(_id: taskId)
-    people = planning.duties[dayId + ',' + taskId]
-    people.each (personObject) ->
-      person = Meteor.users.findOne(_id: personObject._id)
+    duties = planning.duties[dayId + ',' + taskId]
+    duties.each (duty) ->
+      person = Meteor.users.findOne(_id: duty._id)
       callback planning, day, task, person
+
+anyEmailToSend = (duties) ->
+  Object.keys(duties).any (dayTaskKey) ->
+    duties[dayTaskKey].any (duty) ->
+      duty.emailSent == undefined
+
+markAllDutiesAsSent = (planningId) ->
+  planning = Plannings.findOne(_id: planningId)
+  marked_duties = planning.duties
+  Object.keys(marked_duties).each (dayTaskKey) ->
+    marked_duties[dayTaskKey].each (duty) ->
+      duty.emailSent = true
+  Plannings.update planning._id, $set: { duties: marked_duties, emailsSent: true }
 
 Meteor.methods
   createPlanning: (name, days) ->
@@ -38,6 +51,7 @@ Meteor.methods
       tasks: tasks
       presences: {}
       duties: {}
+      emailsToSend: false
     slug
   removePlanning: (planningId) ->
     Plannings.remove planningId
@@ -59,7 +73,7 @@ Meteor.methods
     people = duties[day._id + ',' + task._id] || []
     if !people.find(_id: person._id)
       people.push _id: person._id
-      set = {}
+      set = { emailsToSend: true, emailsSent: false }
       set['duties.' + day._id + ',' + task._id] = people
       Plannings.update planning._id, $set: set
   removePerson: (planningId, day, task, person) ->
@@ -67,11 +81,13 @@ Meteor.methods
     duties = planning.duties
     people = duties[day._id + ',' + task._id]
     people.remove _id: person._id
-    set = {}
+    emailsToSend = anyEmailToSend(duties)
+    set = { emailsToSend: emailsToSend }
+    set['emailsSent'] = false if emailsToSend
     set['duties.' + day._id + ',' + task._id] = people
     Plannings.update planning._id, $set: set
   clearDuties: (planningId) ->
-    Plannings.update planningId, $set: duties: {}
+    Plannings.update planningId, $set: { duties: {}, emailsToSend: false }
   sendEmailNotifications: (planningId) ->
     @unblock()
     options =
@@ -84,6 +100,7 @@ Meteor.methods
         from: 'Planning 24 <no-reply@planning-24.meteor.com>'
         subject: 'Disponible le ' + day.name + ' ?'
         html: 'Bonjour ' + person.profile.firstname + ',<br /><br />' + 'Vous avez été désigné(e) pour "' + task.name + '" le ' + day.name + '.<br /><br />' + '<a href=\'' + Meteor.absoluteUrl('planning/' + planning.slug + '/confirm/' + day._id + '/' + task._id + '/' + person._id) + '\'>Confirmer</a>' + ' / ' + '<a href=\'' + Meteor.absoluteUrl('planning/' + planning.slug + '/decline/' + day._id + '/' + task._id + '/' + person._id) + '\'>Décliner</a><br />'
+    markAllDutiesAsSent(planningId)
   sendSMSNotifications: (planningId) ->
     person =
       name: 'Jérémy'

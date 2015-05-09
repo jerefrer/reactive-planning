@@ -21,6 +21,8 @@ ItemTypes = PERSON: 'person'
       state.tasks = @props.planning.tasks
       state.duties = @props.planning.duties
       state.presences = @props.planning.presences
+      state.emailsToSend = @props.planning.emailsToSend
+      state.emailsSent = @props.planning.emailsSent
     state
   clearDuties: (e) ->
     e.preventDefault()
@@ -41,31 +43,28 @@ ItemTypes = PERSON: 'person'
       <h2>
         {@props.planning.name}
         {' - '}
-        <button className="btn btn-danger" onClick={@clearDuties}>Tout effacer</button>{' - '}
-        <SendEmailsButton planningId={@props.planning._id} />
+        <button className="btn btn-danger" onClick={@clearDuties}>Tout effacer</button>
+        <SendEmailsButton planningId={@props.planning._id} emailsToSend={@state.emailsToSend} emailsSent={@state.emailsSent} />
       </h2>
       <Schedule planningId={@props.planning._id} tasks={@state.tasks} days={@state.days} duties={@state.duties} presences={@state.presences} people={@state.people} />
     </div>
 
 SendEmailsButton = React.createClass
   getInitialState: ->
-    {
-      sending: false
-      sent: false
-    }
+    { sending: false }
   sendNotifications: (e) ->
     e.preventDefault()
-    if !@state.sent
+    if @props.emailsToSend
       @setState sending: true
       Meteor.call 'sendEmailNotifications', @props.planningId, (error, data) =>
         @setState
-          sent: true
           sending: false
   render: ->
+    return null unless @props.emailsToSend
     className = "send-emails-button btn "
     inner = undefined
     style = undefined
-    if @state.sent
+    if @props.emailsSent
       inner = <i className="fa fa-check-circle-o" />
       className += 'btn-success with-icon'
       style = width: '50px'
@@ -74,9 +73,12 @@ SendEmailsButton = React.createClass
       className += 'btn-primary with-icon'
       style = width: '50px'
     else
-      inner = 'Envoyer les e-mails'
+      inner = <span><i className="fa fa-envelope" />Envoyer les e-mails</span>
       className += 'btn-primary'
-    <button className={className} style={style} onClick={@sendNotifications}>{inner}</button>;
+    <span>
+      {' - '}
+      <button className={className} style={style} onClick={@sendNotifications}>{inner}</button>
+    </span>
 
 Schedule = React.createClass
   render: ->
@@ -137,7 +139,7 @@ ScheduleCell = React.createClass
     people = undefined
     if peopleList
       people = peopleList.map (personObject) =>
-        <Person person={personObject} />
+        <Person person={personObject} avatar=true mailStatus=true />
     <ReactBootstrap.ModalTrigger modal={<AddPersonModal planningId={@props.planningId} day={@props.day} task={@props.task} duties={@props.duties} presences={@props.presences} people={@props.people} />}>
       <td>
         {people}
@@ -188,6 +190,7 @@ Person = React.createClass
            onDoubleClick={@cycleStatus} >
         {<img src="http://lorempixel.com/#{@randomWidth()}/#{@randomWidth()}/people" className="img-circle" /> if @props.avatar}
         {person.username}
+        {<i className="mail-to-be-sent fa fa-envelope" /> if @props.mailStatus and not @props.person.emailSent}
       </div>
     else
       null
@@ -250,7 +253,6 @@ PeopleList = React.createClass
     peopleList = @props.people
     dutiesForDay = getPeople(@props.duties, @props.day, @props.task)
     presencesForDay = @props.presences[@props.day._id]
-    debugger
     peopleList.findAll (person) ->
       answered_yes = presencesForDay and presencesForDay.find(_id: person._id)
       already_inserted = dutiesForDay and dutiesForDay.find(_id: person._id)
@@ -259,7 +261,7 @@ PeopleList = React.createClass
     people = if @state then @state.people else @props.people
     # Hack, seems that getInitialState gets called the first time when everything is empty, and not the second time when it's filled
     people_list = @availablePeople().map (person) ->
-      <li><Person person={person} avatar={true} /></li>
+      <li><Person person={person} avatar=true /></li>
     <div className="people-list col-md-6">
       <h3>Disponibles</h3>
       <PeopleFilters onChange={@filterBySearchTerm} />
@@ -295,7 +297,7 @@ PeopleForDuty = React.createClass
     people = undefined
     if peopleList
       people = peopleList.map (personObject) =>
-        <Person person={personObject} scheduleCell={@} onThrowAway={@removePerson} avatar={true}/>
+        <Person person={personObject} scheduleCell={@} onThrowAway={@removePerson} avatar=true />
     dropState = @getDropState(ItemTypes.PERSON)
     className = React.addons.classSet
       "people-for-duty": true

@@ -15,7 +15,6 @@ Just run `meteor`
 #### Needed before launch
 
 * Faire que les Days soient vraiment des dates et non des strings pour pouvoir faire des choses en fonction de leur date.
-* Marquer les Duties une fois l'email envoyé pour ne pas ré-envoyer. Ajouter une icône sur chaque Duty pour indiquer si elle va recevoir un email quand on cliquera sur "Envoyer les emails".
 * On ajoute un bouton "Envoyer les emails des mots de passe" qui envoie un email avec un mot de passe auto-généré à chaque utilisateur qui ne l'a pas déjà (ajouter un boolean) en invitant l'utilisateur à le changer immédiatement
 * Ajouter un bouton sur une fiche user "renvoyer l'email de mot de passe".
 
