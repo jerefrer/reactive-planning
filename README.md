@@ -14,13 +14,12 @@ Just run `meteor`
 
 #### Needed before launch
 
-* Faire que les Days soient vraiment des dates et non des strings pour pouvoir faire des choses en fonction de leur date.
 * On ajoute un bouton "Envoyer les emails des mots de passe" qui envoie un email avec un mot de passe auto-généré à chaque utilisateur qui ne l'a pas déjà (ajouter un boolean) en invitant l'utilisateur à le changer immédiatement
 * Ajouter un bouton sur une fiche user "renvoyer l'email de mot de passe".
 
 #### Nice to have
 
-
+* Faire que les Days soient vraiment des dates et non des strings pour pouvoir faire des choses en fonction de leur date et heure
 * Cronjob pour envoyer un SMS les jours de collecte quelques heures avant à tous les concernés.
 * Bouton "renvoyer la demande" pour ceux qui n'ont pas répondu
 * Bouton "Envoyer un message à tous"
