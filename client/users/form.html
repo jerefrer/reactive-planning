@@ -4,13 +4,16 @@
   {{else}}
     <h3>Nouveau bénévole</h3>
   {{/if}}
-  {{#autoForm collection="Users" id="userForm" doc=selectedUser type=formType autosave=userIsSelected autosaveOnKeyup=true trimStrings=false}}
+  {{#autoForm collection="Users" id="userForm" doc=selectedUser type=formType autosave=userIsSelected autosaveOnKeyup=userIsSelected trimStrings=false}}
     {{> afQuickField name='username'}}
     {{> afQuickField name='profile.firstname'}}
     {{> afQuickField name='profile.phone'}}
     {{> afQuickField name='emails'}}
-    {{#unless userIsSelected}}
+    {{#if userIsSelected}}
+      {{> afQuickField name='passwordEmailSent' type='boolean-radios' trueLabel='Oui' falseLabel='Non'}}
+      {{#quickRemoveButton collection="Users" _id=selectedUser._id beforeRemove=beforeRemove class="btn btn-danger"}}Supprimer ce(tte) bénévole{{/quickRemoveButton}}
+    {{else}}
       <button type="submit" class="btn btn-block btn-primary">Ajouter</button>
-    {{/unless}}
+    {{/if}}
   {{/autoForm}}
 </template>

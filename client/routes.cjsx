@@ -85,6 +85,14 @@ Router.route 'Users',
   path: '/users'
   waitOn: ->
     Meteor.subscribe 'users'
+  action: ->
+    @render 'Users'
+    setTimeout (->
+      React.render(
+        <SendPasswordEmailsButton />,
+        document.getElementById('sendPasswordEmailsButton')
+      )
+    ), 100
 
 Router.route 'login',
   path: '/connectez-vous'

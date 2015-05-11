@@ -90,12 +90,8 @@ Meteor.methods
     Plannings.update planningId, $set: { duties: {}, emailsToSend: false }
   sendEmailNotifications: (planningId) ->
     @unblock()
-    options =
-      apiKey: 'key-53e598497990b587981fb538556d929e'
-      domain: 'sandboxcca7022b53aa489587e322ab0380c2ae.mailgun.org'
-    mailgun = new Mailgun(options)
     eachDuty planningId, (planning, day, task, person) ->
-      mailgun.send
+      mailgun().send
         to: person.emails[0].address
         from: 'Planning 24 <no-reply@planning-24.meteor.com>'
         subject: 'Disponible le ' + day.name + ' ?'
