@@ -1,3 +1,5 @@
+@Plannings = new Meteor.Collection('plannings')
+
 Router.plugin 'auth'
 
 Router.configure
@@ -6,8 +8,22 @@ Router.configure
   notFoundTemplate: 'NotFound'
 Router.onBeforeAction 'loading'
 
-Router.route 'Plannings',
+Router.route 'Home',
   path: '/'
+  waitOn: ->
+    Meteor.subscribe 'plannings'
+  action: ->
+    plannings = Plannings.find().fetch()
+    @render 'Home'
+    setTimeout (->
+      React.render(
+        <Home plannings={plannings} />,
+        document.getElementById('home')
+      )
+    ), 100
+
+Router.route 'Plannings',
+  path: '/plannings'
   waitOn: ->
     Meteor.subscribe 'plannings'
   action: ->
@@ -21,27 +37,39 @@ Router.route 'Plannings',
     ), 100
 
 Router.route 'Planning',
-  path: '/planning/:slug/admin'
-  waitOn: ->
-    Meteor.subscribe 'plannings'
-  action: ->
-    planning = Plannings.findOne(slug: @params.slug)
-    Session.set 'currentPlanning', planning
-    @render 'Planning', planning: planning
-    setTimeout (->
-      React.render(
-        <Scheduler planning={planning} />,
-        document.getElementById('planning')
-      )
-    ), 100
-
-Router.route 'UserPresence',
   path: '/planning/:slug'
   waitOn: ->
     Meteor.subscribe 'plannings'
   action: ->
     planning = Plannings.findOne(slug: @params.slug)
-    Session.set 'currentPlanning', planning
+    @render 'Planning', planning: planning
+    setTimeout (->
+      React.render(
+        <Planning planning={planning} />,
+        document.getElementById('planning')
+      )
+    ), 100
+
+Router.route 'PlanningAdmin',
+  path: '/planning/:slug/admin'
+  waitOn: ->
+    Meteor.subscribe 'plannings'
+  action: ->
+    planning = Plannings.findOne(slug: @params.slug)
+    @render 'PlanningAdmin', planning: planning
+    setTimeout (->
+      React.render(
+        <PlanningAdmin planning={planning} />,
+        document.getElementById('planning-admin')
+      )
+    ), 100
+
+Router.route 'UserPresence',
+  path: '/planning/:slug/presences'
+  waitOn: ->
+    Meteor.subscribe 'plannings'
+  action: ->
+    planning = Plannings.findOne(slug: @params.slug)
     @render 'Planning', planning: planning
     setTimeout (->
       React.render(
@@ -51,12 +79,9 @@ Router.route 'UserPresence',
     ), 100
 
 Router.route 'UsersPresence',
-  path: '/planning/:slug/presences'
-  waitOn: ->
-    Meteor.subscribe 'plannings'
+  path: '/planning/:slug/admin/presences'
   action: ->
     planning = Plannings.findOne(slug: @params.slug)
-    Session.set 'currentPlanning', planning
     @render 'Planning', planning: planning
     setTimeout (->
       React.render(

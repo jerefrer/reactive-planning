@@ -51,6 +51,7 @@ Meteor.methods
       tasks: tasks
       presences: {}
       duties: {}
+      peopleWhoAnswered: []
       emailsToSend: false
     slug
   removePlanning: (planningId) ->
@@ -142,17 +143,19 @@ Meteor.methods
       delete person.confirmation
     set['duties.' + key] = people
     Plannings.update planning._id, $set: set
-  togglePresence: (planningId, dayId, personId) ->
+  togglePresence: (planningId, dayId, personId, fromAdmin) ->
     planning = Plannings.findOne(_id: planningId)
     presences = planning.presences
-    people = presences[dayId]
-    if !people
-      people = []
+    people = presences[dayId] || []
+    peopleWhoAnswered = planning.peopleWhoAnswered || []
     set = {}
     if people.find(_id: personId)
       people.remove _id: personId
     else
       people.push _id: personId
+      unless fromAdmin || (peopleWhoAnswered.indexOf(personId) >= 0)
+        peopleWhoAnswered.push(personId)
+        set.peopleWhoAnswered = peopleWhoAnswered
     set['presences.' + dayId] = people
     Plannings.update planning._id, $set: set
 Meteor.startup ->

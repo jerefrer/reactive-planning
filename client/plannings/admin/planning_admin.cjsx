@@ -1,9 +1,8 @@
-@Plannings = new (Meteor.Collection)('plannings')
-@SoundsToPlay = new (Meteor.Collection)('sounds_to_play')
+SoundsToPlay = new (Meteor.Collection)('sounds_to_play')
 DragDropMixin = ReactDND.DragDropMixin
 ItemTypes = PERSON: 'person'
 
-@Scheduler = React.createClass
+@PlanningAdmin = React.createClass
   mixins: [ ReactMeteor.Mixin ]
   startMeteorSubscriptions: ->
     Meteor.subscribe 'users'

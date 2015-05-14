@@ -70,7 +70,7 @@ ScheduleLine = React.createClass
 
 ScheduleCell = React.createClass
   togglePresence: ->
-    Meteor.call('togglePresence', @props.planningId, @props.day._id, @props.person._id)
+    Meteor.call('togglePresence', @props.planningId, @props.day._id, @props.person._id, true)
   render: ->
     peopleList = @props.presences[@props.day._id]
     present = peopleList && peopleList.find({_id: @props.person._id})
