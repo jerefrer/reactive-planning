@@ -14,6 +14,7 @@ ItemTypes = PERSON: 'person'
       tasks: []
       duties: []
       presences: []
+      peopleWhoAnswered: []
       people: Meteor.users.find().fetch()
     if @props.planning
       state.days = @props.planning.days
@@ -22,6 +23,7 @@ ItemTypes = PERSON: 'person'
       state.presences = @props.planning.presences
       state.emailsToSend = @props.planning.emailsToSend
       state.emailsSent = @props.planning.emailsSent
+      state.peopleWhoAnswered = @props.planning.peopleWhoAnswered
     state
   clearDuties: (e) ->
     e.preventDefault()
@@ -45,7 +47,7 @@ ItemTypes = PERSON: 'person'
         <button className="btn btn-danger" onClick={@clearDuties}>Tout effacer</button>
         <SendEmailsButton planningId={@props.planning._id} emailsToSend={@state.emailsToSend} emailsSent={@state.emailsSent} />
       </h2>
-      <Schedule planningId={@props.planning._id} tasks={@state.tasks} days={@state.days} duties={@state.duties} presences={@state.presences} people={@state.people} />
+      <Schedule planningId={@props.planning._id} tasks={@state.tasks} days={@state.days} duties={@state.duties} presences={@state.presences} people={@state.people} peopleWhoAnswered={@state.peopleWhoAnswered} />
     </div>
 
 SendEmailsButton = React.createClass
@@ -82,7 +84,7 @@ SendEmailsButton = React.createClass
 Schedule = React.createClass
   render: ->
     lines = @props.days.map (day) =>
-      <ScheduleLine planningId={@props.planningId} tasks={@props.tasks} day={day} duties={@props.duties} presences={@props.presences} people={@props.people} />
+      <ScheduleLine planningId={@props.planningId} tasks={@props.tasks} day={day} duties={@props.duties} presences={@props.presences} people={@props.people} peopleWhoAnswered={@props.peopleWhoAnswered}/>
     <div className="schedule-wrapper">
       <table id="schedule" className="table table-striped table-bordered">
         <thead>
@@ -110,7 +112,7 @@ ScheduleHeader = React.createClass
 ScheduleLine = React.createClass
   render: ->
     cells = @props.tasks.map (task) =>
-      <ScheduleCell planningId={@props.planningId} day={@props.day} task={task} duties={@props.duties} presences={@props.presences} people={@props.people} />
+      <ScheduleCell planningId={@props.planningId} day={@props.day} task={task} duties={@props.duties} presences={@props.presences} people={@props.people} peopleWhoAnswered={@props.peopleWhoAnswered} />
     <tr>
       <td><DayName planningId={@props.planningId} day={@props.day} /></td>
       {cells}
@@ -139,7 +141,7 @@ ScheduleCell = React.createClass
     if peopleList
       people = peopleList.map (personObject) =>
         <Person person={personObject} avatar=true mailStatus=true />
-    <ReactBootstrap.ModalTrigger modal={<AddPersonModal planningId={@props.planningId} day={@props.day} task={@props.task} duties={@props.duties} presences={@props.presences} people={@props.people} />}>
+    <ReactBootstrap.ModalTrigger modal={<AddPersonModal planningId={@props.planningId} day={@props.day} task={@props.task} duties={@props.duties} presences={@props.presences} people={@props.people} peopleWhoAnswered={@props.peopleWhoAnswered} />}>
       <td>
         {people}
       </td>
@@ -234,7 +236,7 @@ AddPersonModal = React.createClass
     <ReactBootstrap.Modal {...@props} bsStyle='primary' title="#{@props.day.name} - #{@props.task.name}" animation>
       <div className='modal-body'>
         <div className="row same-height-columns">
-          <PeopleList people={@props.people} day={@props.day} task={@props.task} duties={@props.duties} presences={@props.presences}/>
+          <PeopleList people={@props.people} day={@props.day} task={@props.task} duties={@props.duties} presences={@props.presences} peopleWhoAnswered={@props.peopleWhoAnswered} />
           <div className="divider"></div>
           <PeopleForDuty planningId={@props.planningId} day={@props.day} task={@props.task} duties={@props.duties} />
         </div>
@@ -248,23 +250,37 @@ PeopleList = React.createClass
   filterBySearchTerm: (term) ->
     @setState people: @props.people.findAll (user) ->
       getSlug(user.username).fuzzy getSlug(term)
-  availablePeople: ->
-    peopleList = @props.people
+  availablePeople: (people) ->
     dutiesForDay = getPeople(@props.duties, @props.day, @props.task)
     presencesForDay = @props.presences[@props.day._id]
-    peopleList.findAll (person) ->
+    people.findAll (person) ->
       answered_yes = presencesForDay and presencesForDay.find(_id: person._id)
       already_inserted = dutiesForDay and dutiesForDay.find(_id: person._id)
       answered_yes and not already_inserted
+  peopleWhoDidNotAnswer: (people) ->
+    people.findAll (person) =>
+      @props.peopleWhoAnswered.indexOf(person._id) < 0
+  unavailablePeople: (people) ->
+    presencesForDay = @props.presences[@props.day._id]
+    people.findAll (person) ->
+      presencesForDay and not presencesForDay.find(_id: person._id)
+  buildList: (people) ->
+    people.map (person) ->
+      <li><Person person={person} avatar=true /></li>
   render: ->
     people = if @state then @state.people else @props.people
     # Hack, seems that getInitialState gets called the first time when everything is empty, and not the second time when it's filled
-    people_list = @availablePeople().map (person) ->
-      <li><Person person={person} avatar=true /></li>
+    availablePeople = @availablePeople(people)
+    peopleWhoDidNotAnswer = @peopleWhoDidNotAnswer(people)
+    unavailablePeople = @unavailablePeople(people.exclude(availablePeople).exclude(peopleWhoDidNotAnswer))
     <div className="people-list col-md-6">
-      <h3>Disponibles</h3>
       <PeopleFilters onChange={@filterBySearchTerm} />
-      <ul className="list-unstyled">{people_list}</ul>
+      <h3>Disponibles</h3>
+      <ul className="list-unstyled">{@buildList(availablePeople)}</ul>
+      <h3>Sans réponse</h3>
+      <ul className="list-unstyled">{@buildList(peopleWhoDidNotAnswer)}</ul>
+      <h3>Indisponibles</h3>
+      <ul className="list-unstyled">{@buildList(unavailablePeople)}</ul>
     </div>
 
 PeopleFilters = React.createClass
