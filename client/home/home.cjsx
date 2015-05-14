@@ -1,3 +1,6 @@
+userAnsweredPlanning = (planning) ->
+  planning.peopleWhoAnswered.indexOf(Meteor.userId()) >= 0
+
 @Home = React.createClass
   render: ->
     plannings = @props.plannings.map (planning) ->
@@ -10,24 +13,32 @@
     </div>
 
 Planning = React.createClass
-  userAnsweredThisPlanning: ->
-    @props.planning.peopleWhoAnswered.indexOf(Meteor.userId()) >= 0
-  numberOfDuties: ->
+  userDuties: ->
     duties = @props.planning.duties
-    sum = 0
-    Object.keys(duties).each (dayTaskKey) ->
-      duties[dayTaskKey].each (duty) ->
-        sum++ if duty._id == Meteor.userId()
-    sum
-  nextDuty: ->
+    Object.keys(duties).map( (dayTaskKey) ->
+      duties[dayTaskKey].findAll (duty) ->
+        duty._id == Meteor.userId()
+    ).flatten()
+  numberOfDutiesToAnswerTo: (duties) ->
+    duties.count (duty) ->
+      duty.confirmation == undefined
+  anyEmailSentAlready: ->
     duties = @props.planning.duties
-    day = @props.planning.days.find (day) ->
-      Object.keys(duties).find (dayTaskKey) ->
-        dayTaskKey.split(',')[0] == day._id and duties[dayTaskKey].find (duty) -> duty._id == Meteor.userId()
-    day and day.name
+    Object.keys(duties).any (dayTaskKey) ->
+      duties[dayTaskKey].any (duty) ->
+        duty.emailSent == undefined
+  hasError: (numberOfDutiesToAnswerTo) ->
+    userAnsweredPlanning(@props.planning) || (numberOfDutiesToAnswerTo > 0)
+  colorClass: (numberOfDutiesToAnswerTo) ->
+    if @anyEmailSentAlready()
+      @hasError(numberOfDutiesToAnswerTo) && 'danger' || 'success'
+    else
+      'warning'
   render: ->
-    nextDuty = @nextDuty()
-    colorClass = @userAnsweredThisPlanning() && 'success' || 'danger'
+    anyEmailSentAlready = @anyEmailSentAlready()
+    userDuties = @userDuties()
+    numberOfDutiesToAnswerTo = @numberOfDutiesToAnswerTo(userDuties)
+    colorClass = @colorClass(anyEmailSentAlready, numberOfDutiesToAnswerTo)
     <div className="row">
       <div className="col-md-4" onClick={@openPlanning}>
         <div className="background bg-#{colorClass} text-#{colorClass}">
@@ -35,13 +46,7 @@ Planning = React.createClass
           </div>
       </div>
       <div className="col-md-5">
-        <div className="content status">
-          <ul>
-            {<li className="text-danger"><i className="fa fa-warning" />{"Vous n'avez pas encore indiqué vos disponilités"}</li> unless @userAnsweredThisPlanning()}
-            <li>Vous avez été choisi <strong>{@numberOfDuties()}</strong> fois</li>
-            {<li>Prochain rendez-vous : <strong>{nextDuty}</strong></li> if nextDuty}
-          </ul>
-        </div>
+        <Status planning={@props.planning} anyEmailSentAlready={anyEmailSentAlready} numberOfDuties={userDuties.length} numberOfDutiesToAnswerTo={numberOfDutiesToAnswerTo}/>
       </div>
       <div className="col-md-3">
         <div className="content links">
@@ -57,6 +62,40 @@ Planning = React.createClass
         </div>
       </div>
     </div>
+
+Status = React.createClass
+  nextDuty: ->
+    duties = @props.planning.duties
+    day = @props.planning.days.find (day) ->
+      Object.keys(duties).find (dayTaskKey) ->
+        dayTaskKey.split(',')[0] == day._id and duties[dayTaskKey].find (duty) -> duty._id == Meteor.userId()
+    day and day.name
+  render: ->
+    nextDuty = @nextDuty()
+    numberOfDutiesToAnswerTo = @props.numberOfDutiesToAnswerTo
+    lines = []
+    lines.push(<StatusLine warning=true message="Ce planning est toujours en cours d'élaboration" />) unless @props.anyEmailSentAlready
+    lines.push(<StatusLine  danger=true message="Vous n'avez pas encore indiqué vos disponilités" />) unless userAnsweredPlanning(@props.planning)
+    lines.push(<StatusLine  danger=true message="Vous avez #{numberOfDutiesToAnswerTo} demande#{numberOfDutiesToAnswerTo > 1 && 's' || ''} en attente" />) if numberOfDutiesToAnswerTo > 0
+    if @props.anyEmailSentAlready
+      message = <span>Vous avez été choisi <strong>{@props.numberOfDuties}</strong> fois</span>
+      lines.push(<StatusLine message={message} />)
+    if nextDuty
+      message = <span>Prochain rendez-vous : <strong>{nextDuty}</strong></span>
+      lines.push(<StatusLine message={message} />)
+    <div className="content status">
+      <ul>{lines}</ul>
+    </div>
+
+StatusLine = React.createClass
+  render: ->
+    className = null
+    className = 'text-danger'  if @props.danger
+    className = 'text-warning' if @props.warning
+    <li className={className}>
+      {<i className="fa fa-warning" /> if @props.danger or @props.warning}
+      {@props.message}
+    </li>
 
 NewPlanning = React.createClass
   createPlanning: (e) ->
