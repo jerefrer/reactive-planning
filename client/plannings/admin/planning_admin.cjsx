@@ -140,7 +140,7 @@ ScheduleHeader = React.createClass
     tasks = @props.tasks.map (task) ->
       <th><strong>{task.name}</strong></th>
     <tr>
-      <th></th>
+      <th className="day-column"></th>
       {tasks}
     </tr>
 
@@ -261,10 +261,13 @@ DayForm = React.createClass
   render: ->
     <div>
       <form onSubmit={@handleSubmit}>
-        <input className="form-control" ref="dayName" />
+        <input className="set-due-date form-control datetimepicker" ref="date" placeholder="Date" />
+        <input className="form-control" ref="dayName" placeholder="Nom"/>
       </form>
       <a href="#" onClick={@props.onCancel} className="pull-right">Annuler</a>
     </div>
+  componentDidMount: ->
+    $('.datetimepicker').datetimepicker(format: "dddd DD à h:mm")
 
 AddPersonModal = React.createClass
   render: ->
