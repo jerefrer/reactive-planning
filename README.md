@@ -16,6 +16,7 @@ Just run `meteor`
 
 * Envoyer les emails dans un background job : https://github.com/vsivsi/meteor-job-collection
 * Faire que les Days soient vraiment des dates et non des strings pour pouvoir faire des choses en fonction de leur date et heure
+* Remplacer `reactjs:react` par `grove:react` : https://forums.meteor.com/t/a-better-package-for-integrating-with-react-grove-react/2225
 * Cronjob pour envoyer un SMS les jours de collecte quelques heures avant à tous les concernés.
 * Bouton "renvoyer la demande" pour ceux qui n'ont pas répondu
 * Bouton "Envoyer un message à tous"
