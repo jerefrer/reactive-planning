@@ -157,10 +157,13 @@ Meteor.methods
     set = {}
     if person.confirmation == undefined
       person.confirmation = true
+      person.emailSent = true
     else if person.confirmation == true
       person.confirmation = false
+      person.emailSent = true
     else if person.confirmation == false
       delete person.confirmation
+      person.emailSent = false
     set['duties.' + key] = people
     Plannings.update planning._id, $set: set
   togglePresence: (planningId, dayId, personId, fromAdmin) ->
