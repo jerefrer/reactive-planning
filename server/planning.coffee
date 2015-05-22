@@ -210,6 +210,7 @@ Meteor.startup ->
       profile:
         firstname: 'Jérémy'
     Roles.addUsersToRoles(admin, ["admin"]);
+    Meteor.users.update({username: 'Jérémy Frere'}, $set: {passwordEmailSent: true})
 
     Accounts.createUser
       username: 'Anne Benson'
@@ -217,6 +218,7 @@ Meteor.startup ->
       password: 'canada'
       profile:
         firstname: 'Anne'
+    Meteor.users.update({username: 'Anne Benson'}, $set: {passwordEmailSent: true})
 
 Meteor.publish 'users', ->
   Meteor.users.find()
