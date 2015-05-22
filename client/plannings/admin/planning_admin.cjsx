@@ -27,7 +27,8 @@ ItemTypes = PERSON: 'person'
     state
   clearDuties: (e) ->
     e.preventDefault()
-    Meteor.call 'clearDuties', @props.planning._id
+    if confirm("Êtes-vous sûr ?")
+      Meteor.call 'clearDuties', @props.planning._id
   render: ->
     sound_to_play = SoundsToPlay.find().fetch()[0]
     if sound_to_play
