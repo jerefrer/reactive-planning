@@ -206,6 +206,8 @@ Person = React.createClass
   cycleStatus: ->
     cell = @props.scheduleCell
     Meteor.call 'cycleStatus', cell.props.planningId, cell.props.day._id, cell.props.task._id, @props.person._id
+  randomWidth: ->
+    40 + Math.floor(Math.random() * 10)
   render: ->
     person = @getPerson()
     if person
@@ -222,7 +224,7 @@ Person = React.createClass
       <div className={className}
            {...@dragSourceFor(ItemTypes.PERSON)}
            onDoubleClick={@cycleStatus} >
-        {<img src="/dummy-avatar.jpg" className="img-circle" /> if @props.avatar}
+        {<img src="http://lorempixel.com/#{@randomWidth()}/#{@randomWidth()}/people" className="img-circle" /> if @props.avatar}
         {person.username}
         {<i className="mail-to-be-sent fa fa-envelope" /> if @props.mailStatus and not @props.person.emailSent}
       </div>
