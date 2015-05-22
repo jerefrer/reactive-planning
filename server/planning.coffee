@@ -210,7 +210,7 @@ Meteor.startup ->
 
     Accounts.createUser
       username: 'Anne Benson'
-      email: 'anne.benson@gmail.com'
+      email: 'tatamonique@gmail.com'
       password: 'canada'
       profile:
         firstname: 'Anne'

@@ -293,10 +293,6 @@ PeopleList = React.createClass
   peopleWhoDidNotAnswer: (people) ->
     people.findAll (person) =>
       @props.peopleWhoAnswered.indexOf(person._id) < 0
-  unavailablePeople: (people) ->
-    presencesForDay = @props.presences[@props.day._id]
-    people.findAll (person) ->
-      presencesForDay and not presencesForDay.find(_id: person._id)
   buildList: (people) ->
     people.map (person) ->
       <li><Person person={person} avatar=true /></li>
@@ -305,7 +301,7 @@ PeopleList = React.createClass
     # Hack, seems that getInitialState gets called the first time when everything is empty, and not the second time when it's filled
     availablePeople = @availablePeople(people)
     peopleWhoDidNotAnswer = @peopleWhoDidNotAnswer(people)
-    unavailablePeople = @unavailablePeople(people.exclude(availablePeople).exclude(peopleWhoDidNotAnswer))
+    unavailablePeople = _.difference(_.difference(people, availablePeople), peopleWhoDidNotAnswer)
     <div className="people-list col-md-6">
       <PeopleFilters onChange={@filterBySearchTerm} />
       <h3>Disponibles</h3>
