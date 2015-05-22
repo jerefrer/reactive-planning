@@ -60,7 +60,7 @@ ScheduleHeader = React.createClass
     tasks = @props.tasks.map (task) ->
       <th><strong>{task.name}</strong></th>
     <tr>
-      <td></td>
+      <th></th>
       {tasks}
     </tr>
 
@@ -69,7 +69,7 @@ ScheduleLine = React.createClass
     cells = @props.tasks.map (task) =>
       <ScheduleCell planningId={@props.planningId} day={@props.day} task={task} duties={@props.duties} presences={@props.presences} people={@props.people} onlyMe={@props.onlyMe} />
     <tr>
-      <td><DayName planningId={@props.planningId} day={@props.day} /></td>
+      <th><DayName planningId={@props.planningId} day={@props.day} /></th>
       {cells}
     </tr>
 
