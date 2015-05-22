@@ -92,8 +92,8 @@ DayName = React.createClass
 ScheduleCell = React.createClass
   render: ->
     peopleList = @props.duties[k(@props.day) + ',' + k(@props.task)]
-    people = undefined
     if peopleList
+      peopleList = peopleList.findAll (person) -> person.confirmation == true
       if @props.onlyMe
         peopleList = peopleList.findAll (person) -> person._id == Meteor.userId()
       people = peopleList.map (personObject) =>
