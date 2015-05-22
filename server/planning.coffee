@@ -52,6 +52,8 @@ Meteor.methods
       presences: {}
       duties: {}
       peopleWhoAnswered: []
+      daysFilledIn: false
+      availabilityEmailSent: false
       emailsToSend: false
     slug
   removePlanning: (planningId) ->
@@ -89,14 +91,32 @@ Meteor.methods
     Plannings.update planning._id, $set: set
   clearDuties: (planningId) ->
     Plannings.update planningId, $set: { duties: {}, emailsToSend: false }
-  sendEmailNotifications: (planningId) ->
+  sendAvailabilityEmailNotifications: (planningId) ->
+    @unblock()
+    planning = Plannings.findOne(_id: planningId)
+    month = planning.name
+    Meteor.users.find().fetch().each (person) ->
+      mailgun().send
+        to: person.emails[0].address
+        from: 'Planning 24 <no-reply@planning-24.meteor.com>'
+        subject: "Vos disponilités pour #{month}"
+        html: 'Bonjour ' + person.profile.firstname + ',<br /><br />' +
+              "Pouvez-vous nous indiquer vos disponibilités pour #{month} ?.<br /><br />" +
+              '<a href=\'' + Meteor.absoluteUrl('planning/' + planning.slug) +'\'>Pour ce faire cliquez-ici</a><br />< br />' +
+              'Merci !'
+    Plannings.update planningId, $set: { availabilityEmailSent: true }
+  sendPresenceEmailNotifications: (planningId) ->
     @unblock()
     eachDuty planningId, (planning, day, task, person) ->
       mailgun().send
         to: person.emails[0].address
         from: 'Planning 24 <no-reply@planning-24.meteor.com>'
         subject: 'Disponible le ' + day.name + ' ?'
-        html: 'Bonjour ' + person.profile.firstname + ',<br /><br />' + 'Vous avez été désigné(e) pour "' + task.name + '" le ' + day.name + '.<br /><br />' + '<a href=\'' + Meteor.absoluteUrl('planning/' + planning.slug + '/confirm/' + day._id + '/' + task._id + '/' + person._id) + '\'>Confirmer</a>' + ' / ' + '<a href=\'' + Meteor.absoluteUrl('planning/' + planning.slug + '/decline/' + day._id + '/' + task._id + '/' + person._id) + '\'>Décliner</a><br />'
+        html: 'Bonjour ' + person.profile.firstname + ',<br /><br />' +
+              'Vous avez été désigné(e) pour "' + task.name + '" le ' + day.name + '.<br /><br />' +
+              '<a href=\'' + Meteor.absoluteUrl('planning/' + planning.slug + '/confirm/' + day._id + '/' + task._id + '/' + person._id) + '\'>Confirmer</a>' +
+              ' / ' +
+              '<a href=\'' + Meteor.absoluteUrl('planning/' + planning.slug + '/decline/' + day._id + '/' + task._id + '/' + person._id) + '\'>Décliner</a><br />'
     markAllDutiesAsSent(planningId)
   sendSMSNotifications: (planningId) ->
     person =

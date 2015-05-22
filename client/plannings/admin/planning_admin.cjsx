@@ -46,24 +46,58 @@ ItemTypes = PERSON: 'person'
         {@props.planning.name}
         {' - '}
         <button className="btn btn-danger" onClick={@clearDuties}>Tout effacer</button>
-        <SendEmailsButton planningId={@props.planning._id} emailsToSend={@state.emailsToSend} emailsSent={@state.emailsSent} />
+        <SendAvailabilityEmailNotificationsButton planning={@props.planning} />
+        <SendPresenceEmailNotificationsButton planningId={@props.planning._id} emailsToSend={@state.emailsToSend} emailsSent={@state.emailsSent} />
       </h2>
       <Schedule planningId={@props.planning._id} tasks={@state.tasks} days={@state.days} duties={@state.duties} presences={@state.presences} people={@state.people} peopleWhoAnswered={@state.peopleWhoAnswered} />
     </div>
 
-SendEmailsButton = React.createClass
+SendAvailabilityEmailNotificationsButton = React.createClass
+  getInitialState: ->
+    sending: false
+    showingSuccess: false
+  sendAvailabilityEmailNotifications: (e) ->
+    e.preventDefault()
+    @setState sending: true
+    Meteor.call 'sendAvailabilityEmailNotifications', @props.planning._id, (error, data) =>
+      @setState
+        sending: false
+        showingSuccess: true
+      setTimeout (=> @setState showingSuccess: false), 5000
+  render: ->
+    return null unless (not @props.planning.availabilityEmailSent) or @state.sending or @state.showingSuccess
+    className = "send-emails-button send-availability-emails-button btn "
+    inner = undefined
+    style = undefined
+    if @state.showingSuccess
+      inner = <i className="fa fa-check-circle-o" />
+      className += 'btn-success with-icon'
+      style = width: '50px'
+    else if @state.sending
+      inner = <i className="fa fa-spinner fa-spin" />
+      className += 'btn-primary with-icon'
+      style = width: '50px'
+    else
+      inner = <span><i className="fa fa-envelope" />Demander les disponibilités</span>
+      className += 'btn-primary'
+    <span>
+      {' - '}
+      <button className={className} style={style} onClick={@sendAvailabilityEmailNotifications}>{inner}</button>
+    </span>
+
+SendPresenceEmailNotificationsButton = React.createClass
   getInitialState: ->
     { sending: false }
-  sendNotifications: (e) ->
+  sendPresenceEmailNotifications: (e) ->
     e.preventDefault()
     if @props.emailsToSend
       @setState sending: true
-      Meteor.call 'sendEmailNotifications', @props.planningId, (error, data) =>
+      Meteor.call 'sendPresenceEmailNotifications', @props.planningId, (error, data) =>
         @setState
           sending: false
   render: ->
     return null unless @props.emailsToSend
-    className = "send-emails-button btn "
+    className = "send-emails-button send-confirmation-emails-button btn "
     inner = undefined
     style = undefined
     if @props.emailsSent
@@ -75,11 +109,11 @@ SendEmailsButton = React.createClass
       className += 'btn-primary with-icon'
       style = width: '50px'
     else
-      inner = <span><i className="fa fa-envelope" />Envoyer les e-mails</span>
+      inner = <span><i className="fa fa-envelope" />Envoyer les e-mails de confirmation</span>
       className += 'btn-primary'
     <span>
       {' - '}
-      <button className={className} style={style} onClick={@sendNotifications}>{inner}</button>
+      <button className={className} style={style} onClick={@sendPresenceEmailNotifications}>{inner}</button>
     </span>
 
 Schedule = React.createClass

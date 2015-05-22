@@ -1,6 +1,3 @@
-userAnsweredPlanning = (planning) ->
-  planning.peopleWhoAnswered.indexOf(Meteor.userId()) >= 0
-
 @Home = React.createClass
   render: ->
     plannings = @props.plannings.map (planning) ->
@@ -22,25 +19,20 @@ Planning = React.createClass
   numberOfDutiesToAnswerTo: (duties) ->
     duties.count (duty) ->
       duty.confirmation == undefined
-  anyEmailsSentAlready: ->
-    duties = @props.planning.duties
-    Object.keys(duties).any (dayTaskKey) ->
-      duties[dayTaskKey].any (duty) ->
-        duty.emailSent == undefined
-  waitingForAnswers: ->
-    @anyEmailsSentAlready()
-  hasError: (numberOfDutiesToAnswerTo) ->
-    userAnsweredPlanning(@props.planning) || (numberOfDutiesToAnswerTo > 0)
+  userProvidedHisAvailabilities: ->
+    @props.planning.peopleWhoAnswered.indexOf(Meteor.userId()) >= 0
   colorClass: (numberOfDutiesToAnswerTo) ->
-    if @waitingForAnswers()
-      @hasError(numberOfDutiesToAnswerTo) && 'danger' || 'success'
+    if @props.planning.availabilityEmailSent
+      if not @userProvidedHisAvailabilities() or numberOfDutiesToAnswerTo > 0
+        'danger'
+      else
+        'success'
     else
       'warning'
   render: ->
-    waitingForAnswers = @waitingForAnswers()
     userDuties = @userDuties()
     numberOfDutiesToAnswerTo = @numberOfDutiesToAnswerTo(userDuties)
-    colorClass = @colorClass(waitingForAnswers, numberOfDutiesToAnswerTo)
+    colorClass = @colorClass(numberOfDutiesToAnswerTo)
     <div className="row">
       <div className="col-md-4" onClick={@openPlanning}>
         <div className="background bg-#{colorClass} text-#{colorClass}">
@@ -48,10 +40,10 @@ Planning = React.createClass
         </div>
       </div>
       <div className="col-md-5">
-        <Status planning={@props.planning} waitingForAnswers={waitingForAnswers} numberOfDuties={userDuties.length} numberOfDutiesToAnswerTo={numberOfDutiesToAnswerTo}/>
+        <Status planning={@props.planning} userProvidedHisAvailabilities={@userProvidedHisAvailabilities()} numberOfDuties={userDuties.length} numberOfDutiesToAnswerTo={numberOfDutiesToAnswerTo}/>
       </div>
       <div className="col-md-3">
-        <Links planning={@props.planning} waitingForAnswers={waitingForAnswers} />
+        <Links planning={@props.planning} userProvidedHisAvailabilities={@userProvidedHisAvailabilities()} />
       </div>
     </div>
 
@@ -64,10 +56,10 @@ Status = React.createClass
     day and day.name
   render: ->
     lines = []
-    if @props.waitingForAnswers
+    if @props.planning.availabilityEmailSent
       nextDuty = @nextDuty()
       numberOfDutiesToAnswerTo = @props.numberOfDutiesToAnswerTo
-      lines.push(<StatusLine  danger=true message="Vous n'avez pas encore indiqué vos disponilités" />) unless userAnsweredPlanning(@props.planning)
+      lines.push(<StatusLine  danger=true message="Vous n'avez pas encore indiqué vos disponilités" />) unless @props.userProvidedHisAvailabilities
       lines.push(<StatusLine  danger=true message="Vous avez #{numberOfDutiesToAnswerTo} demande#{numberOfDutiesToAnswerTo > 1 && 's' || ''} en attente" />) if numberOfDutiesToAnswerTo > 0
       message = <span>Vous avez été choisi <strong>{@props.numberOfDuties}</strong> fois</span>
       lines.push(<StatusLine message={message} />)
@@ -112,8 +104,8 @@ NewPlanning = React.createClass
 Links = React.createClass
   render: ->
     links = []
-    links.push(<Link text="Voir le planning" url="/planning/#{@props.planning.slug}" />) if @props.waitingForAnswers
-    links.push(<Link text="Indiquer mes disponilités" url="/planning/#{@props.planning.slug}/presences" />) if @props.waitingForAnswers
+    links.push(<Link text="Voir le planning" url="/planning/#{@props.planning.slug}" />) if @props.planning.availabilityEmailSent and @props.userProvidedHisAvailabilities
+    links.push(<Link text="Indiquer mes disponilités" url="/planning/#{@props.planning.slug}/presences" />) if @props.planning.availabilityEmailSent
     <div className="content links">
       {links}
     </div>
