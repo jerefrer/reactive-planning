@@ -312,11 +312,11 @@ PeopleList = React.createClass
     unavailablePeople = @unavailablePeople(people, availablePeople, peopleWhoDidNotAnswer)
     <div className="people-list col-md-6">
       <PeopleFilters onChange={@filterBySearchTerm} />
-      <h3>Disponibles</h3>
+      <h3 className="text-success">Disponibles</h3>
       <ul className="list-unstyled">{@buildList(availablePeople)}</ul>
-      <h3>Sans réponse</h3>
+      <h3 className="text-warning">Sans réponse</h3>
       <ul className="list-unstyled">{@buildList(peopleWhoDidNotAnswer)}</ul>
-      <h3>Indisponibles</h3>
+      <h3 className="text-danger">Indisponibles</h3>
       <ul className="list-unstyled">{@buildList(unavailablePeople)}</ul>
     </div>
 
