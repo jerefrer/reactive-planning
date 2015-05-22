@@ -103,13 +103,11 @@ ScheduleCell = React.createClass
 Person = React.createClass
   getPerson: ->
     Meteor.users.findOne _id: @props.person._id
-  randomWidth: ->
-    40 + Math.floor(Math.random() * 10)
   render: ->
     person = @getPerson()
     if person
       <div className='person alert neutral'>
-        {<img src="http://lorempixel.com/#{@randomWidth()}/#{@randomWidth()}/people" className="img-circle" /> if @props.avatar}
+        {<img src="/dummy-avatar.jpg" className="img-circle" /> if @props.avatar}
         {person.username}
       </div>
     else
