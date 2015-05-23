@@ -24,3 +24,10 @@ Just run `meteor`
   * Si des cases sont vides X jours avant l'event
   * Quand quelqu'un refuse => beaucoup de mail, faire un récap journalier, hebdomadaire. Est-ce nécessaire ?
 * Add proper restrictions for non-admin users
+
+
+# TODO reunion
+
+* Envoyer SMS la veille à 12H
+* Mettre une couleur par jour
+* Ajouter deux colonnes: "Camion Plazac" & "Entretiens individuels"
