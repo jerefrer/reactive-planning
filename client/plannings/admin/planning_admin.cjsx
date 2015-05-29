@@ -128,8 +128,8 @@ Schedule = React.createClass
         <tbody>
           {lines}
           <tr>
-            <td><AddDayCell planningId={@props.planningId} onAddDay={@handleAddDay} /></td>
-            <td colSpan="5000"></td>
+            <th><AddDayCell planningId={@props.planningId} onAddDay={@handleAddDay} /></th>
+            <th colSpan="5000"></th>
           </tr>
         </tbody>
       </table>
@@ -160,12 +160,12 @@ DayName = React.createClass
     @setState formIsVisible: true
   hideForm: ->
     @setState formIsVisible: false
-  updateDayName: (dayName) ->
+  updateDay: (dayName, dayDate) ->
     @hideForm()
-    Meteor.call 'updateDayName', @props.planningId, @props.day, dayName
+    Meteor.call 'updateDay', @props.planningId, @props.day, dayName, dayDate
   render: ->
     if @state.formIsVisible
-      <DayForm originalValue={@props.day.name} onSubmit={@updateDayName} onCancel={@hideForm} />
+      <DayForm originalDayDate={@props.day.date} originalDayName={@props.day.name} onSubmit={@updateDay} onCancel={@hideForm} />
     else
       <strong onClick={@showForm} title="Cliquez pour modifier">{@props.day.name}</strong>
 
@@ -248,26 +248,30 @@ AddDayCell = React.createClass
       <a href="#" onClick={@showForm}>Ajouter un jour</a>
 
 DayForm = React.createClass
-  componentDidMount: ->
-    domNode = @refs.dayName.getDOMNode()
-    if @props.originalValue
-      domNode.value = @props.originalValue
-    domNode.select()
   handleSubmit: (e) ->
     e.preventDefault()
-    dayName = @refs.dayName.getDOMNode().value.trim()
-    @props.onSubmit dayName
+    dayDate = @refs.dayDate.getDOMNode().value.trim()
+    dayName = @refs.dayName.getDOMNode().value.trim() || @refs.datepicker.getDOMNode().value.trim()
+    @props.onSubmit dayName, dayDate
+    @refs.dayDate.getDOMNode().value = ''
     @refs.dayName.getDOMNode().value = ''
   render: ->
     <div>
       <form onSubmit={@handleSubmit}>
-        <input className="set-due-date form-control datetimepicker" ref="date" placeholder="Date" />
-        <input className="form-control" ref="dayName" placeholder="Nom"/>
+        <input className="hidden-date" ref="dayDate" type="hidden" />
+        <input className="set-due-date form-control datepicker-trigger" ref="datepicker" placeholder="Date" />
+        <input className="form-control" ref="dayName" placeholder="Nom" />
+        <button className="btn btn-primary">Valider</button>
       </form>
       <a href="#" onClick={@props.onCancel} className="pull-right">Annuler</a>
     </div>
   componentDidMount: ->
-    $('.datetimepicker').datetimepicker(format: "dddd DD à h:mm")
+    $('.datepicker-trigger').datepicker(format: 'DD dd', autoclose: true, language: 'fr')
+    $('.datepicker-trigger').datepicker().on 'changeDate', (e) ->
+      $(@).parents('form').find('.hidden-date').val e.format('dd-mm-yyyy')
+      $(@).parents('form').find('.form-control').prop 'placeholder', e.format('DD dd')
+    $('.datepicker-trigger').datepicker('setDate', @props.originalDayDate) if @props.originalDayDate
+    @refs.dayName.getDOMNode().value = @props.originalDayName if @props.originalDayName
 
 AddPersonModal = React.createClass
   render: ->
