@@ -1,4 +1,5 @@
 Plannings = new (Meteor.Collection)('plannings')
+Tasks = new (Meteor.Collection)('tasks')
 SoundsToPlay = new (Meteor.Collection)('sounds_to_play')
 
 eachDuty = (planningId, callback) ->
@@ -26,23 +27,27 @@ markAllDutiesAsSent = (planningId) ->
       duty.emailSent = true
   Plannings.update planning._id, $set: { duties: marked_duties, emailsSent: true }
 
+initializeTasks = ->
+  ['Banque alimentaire',
+   'Médiateur, responsable d\'équipe' ,
+   'Chercher pain'
+   'Ramasse Carrefour Market',
+   'Préparer soupe',
+   'Amener soupe',
+   'Camion',
+   'Chargement',
+   'Accueil & Distribution',
+   'Fourniture comptoir',
+   'Servir café & soupe',
+   'Déchargement & Vaisselle local',
+   'Suppléants'].each (name) ->
+    Tasks.insert name: name
+
 Meteor.methods
   createPlanning: (name, days) ->
     if !days
       days = []
-    tasks = [{_id: guid(), name: 'Banque alimentaire'},
-             {_id: guid(), name: 'Médiateur, responsable d\'équipe' },
-             {_id: guid(), name: 'Chercher pain'}
-             {_id: guid(), name: 'Ramasse Carrefour Market'},
-             {_id: guid(), name: 'Préparer soupe'},
-             {_id: guid(), name: 'Amener soupe'},
-             {_id: guid(), name: 'Camion'},
-             {_id: guid(), name: 'Chargement'},
-             {_id: guid(), name: 'Accueil & Distribution'},
-             {_id: guid(), name: 'Fourniture comptoir'},
-             {_id: guid(), name: 'Servir café & soupe'},
-             {_id: guid(), name: 'Déchargement & Vaisselle local'},
-             {_id: guid(), name: 'Suppléants'}]
+    tasks = Tasks.find().fetch()
     slug = getSlug(name)
     Plannings.insert
       name: name
@@ -181,24 +186,27 @@ Meteor.methods
         set.peopleWhoAnswered = peopleWhoAnswered
     set['presences.' + dayId] = people
     Plannings.update planning._id, $set: set
+
 Meteor.startup ->
+  if Tasks.find().fetch().length == 0
+    initializeTasks()
   if !Plannings.findOne(name: 'Mai 2015')
     days = [
-      {_id: guid(), name: 'Vendredi 1er Mai'}
-      {_id: guid(), name: 'Samedi 2 Mai'}
-      {_id: guid(), name: 'Dimanche 3 Mai'}
-      {_id: guid(), name: 'Vendredi 8 Mai'}
-      {_id: guid(), name: 'Samedi 9 Mai'}
-      {_id: guid(), name: 'Dimanche 10 Mai'}
-      {_id: guid(), name: 'Vendredi 15 Mai'}
-      {_id: guid(), name: 'Samedi 16 Mai'}
-      {_id: guid(), name: 'Dimanche 17 Mai'}
-      {_id: guid(), name: 'Vendredi 22 Mai'}
-      {_id: guid(), name: 'Samedi 23 Mai'}
-      {_id: guid(), name: 'Dimanche 24 Mai'}
-      {_id: guid(), name: 'Vendredi 29 Mai'}
-      {_id: guid(), name: 'Samedi 30 Mai'}
-      {_id: guid(), name: 'Dimanche 31 Mai'}
+      {_id: guid(), name: 'Vendredi 1er Mai', date: moment('01-05-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Samedi 2 Mai',     date: moment('02-05-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Dimanche 3 Mai',   date: moment('03-05-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Vendredi 8 Mai',   date: moment('08-05-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Samedi 9 Mai',     date: moment('09-05-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Dimanche 10 Mai',  date: moment('10-05-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Vendredi 15 Mai',  date: moment('15-05-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Samedi 16 Mai',    date: moment('16-05-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Dimanche 17 Mai',  date: moment('17-05-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Vendredi 22 Mai',  date: moment('22-05-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Samedi 23 Mai',    date: moment('23-05-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Dimanche 24 Mai',  date: moment('24-05-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Vendredi 29 Mai',  date: moment('29-05-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Samedi 30 Mai',    date: moment('30-05-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Dimanche 31 Mai',  date: moment('31-05-2015', 'DD-MM-YYYY').toDate() }
     ]
     Meteor.call 'createPlanning', 'Mai 2015', days
     Meteor.call 'createPlanning', 'Juin 2015', []
@@ -222,6 +230,9 @@ Meteor.startup ->
 
 Meteor.publish 'users', ->
   Meteor.users.find()
+
+Meteor.publish 'tasks', ->
+  Tasks.find()
 
 Meteor.publish 'plannings', ->
   Plannings.find()

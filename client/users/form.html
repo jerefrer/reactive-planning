@@ -1,6 +1,9 @@
 <template name="UserForm">
   {{#if selectedUser}}
-    <h3>{{selectedUser.username}}</h3>
+    <h3>
+      {{selectedUser.username}}
+      <div class="pull-right" id="user-tasks-form-trigger"></div>
+    </h3>
   {{else}}
     <h3>Nouveau bénévole</h3>
   {{/if}}
