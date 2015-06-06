@@ -63,18 +63,19 @@ Meteor.methods
     slug
   removePlanning: (planningId) ->
     Plannings.remove planningId
-  addDay: (planningId, dayName) ->
+  addDay: (planningId, dayName, dayDate) ->
     planning = Plannings.findOne(_id: planningId)
     days = planning.days
     days.push
       _id: guid()
       name: dayName
+      date: moment(dayDate, 'DD-MM-YYYY').toDate()
     Plannings.update planning._id, $set: days: days
-  updateDayName: (planningId, day, newName) ->
+  updateDay: (planningId, day, newName, newDate) ->
     Plannings.update {
       _id: planningId
       days: $elemMatch: _id: day._id
-    }, $set: 'days.$.name': newName
+    }, $set: 'days.$.name': newName, 'days.$.date': moment(newDate, 'DD-MM-YYYY').toDate()
   addPerson: (planningId, day, task, person) ->
     planning = Plannings.findOne(_id: planningId)
     duties = planning.duties

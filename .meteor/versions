@@ -71,6 +71,7 @@ npm-bcrypt@0.7.8_1
 observe-sequence@1.0.5
 ongoworks:speakingurl@1.1.0
 ordered-dict@1.0.3
+rajit:bootstrap3-datepicker@1.4.1
 random@1.0.3
 reactive-dict@1.1.0
 reactive-var@1.0.5

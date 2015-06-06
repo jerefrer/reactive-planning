@@ -121,15 +121,15 @@ Schedule = React.createClass
     lines = @props.days.map (day) =>
       <ScheduleLine planningId={@props.planningId} tasks={@props.tasks} day={day} duties={@props.duties} presences={@props.presences} people={@props.people} peopleWhoAnswered={@props.peopleWhoAnswered}/>
     <div className="schedule-wrapper">
-      <table id="schedule" className="table table-striped table-bordered">
+      <table id="schedule" className="table table-bordered">
         <thead>
           <ScheduleHeader tasks={@props.tasks} />
         </thead>
         <tbody>
           {lines}
           <tr>
-            <td><AddDayCell planningId={@props.planningId} onAddDay={@handleAddDay} /></td>
-            <td colSpan="5000"></td>
+            <th><AddDayCell planningId={@props.planningId} onAddDay={@handleAddDay} /></th>
+            <th colSpan="5000"></th>
           </tr>
         </tbody>
       </table>
@@ -140,7 +140,7 @@ ScheduleHeader = React.createClass
     tasks = @props.tasks.map (task) ->
       <th><strong>{task.name}</strong></th>
     <tr>
-      <th></th>
+      <th className="day-column"></th>
       {tasks}
     </tr>
 
@@ -148,7 +148,7 @@ ScheduleLine = React.createClass
   render: ->
     cells = @props.tasks.map (task) =>
       <ScheduleCell planningId={@props.planningId} day={@props.day} task={task} duties={@props.duties} presences={@props.presences} people={@props.people} peopleWhoAnswered={@props.peopleWhoAnswered} />
-    <tr>
+    <tr className="day-no-#{moment(@props.day.date).format('e')}">
       <th><DayName planningId={@props.planningId} day={@props.day} /></th>
       {cells}
     </tr>
@@ -160,12 +160,12 @@ DayName = React.createClass
     @setState formIsVisible: true
   hideForm: ->
     @setState formIsVisible: false
-  updateDayName: (dayName) ->
+  updateDay: (dayName, dayDate) ->
     @hideForm()
-    Meteor.call 'updateDayName', @props.planningId, @props.day, dayName
+    Meteor.call 'updateDay', @props.planningId, @props.day, dayName, dayDate
   render: ->
     if @state.formIsVisible
-      <DayForm originalValue={@props.day.name} onSubmit={@updateDayName} onCancel={@hideForm} />
+      <DayForm originalDayDate={@props.day.date} originalDayName={@props.day.name} onSubmit={@updateDay} onCancel={@hideForm} />
     else
       <strong onClick={@showForm} title="Cliquez pour modifier">{@props.day.name}</strong>
 
@@ -238,9 +238,9 @@ AddDayCell = React.createClass
     @setState formIsVisible: true
   hideForm: ->
     @setState formIsVisible: false
-  addDay: (dayName) ->
+  addDay: (dayName, dayDate) ->
     @hideForm()
-    Meteor.call 'addDay', @props.planningId, dayName
+    Meteor.call 'addDay', @props.planningId, dayName, dayDate
   render: ->
     if @state.formIsVisible
       <DayForm onSubmit={@addDay} onCancel={@hideForm} />
@@ -248,22 +248,50 @@ AddDayCell = React.createClass
       <a href="#" onClick={@showForm}>Ajouter un jour</a>
 
 DayForm = React.createClass
-  componentDidMount: ->
-    domNode = @refs.dayName.getDOMNode()
-    if @props.originalValue
-      domNode.value = @props.originalValue
-    domNode.select()
+  thereIsANameDifferentFromDateName: ->
+    @props.originalDayDate and
+    @props.originalDayName.trim() != '' and
+    @props.originalDayName.toLowerCase() != moment(@props.originalDayDate).format('dddd DD')
+  getInitialState: ->
+    showNameField: @thereIsANameDifferentFromDateName()
+  showInput: (e) ->
+    e.preventDefault()
+    @setState showNameField: true
+  hideInput: (e) ->
+    e.preventDefault()
+    @setState showNameField: false
   handleSubmit: (e) ->
     e.preventDefault()
-    dayName = @refs.dayName.getDOMNode().value.trim()
-    @props.onSubmit dayName
-    @refs.dayName.getDOMNode().value = ''
+    dayDate = @refs.dayDate.getDOMNode().value.trim()
+    dayName = @refs.dayName && @refs.dayName.getDOMNode().value.trim() || @refs.datepicker.getDOMNode().value.trim()
+    @props.onSubmit dayName, dayDate
+  componentDidMount: ->
+    $('.datepicker-trigger').datepicker(format: 'DD dd', autoclose: true, language: 'fr', weekStart: 1)
+    $('.datepicker-trigger').datepicker().on 'changeDate', (e) =>
+      @refs.dayDate.getDOMNode().value = e.format('dd-mm-yyyy')
+      @refs.dayName.getDOMNode().value = e.format('DD dd') if @refs.dayName
+    $('.datepicker-trigger').datepicker('setDate', @props.originalDayDate) if @props.originalDayDate
+    @refs.dayName.getDOMNode().value = @props.originalDayName if @state.showNameField
+  componentDidUpdate: ->
+    if @state.showNameField
+      @refs.dayName.getDOMNode().value = @refs.datepicker.getDOMNode().value
+      @refs.dayName.getDOMNode().select()
   render: ->
-    <div>
+    dayNameInput = if @state.showNameField
+      <div className="dayNameInputGroup">
+        <input className="form-control" ref="dayName" placeholder="Nom" />
+        <a href='#' onClick={@hideInput}><i className="fa fa-times-circle-o" /></a>
+      </div>
+    else
+      <a href="#" onClick={@showInput} className="customizeDayName">Donner un nom ?</a>
+    <div className="dayForm">
       <form onSubmit={@handleSubmit}>
-        <input className="form-control" ref="dayName" />
+        <input className="hidden-date" ref="dayDate" type="hidden" />
+        <input className="set-due-date form-control datepicker-trigger" ref="datepicker" placeholder="Date" />
+        {dayNameInput}
+        <button className="btn btn-primary pull-left">Valider</button>
       </form>
-      <a href="#" onClick={@props.onCancel} className="pull-right">Annuler</a>
+      <a href="#" onClick={@props.onCancel} className="cancel pull-right">Annuler</a>
     </div>
 
 AddPersonModal = React.createClass

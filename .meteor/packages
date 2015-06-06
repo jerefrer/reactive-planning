@@ -22,7 +22,6 @@ ongoworks:speakingurl
 gfk:mailgun-api
 stylus
 aldeed:tabular
-momentjs:moment
 aldeed:autoform
 aldeed:collection2
 coffeescript
@@ -31,3 +30,4 @@ ian:accounts-ui-bootstrap-3
 firfi:meteor-react-bootstrap
 msavin:mongol
 aldeed:delete-button
+rajit:bootstrap3-datepicker

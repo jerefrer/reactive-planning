@@ -1,3 +1,5 @@
+moment.locale('fr')
+
 @Plannings = new Meteor.Collection('plannings')
 
 Router.plugin 'auth'
