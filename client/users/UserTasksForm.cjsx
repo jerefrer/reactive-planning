@@ -18,11 +18,12 @@ ItemTypes = TASK: 'task'
 UserTasksModal = React.createClass
   render: ->
     <ReactBootstrap.Modal {...@props} bsStyle='primary' title="Rôles de #{@props.user.username}" animation>
-      <div className='modal-body'>
+      <div className='modal-body task-form'>
         <div className="row same-height-columns">
           <TaskList tasks={@props.tasks} user={@props.user} />
           <div className="divider"></div>
           <PreferedOrBannedTaskList user={@props.user} tasks={@props.user.preferedTasks} preferedOrBanned='Prefered' />
+          <div className="divider"></div>
           <PreferedOrBannedTaskList user={@props.user} tasks={@props.user.bannedTasks}   preferedOrBanned='Banned' />
         </div>
       </div>
@@ -42,7 +43,7 @@ TaskList = React.createClass
   render: ->
     tasksList = @getRemainingTasks(@state.tasks).map (task) -> <Task task={task} />
     <div className="tasks-list col-md-4">
-      <h3 className="text-success">Tâches</h3>
+      <h3>Tâches</h3>
       <ul className="list-unstyled">{tasksList}</ul>
     </div>
 
@@ -56,32 +57,37 @@ TaskFilters = React.createClass
     </div>
 
 PreferedOrBannedTaskList = React.createClass
-  handleTaskDrop: (task) ->
-    cell = task.scheduleCell
-    Meteor.call "addUser#{@props.preferedOrBanned}Task", @props.user._id, task._id
-  removeTask: (task) ->
-    Meteor.call "removeUser#{@props.preferedOrBanned}Task", @props.user._id, task._id
+  prefered: ->
+    @props.preferedOrBanned == 'Prefered'
+  handleTaskDrop: (taskId, removeFromOtherList) ->
+    Meteor.call "addUser#{@props.preferedOrBanned}Task", @props.user._id, taskId, removeFromOtherList
+  removeTask: (taskId) ->
+    Meteor.call "removeUser#{@props.preferedOrBanned}Task", @props.user._id, taskId
   mixins: [ DragDropMixin ]
   statics: configureDragDrop: (register) ->
     register ItemTypes.TASK, dropTarget:
-      acceptDrop: (component, task) ->
-        component.handleTaskDrop task
+      acceptDrop: (component, item) ->
+        component.handleTaskDrop item.taskId, item.removeFromOtherList
+  getRemainingTasks: (tasks) ->
+    tasks.findAll (task) =>
+      tasksToReject  = @prefered() && @props.user.bannedTasks || @props.user.preferedTasks
+      (tasksToReject || []).map('_id').indexOf(task._id) < 0
   render: ->
-    tasks = @props.tasks
+    tasks = @getRemainingTasks(@props.tasks)
     tasksList = undefined
     if tasks
       tasksList = tasks.map (taskId) =>
         task = Tasks.findOne(taskId)
-        <Task task={task} onThrowAway={@removeTask} />
+        <Task task={task} onThrowAway={@removeTask} inPreferedOrBannedList=true />
     dropState = @getDropState(ItemTypes.TASK)
     className = React.addons.classSet
-      "preferred-tasks": @props.preferedOrBanned == 'Prefered'
-      "banned-tasks": @props.preferedOrBanned == 'Banned'
+      "prefered-tasks": @prefered()
+      "banned-tasks": not @prefered()
       "col-md-4": true
       "drop-target": dropState.isDragging
       "drop-hover": dropState.isHovering
     <div {...@dropTargetFor(ItemTypes.TASK)} className={className}>
-      <h3>{@props.preferedOrBanned == 'Prefered' && 'Souvent' || 'Jamais'}</h3>
+      <h3 className={@prefered() && 'text-success' || 'text-danger'}>{@prefered() && 'Souvent' || 'Jamais'}</h3>
       {tasksList}
     </div>
 
@@ -90,13 +96,13 @@ Task = React.createClass
   statics: configureDragDrop: (register) ->
     register ItemTypes.TASK, dragSource:
       beginDrag: (component) ->
-        { item: component.props.task }
+        item: { taskId: component.props.task._id, removeFromOtherList: component.props.inPreferedOrBannedList }
       endDrag: (component, effect) ->
         if !effect
           if component.props.onThrowAway
-            component.props.onThrowAway component.props.task
+            component.props.onThrowAway component.props.task._id
   render: ->
-    <div className="task"
+    <div className="task alert alert-info"
         {...@dragSourceFor(ItemTypes.TASK)}>
       {@props.task.name}
     </div>
