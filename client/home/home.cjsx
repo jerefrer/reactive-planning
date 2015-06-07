@@ -82,25 +82,6 @@ StatusLine = React.createClass
       {@props.message}
     </li>
 
-NewPlanning = React.createClass
-  createPlanning: (e) ->
-    e.preventDefault()
-    input = @refs.planningName.getDOMNode()
-    Meteor.call 'createPlanning', input.value.trim(), (error, slug) ->
-      window.location = "/planning/#{slug}/admin"
-    input.value = '';
-  render: ->
-    <div className="col-md-3">
-      <div className="background">
-        <div className="content">
-          Nouveau planning
-          <form onSubmit={@createPlanning}>
-            <input type="text" ref="planningName" placeholder="Nom ?" className="form-control" />
-          </form>
-        </div>
-      </div>
-    </div>
-
 Links = React.createClass
   render: ->
     links = []
