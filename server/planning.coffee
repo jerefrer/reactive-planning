@@ -19,13 +19,13 @@ anyEmailToSend = (duties) ->
     duties[dayTaskKey].any (duty) ->
       duty.emailSent == undefined
 
-markAllDutiesAsSent = (planningId) ->
-  planning = Plannings.findOne(_id: planningId)
-  marked_duties = planning.duties
-  Object.keys(marked_duties).each (dayTaskKey) ->
-    marked_duties[dayTaskKey].each (duty) ->
-      duty.emailSent = true
-  Plannings.update planning._id, $set: { duties: marked_duties, emailsSent: true }
+markDutyAsSent = (planning, day, task, person) ->
+  dutyKey = 'duties.' + day._id + ',' + task._id
+  condition = _id: planning._id
+  condition[dutyKey] = $elemMatch: _id: person._id
+  set = {}
+  set["#{dutyKey}.$.emailSent"] = true
+  Plannings.update condition, $set: set
 
 initializeTasks = ->
   ['Banque alimentaire',
@@ -126,7 +126,7 @@ Meteor.methods
               '<a href=\'' + Meteor.absoluteUrl('planning/' + planning.slug + '/confirm/' + day._id + '/' + task._id + '/' + person._id) + '\'>Confirmer</a>' +
               ' / ' +
               '<a href=\'' + Meteor.absoluteUrl('planning/' + planning.slug + '/decline/' + day._id + '/' + task._id + '/' + person._id) + '\'>Décliner</a><br />'
-    markAllDutiesAsSent(planningId)
+      markDutyAsSent(planning, day, task, person)
   answerNotification: (planningSlug, dayId, taskId, personId, confirmation) ->
     planning = Plannings.findOne(slug: planningSlug)
     duties = planning.duties
