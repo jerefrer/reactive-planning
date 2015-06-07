@@ -49,7 +49,7 @@ ItemTypes = PERSON: 'person'
         <SendAvailabilityEmailNotificationsButton planning={@props.planning} />
         <SendPresenceEmailNotificationsButton planningId={@props.planning._id} emailsToSend={@state.emailsToSend} emailsSent={@state.emailsSent} />
       </h2>
-      <Schedule planningId={@props.planning._id} tasks={@state.tasks} days={@state.days} duties={@state.duties} presences={@state.presences} people={@state.people} peopleWhoAnswered={@state.peopleWhoAnswered} />
+      <Schedule planning={@props.planning} tasks={@state.tasks} days={@state.days} duties={@state.duties} presences={@state.presences} people={@state.people} peopleWhoAnswered={@state.peopleWhoAnswered} />
     </div>
 
 SendAvailabilityEmailNotificationsButton = React.createClass
@@ -119,7 +119,7 @@ SendPresenceEmailNotificationsButton = React.createClass
 Schedule = React.createClass
   render: ->
     lines = @props.days.map (day) =>
-      <ScheduleLine planningId={@props.planningId} tasks={@props.tasks} day={day} duties={@props.duties} presences={@props.presences} people={@props.people} peopleWhoAnswered={@props.peopleWhoAnswered}/>
+      <ScheduleLine planning={@props.planning} tasks={@props.tasks} day={day} duties={@props.duties} presences={@props.presences} people={@props.people} peopleWhoAnswered={@props.peopleWhoAnswered}/>
     <div className="schedule-wrapper">
       <table id="schedule" className="table table-bordered">
         <thead>
@@ -128,7 +128,7 @@ Schedule = React.createClass
         <tbody>
           {lines}
           <tr>
-            <th><AddDayCell planningId={@props.planningId} onAddDay={@handleAddDay} /></th>
+            <th><AddDayCell planning={@props.planning} onAddDay={@handleAddDay} /></th>
             <th colSpan="5000"></th>
           </tr>
         </tbody>
@@ -147,9 +147,9 @@ ScheduleHeader = React.createClass
 ScheduleLine = React.createClass
   render: ->
     cells = @props.tasks.map (task) =>
-      <ScheduleCell planningId={@props.planningId} day={@props.day} task={task} duties={@props.duties} presences={@props.presences} people={@props.people} peopleWhoAnswered={@props.peopleWhoAnswered} />
+      <ScheduleCell planningId={@props.planning._id} day={@props.day} task={task} duties={@props.duties} presences={@props.presences} people={@props.people} peopleWhoAnswered={@props.peopleWhoAnswered} />
     <tr className="day-no-#{moment(@props.day.date).format('e')}">
-      <th><DayName planningId={@props.planningId} day={@props.day} /></th>
+      <th><DayName planning={@props.planning} day={@props.day} /></th>
       {cells}
     </tr>
 
@@ -165,7 +165,7 @@ DayName = React.createClass
     Meteor.call 'updateDay', @props.planningId, @props.day, dayName, dayDate
   render: ->
     if @state.formIsVisible
-      <DayForm originalDayDate={@props.day.date} originalDayName={@props.day.name} onSubmit={@updateDay} onCancel={@hideForm} />
+      <DayForm planning={@props.planning} originalDayDate={@props.day.date} originalDayName={@props.day.name} onSubmit={@updateDay} onCancel={@hideForm} />
     else
       <strong onClick={@showForm} title="Cliquez pour modifier">{@props.day.name}</strong>
 
@@ -240,10 +240,10 @@ AddDayCell = React.createClass
     @setState formIsVisible: false
   addDay: (dayName, dayDate) ->
     @hideForm()
-    Meteor.call 'addDay', @props.planningId, dayName, dayDate
+    Meteor.call 'addDay', @props.planning._id, dayName, dayDate
   render: ->
     if @state.formIsVisible
-      <DayForm onSubmit={@addDay} onCancel={@hideForm} />
+      <DayForm planning={@props.planning} onSubmit={@addDay} onCancel={@hideForm} />
     else
       <a href="#" onClick={@showForm}>Ajouter un jour</a>
 
@@ -266,7 +266,13 @@ DayForm = React.createClass
     dayName = @refs.dayName && @refs.dayName.getDOMNode().value.trim() || @refs.datepicker.getDOMNode().value.trim()
     @props.onSubmit dayName, dayDate
   componentDidMount: ->
-    $('.datepicker-trigger').datepicker(format: 'DD dd', autoclose: true, language: 'fr', weekStart: 1)
+    $('.datepicker-trigger').datepicker
+      format: 'DD dd'
+      autoclose: true
+      language: 'fr'
+      weekStart: 1
+      startDate: new Date(@props.planning.year, @props.planning.month)
+      endDate: moment(new Date(@props.planning.year, @props.planning.month)).endOf('month').toDate()
     $('.datepicker-trigger').datepicker().on 'changeDate', (e) =>
       @refs.dayDate.getDOMNode().value = e.format('dd-mm-yyyy')
       @refs.dayName.getDOMNode().value = e.format('DD dd') if @refs.dayName

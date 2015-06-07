@@ -44,14 +44,17 @@ initializeTasks = ->
     Tasks.insert name: name
 
 Meteor.methods
-  createPlanning: (name, days) ->
+  createPlanning: (month, year, days) ->
     if !days
       days = []
     tasks = Tasks.find().fetch()
+    name = moment().month(parseInt(month)).format('MMMM').capitalize() + ' ' + year
     slug = getSlug(name)
     Plannings.insert
       name: name
       slug: slug
+      month: month
+      year: year
       days: days
       tasks: tasks
       presences: {}
@@ -209,8 +212,8 @@ Meteor.startup ->
       {_id: guid(), name: 'Samedi 30 Mai',    date: moment('30-05-2015', 'DD-MM-YYYY').toDate() }
       {_id: guid(), name: 'Dimanche 31 Mai',  date: moment('31-05-2015', 'DD-MM-YYYY').toDate() }
     ]
-    Meteor.call 'createPlanning', 'Mai 2015', days
-    Meteor.call 'createPlanning', 'Juin 2015', []
+    Meteor.call 'createPlanning', 'Mai 2015', 5, 2015, days
+    Meteor.call 'createPlanning', 'Juin 2015', 6, 2015, []
 
     admin = Accounts.createUser
       username: 'Jérémy Frere'
