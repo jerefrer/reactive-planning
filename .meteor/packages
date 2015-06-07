@@ -31,3 +31,5 @@ firfi:meteor-react-bootstrap
 msavin:mongol
 aldeed:delete-button
 rajit:bootstrap3-datepicker
+percolate:synced-cron
+ecwyne:nexmo-sms

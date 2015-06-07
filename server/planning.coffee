@@ -1,5 +1,5 @@
-Plannings = new (Meteor.Collection)('plannings')
-Tasks = new (Meteor.Collection)('tasks')
+moment.locale('fr')
+
 SoundsToPlay = new (Meteor.Collection)('sounds_to_play')
 
 eachDuty = (planningId, callback) ->
@@ -127,24 +127,6 @@ Meteor.methods
               ' / ' +
               '<a href=\'' + Meteor.absoluteUrl('planning/' + planning.slug + '/decline/' + day._id + '/' + task._id + '/' + person._id) + '\'>Décliner</a><br />'
     markAllDutiesAsSent(planningId)
-  sendSMSNotifications: (planningId) ->
-    person =
-      name: 'Jérémy'
-      phone: '+33628055409'
-    task =
-      name: 'Médiateur, response d\'équipe'
-      name: 'Médiateur'
-    day = name: 'Samedi 28 Septembre 2015'
-    ACCOUNT_SID = 'AC3869695257d0b4105a8286c9bf868c24'
-    AUTH_TOKEN = 'f4bd037ce0f2f7e9338b819af6aae578'
-    twilio_number = '+15005550006'
-    twilio = Twilio(ACCOUNT_SID, AUTH_TOKEN)
-    eachDuty planningId, (planning, day, task, person) ->
-      twilio.sendSms {
-        to: person.phone
-        from: twilio_number
-        body: 'Bonjour ' + person.name + ',\n' + 'Tu as été désigné pour "' + task.name + '" le ' + day.name + '.\n' + '1 pour confirmer,\n' + '0 pour décliner.'
-      }, (err, responseData) ->
   answerNotification: (planningSlug, dayId, taskId, personId, confirmation) ->
     planning = Plannings.findOne(slug: planningSlug)
     duties = planning.duties
