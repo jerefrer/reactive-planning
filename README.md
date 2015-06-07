@@ -10,7 +10,17 @@ can work together.**
 
 Just run `meteor`
 
+### SMS
+
+En se basant sur le planning de Juin on serait arrivé à 9,40€ pour envoyer un
+SMS à chacun des participants la veille de chaque jour de distribution.
+
 ### TODO
+
+#### Before deployment
+
+* Changer l'API key de Nexmo et l'extraire du code pour la mettre dans une variable d'environnement
+* Ajouter deux colonnes: "Camion Plazac" & "Entretiens individuels"
 
 #### Nice to have
 
@@ -24,10 +34,3 @@ Just run `meteor`
   * Si des cases sont vides X jours avant l'event
   * Quand quelqu'un refuse => beaucoup de mail, faire un récap journalier, hebdomadaire. Est-ce nécessaire ?
 * Add proper restrictions for non-admin users
-
-
-# TODO reunion
-
-* Envoyer SMS la veille à 12H
-* Mettre une couleur par jour
-* Ajouter deux colonnes: "Camion Plazac" & "Entretiens individuels"
