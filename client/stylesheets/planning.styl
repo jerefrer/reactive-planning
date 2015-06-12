@@ -50,6 +50,26 @@ form
     .mail-to-be-sent
       display: block
       font-size: 20px
+    .buttons
+      white-space: nowrap
+      .accept-duty, .reject-duty
+        width: 28px
+        padding: 2px
+        font-size: 24px
+        text-align: center
+        border-radius: 5px
+        &:hover:not(.selected)
+          background: lightGray
+          cursor: pointer
+    .accept-duty
+      margin-right: 5px
+      &.selected
+        background: #3c763d
+        color: white
+    .reject-duty
+      &.selected
+        background: #a94442
+        color: white
 
 .person
   &.neutral

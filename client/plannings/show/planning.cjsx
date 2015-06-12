@@ -22,7 +22,7 @@
     <div>
       <div className="pull-right"><PersonFilter setOnlyMe={@setOnlyMe} onlyMe={@state.onlyMe} /></div>
       <h2>{@props.planning.name}</h2>
-      <Schedule planningId={@props.planning._id} tasks={@state.tasks} days={@state.days} duties={@state.duties} onlyMe={@state.onlyMe} />
+      <Schedule planning={@props.planning} tasks={@state.tasks} days={@state.days} duties={@state.duties} onlyMe={@state.onlyMe} />
     </div>
 
 PersonFilter = React.createClass
@@ -43,7 +43,7 @@ PersonFilter = React.createClass
 Schedule = React.createClass
   render: ->
     lines = @props.days.map (day) =>
-      <ScheduleLine planningId={@props.planningId} tasks={@props.tasks} day={day} duties={@props.duties} onlyMe={@props.onlyMe} />
+      <ScheduleLine planning={@props.planning} tasks={@props.tasks} day={day} duties={@props.duties} onlyMe={@props.onlyMe} />
     <div className="schedule-wrapper">
       <table id="schedule" className="table table-striped table-bordered">
         <thead>
@@ -67,7 +67,7 @@ ScheduleHeader = React.createClass
 ScheduleLine = React.createClass
   render: ->
     cells = @props.tasks.map (task) =>
-      <ScheduleCell planningId={@props.planningId} day={@props.day} task={task} duties={@props.duties} presences={@props.presences} people={@props.people} onlyMe={@props.onlyMe} />
+      <ScheduleCell planning={@props.planning} day={@props.day} task={task} duties={@props.duties} presences={@props.presences} people={@props.people} onlyMe={@props.onlyMe} />
     <tr>
       <th><DayName planningId={@props.planningId} day={@props.day} /></th>
       {cells}
@@ -90,27 +90,60 @@ DayName = React.createClass
       <strong onClick={@showForm} title="Cliquez pour modifier">{@props.day.name}</strong>
 
 ScheduleCell = React.createClass
+  answerDuty: (personId, value) ->
+    Meteor.call('answerNotification', @props.planning.slug, @props.day._id, @props.task._id, personId, value)
+  isCurrentUser: (person) ->
+    person._id == Meteor.userId()
   render: ->
     peopleList = @props.duties[k(@props.day) + ',' + k(@props.task)]
     if peopleList
-      peopleList = peopleList.findAll (person) -> person.confirmation == true
+      peopleList = peopleList.findAll (person) => person.confirmation == true or @isCurrentUser(person)
       if @props.onlyMe
-        peopleList = peopleList.findAll (person) -> person._id == Meteor.userId()
-      people = peopleList.map (personObject) =>
-        <Person person={personObject} avatar=true mailStatus=true />
+        peopleList = peopleList.findAll (person) => @isCurrentUser(person)
+      people = peopleList.map (person) =>
+        <Person person={person} avatar=true mailStatus=true answerDuty={@answerDuty} isCurrentUser={@isCurrentUser(person)} />
     <td>{people}</td>
 
 Person = React.createClass
+  getInitialState: ->
+    { wobble: false }
+  componentWillReceiveProps: (nextProps) ->
+    if nextProps.person.confirmation != @props.person.confirmation
+      @setState
+        wobble: nextProps.person.confirmation != undefined
   getPerson: ->
     Meteor.users.findOne _id: @props.person._id
   randomWidth: ->
     40 + Math.floor(Math.random() * 10)
+  acceptDuty: ->
+    @props.answerDuty(@props.person._id, true)
+  rejectDuty: ->
+    @props.answerDuty(@props.person._id, false)
   render: ->
     person = @getPerson()
+    confirmation = @props.person.confirmation
+    className = 'person alert '
+    if @props.isCurrentUser
+      if confirmation == undefined
+        className += 'neutral background-fade'
+      else if confirmation == true
+        className += 'good background-fade '
+        className += 'hvr-wobble-vertical' if @state.wobble
+      else if confirmation == false
+        className += 'bad  background-fade '
+        className += 'hvr-wobble-horizontal' if @state.wobble
+    else
+      className += 'neutral background-fade'
+    buttons = if @props.isCurrentUser
+      <div className="buttons">
+        <i className="fa fa-check accept-duty text-success #{if @props.person.confirmation == true then 'selected' else ''}" onClick={@acceptDuty} />
+        <i className="fa fa-times reject-duty text-danger #{if @props.person.confirmation == false then 'selected' else ''}" onClick={@rejectDuty} />
+      </div>
     if person
-      <div className='person alert neutral'>
+      <div className={className}>
         {<img src="http://lorempixel.com/#{@randomWidth()}/#{@randomWidth()}/people" className="img-circle" /> if @props.avatar}
         {person.username}
+        {buttons}
       </div>
     else
       null
