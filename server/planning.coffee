@@ -111,7 +111,7 @@ Meteor.methods
         subject: "Vos disponilités pour #{month}"
         html: 'Bonjour ' + person.profile.firstname + ',<br /><br />' +
               "Pouvez-vous nous indiquer vos disponibilités pour #{month} ?.<br /><br />" +
-              '<a href=\'' + Meteor.absoluteUrl('planning/' + planning.slug) +'\'>Pour ce faire cliquez-ici</a><br />< br />' +
+              "<a href='#{Meteor.absoluteUrl('planning/' + planning.slug)}'>Pour ce faire cliquez-ici</a><br /><br />" +
               'Merci !'
     Plannings.update planningId, $set: { availabilityEmailSent: true }
   sendPresenceEmailNotifications: (planningId) ->
