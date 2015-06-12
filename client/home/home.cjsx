@@ -61,8 +61,9 @@ Status = React.createClass
       numberOfDutiesToAnswerTo = @props.numberOfDutiesToAnswerTo
       lines.push(<StatusLine  danger=true message="Vous n'avez pas encore indiqué vos disponilités" />) unless @props.userProvidedHisAvailabilities
       lines.push(<StatusLine  danger=true message="Vous avez #{numberOfDutiesToAnswerTo} demande#{numberOfDutiesToAnswerTo > 1 && 's' || ''} en attente" />) if numberOfDutiesToAnswerTo > 0
-      message = <span>Vous avez été choisi <strong>{@props.numberOfDuties}</strong> fois</span>
-      lines.push(<StatusLine message={message} />)
+      if @props.userProvidedHisAvailabilities
+        message = <span>Vous avez été choisi <strong>{@props.numberOfDuties}</strong> fois</span>
+        lines.push(<StatusLine message={message} />)
       if nextDuty
         message = <span>Prochain rendez-vous : <strong>{nextDuty}</strong></span>
         lines.push(<StatusLine message={message} />)
