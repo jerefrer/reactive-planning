@@ -43,7 +43,7 @@ Planning = React.createClass
         <Status planning={@props.planning} userProvidedHisAvailabilities={@userProvidedHisAvailabilities()} numberOfDuties={userDuties.length} numberOfDutiesToAnswerTo={numberOfDutiesToAnswerTo}/>
       </div>
       <div className="col-md-3">
-        <Links planning={@props.planning} userProvidedHisAvailabilities={@userProvidedHisAvailabilities()} />
+        <Links planning={@props.planning} userProvidedHisAvailabilities={@userProvidedHisAvailabilities()} numberOfDuties={userDuties.length} />
       </div>
     </div>
 
@@ -59,9 +59,10 @@ Status = React.createClass
     if @props.planning.availabilityEmailSent
       nextDuty = @nextDuty()
       numberOfDutiesToAnswerTo = @props.numberOfDutiesToAnswerTo
-      lines.push(<StatusLine  danger=true message="Vous n'avez pas encore indiqué vos disponilités" />) unless @props.userProvidedHisAvailabilities
-      lines.push(<StatusLine  danger=true message="Vous avez #{numberOfDutiesToAnswerTo} demande#{numberOfDutiesToAnswerTo > 1 && 's' || ''} en attente" />) if numberOfDutiesToAnswerTo > 0
-      if @props.userProvidedHisAvailabilities
+      lines.push(<StatusLine  danger=true message="Vous n'avez pas encore indiqué vos disponilités" />) unless @props.userProvidedHisAvailabilities or @props.numberOfDuties > 0
+      if numberOfDutiesToAnswerTo > 0
+        lines.push(<StatusLine  danger=true message="Vous avez #{numberOfDutiesToAnswerTo} demande#{numberOfDutiesToAnswerTo > 1 && 's' || ''} en attente" />)
+      else if @props.userProvidedHisAvailabilities or @props.numberOfDuties > 0
         message = <span>Vous avez été choisi <strong>{@props.numberOfDuties}</strong> fois</span>
         lines.push(<StatusLine message={message} />)
       if nextDuty
@@ -86,7 +87,7 @@ StatusLine = React.createClass
 Links = React.createClass
   render: ->
     links = []
-    links.push(<Link text="Voir le planning" url="/planning/#{@props.planning.slug}" />) if @props.planning.availabilityEmailSent and @props.userProvidedHisAvailabilities
+    links.push(<Link text="Voir le planning" url="/planning/#{@props.planning.slug}" />) if @props.userProvidedHisAvailabilities or @props.numberOfDuties > 0
     links.push(<Link text="Indiquer mes disponilités" url="/planning/#{@props.planning.slug}/presences" />) if @props.planning.availabilityEmailSent
     <div className="content links">
       {links}
