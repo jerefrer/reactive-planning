@@ -141,7 +141,6 @@ Person = React.createClass
       </div>
     if person
       <div className={className}>
-        {<img src="http://lorempixel.com/#{@randomWidth()}/#{@randomWidth()}/people" className="img-circle" /> if @props.avatar}
         {person.username}
         {buttons}
       </div>

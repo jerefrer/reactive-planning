@@ -224,7 +224,6 @@ Person = React.createClass
       <div className={className}
            {...@dragSourceFor(ItemTypes.PERSON)}
            onDoubleClick={@cycleStatus} >
-        {<img src="http://lorempixel.com/#{@randomWidth()}/#{@randomWidth()}/people" className="img-circle" /> if @props.avatar}
         {person.username}
         {<i className="mail-to-be-sent fa fa-envelope" /> if @props.mailStatus and not @props.person.emailSent}
       </div>
