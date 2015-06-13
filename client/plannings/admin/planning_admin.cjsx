@@ -287,11 +287,9 @@ DayForm = React.createClass
 
 AddPersonModal = React.createClass
   render: ->
-    <ReactBootstrap.Modal {...@props} bsStyle='primary' title="#{@props.day.name} - #{@props.task.name}" animation>
-      <div className='modal-body'>
-        <div className="row same-height-columns">
-          <PeopleList planningId={@props.planningId} people={@props.people} day={@props.day} task={@props.task} duties={@props.duties} presences={@props.presences} peopleWhoAnswered={@props.peopleWhoAnswered} />
-        </div>
+    <ReactBootstrap.Modal {...@props} bsStyle='primary' bsSize='large' animation>
+      <div className='modal-body add-person-modal'>
+        <PeopleList planningId={@props.planningId} people={@props.people} day={@props.day} task={@props.task} duties={@props.duties} presences={@props.presences} peopleWhoAnswered={@props.peopleWhoAnswered} title={"#{@props.day.name} - #{@props.task.name}"}/>
       </div>
       <div className='modal-footer'>
         <ReactBootstrap.Button onClick={@props.onRequestHide}>Fermer</ReactBootstrap.Button>
@@ -333,19 +331,24 @@ PeopleList = React.createClass
     availablePeopleList = @buildList(availablePeople)
     peopleWhoDidNotAnswerList = @buildList(peopleWhoDidNotAnswer)
     unavailablePeopleList = @buildList(unavailablePeople)
-    <div className="people-list col-md-6">
-      <PeopleFilters onChange={@filterBySearchTerm} />
-      <div className="available-people">
-        <h3>Disponibles</h3>
-        <ul className="list-unstyled">{availablePeopleList}</ul>
+    <div>
+      <div className="header">
+        <PeopleFilters onChange={@filterBySearchTerm} />
+        <h3>{@props.title}</h3>
       </div>
-      <div className="people-who-did-not-answer">
-        <h3>Sans réponse</h3>
-        <ul className="list-unstyled">{peopleWhoDidNotAnswerList}</ul>
-      </div>
-      <div className="unavailable-people">
-        <h3>Indisponibles</h3>
-        <ul className="list-unstyled">{unavailablePeopleList}</ul>
+      <div className="people-list">
+        <div className="available-people">
+          <h3>Disponibles</h3>
+          <ul className="list-unstyled">{availablePeopleList}</ul>
+        </div>
+        <div className="people-who-did-not-answer">
+          <h3>Sans réponse</h3>
+          <ul className="list-unstyled">{peopleWhoDidNotAnswerList}</ul>
+        </div>
+        <div className="unavailable-people">
+          <h3>Non disponibles</h3>
+          <ul className="list-unstyled">{unavailablePeopleList}</ul>
+        </div>
       </div>
     </div>
 
@@ -354,8 +357,7 @@ PeopleFilters = React.createClass
     @props.onChange @refs.name.getDOMNode().value.trim()
   render: ->
     <div className="form-group form-inline">
-      <label className="control-label">Nom</label>
-      <input type="text" ref="name" onChange={@handleChange} className="form-control" />
+      <input type="text" ref="name" onChange={@handleChange} className="form-control" placeholder="Rechercher" />
     </div>
 
 PersonForDuty = React.createClass
