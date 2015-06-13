@@ -2,6 +2,22 @@ moment.locale('fr')
 
 SoundsToPlay = new (Meteor.Collection)('sounds_to_play')
 
+dutiesByPerson = (planningId, callback) ->
+  planning = Plannings.findOne(_id: planningId)
+  dutiesByPerson = {}
+  Object.keys(planning.duties).each (key) ->
+    dayId = key.split(',')[0]
+    taskId = key.split(',')[1]
+    day = planning.days.find(_id: dayId)
+    task = planning.tasks.find(_id: taskId)
+    duties = planning.duties[dayId + ',' + taskId]
+    duties.each (duty) ->
+      dutiesByPerson[duty._id] ||= []
+      dutiesByPerson[duty._id].push({day: day, task: task})
+  _.each dutiesByPerson, (duties, personId) ->
+    person = Meteor.users.findOne(_id: personId)
+    callback planning, duties, person
+
 eachDuty = (planningId, callback) ->
   planning = Plannings.findOne(_id: planningId)
   Object.keys(planning.duties).each (key) ->
@@ -116,17 +132,18 @@ Meteor.methods
     Plannings.update planningId, $set: { availabilityEmailSent: true }
   sendPresenceEmailNotifications: (planningId) ->
     @unblock()
-    eachDuty planningId, (planning, day, task, person) ->
-      mailgun().send
+    dutiesByPerson planningId, (planning, duties, person) ->
+      result = mailgun().send
         to: person.emails[0].address
         from: 'Planning 24 <no-reply@planning-24.meteor.com>'
-        subject: 'Disponible le ' + day.name + ' ?'
-        html: 'Bonjour ' + person.profile.firstname + ',<br /><br />' +
-              'Vous avez été désigné(e) pour "' + task.name + '" le ' + day.name + '.<br /><br />' +
-              '<a href=\'' + Meteor.absoluteUrl('planning/' + planning.slug + '/confirm/' + day._id + '/' + task._id + '/' + person._id) + '\'>Confirmer</a>' +
-              ' / ' +
-              '<a href=\'' + Meteor.absoluteUrl('planning/' + planning.slug + '/decline/' + day._id + '/' + task._id + '/' + person._id) + '\'>Décliner</a><br />'
-      markDutyAsSent(planning, day, task, person)
+        subject: "Confirmation des dates pour le planning de #{planning.name}"
+        html: "Bonjour #{person.profile.firstname},<br /><br />" +
+              "Vous avez été désigné(e) pour une ou plusieurs tâches au planning de #{planning.name}<br /><br />" +
+              "<a href='#{Meteor.absoluteUrl('planning/' + planning.slug)}'>Cliquez-ici pour confirmer votre présence</a><br /><br />" +
+              'Merci !'
+      unless result.error
+        duties.each (duty) ->
+          markDutyAsSent(planning, duty.day, duty.task, person)
   answerNotification: (planningSlug, dayId, taskId, personId, confirmation) ->
     planning = Plannings.findOne(slug: planningSlug)
     duties = planning.duties
