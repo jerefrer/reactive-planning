@@ -211,8 +211,8 @@ Meteor.startup ->
       {_id: guid(), name: 'Samedi 30',    date: moment('30-05-2015', 'DD-MM-YYYY').toDate() }
       {_id: guid(), name: 'Dimanche 31',  date: moment('31-05-2015', 'DD-MM-YYYY').toDate() }
     ]
-    Meteor.call 'createPlanning', 'Mai 2015', 5, 2015, days
-    Meteor.call 'createPlanning', 'Juin 2015', 6, 2015, []
+    Meteor.call 'createPlanning', 5, 2015, days
+    Meteor.call 'createPlanning', 6, 2015, []
 
     admin = Accounts.createUser
       username: 'Jérémy Frere'
