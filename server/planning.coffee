@@ -195,21 +195,21 @@ Meteor.startup ->
     initializeTasks()
   if !Plannings.findOne(name: 'Mai 2015')
     days = [
-      {_id: guid(), name: 'Vendredi 1er Mai', date: moment('01-05-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Samedi 2 Mai',     date: moment('02-05-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Dimanche 3 Mai',   date: moment('03-05-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Vendredi 8 Mai',   date: moment('08-05-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Samedi 9 Mai',     date: moment('09-05-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Dimanche 10 Mai',  date: moment('10-05-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Vendredi 15 Mai',  date: moment('15-05-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Samedi 16 Mai',    date: moment('16-05-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Dimanche 17 Mai',  date: moment('17-05-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Vendredi 22 Mai',  date: moment('22-05-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Samedi 23 Mai',    date: moment('23-05-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Dimanche 24 Mai',  date: moment('24-05-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Vendredi 29 Mai',  date: moment('29-05-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Samedi 30 Mai',    date: moment('30-05-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Dimanche 31 Mai',  date: moment('31-05-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Vendredi 1er', date: moment('01-05-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Samedi 2',     date: moment('02-05-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Dimanche 3',   date: moment('03-05-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Vendredi 8',   date: moment('08-05-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Samedi 9',     date: moment('09-05-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Dimanche 10',  date: moment('10-05-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Vendredi 15',  date: moment('15-05-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Samedi 16',    date: moment('16-05-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Dimanche 17',  date: moment('17-05-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Vendredi 22',  date: moment('22-05-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Samedi 23',    date: moment('23-05-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Dimanche 24',  date: moment('24-05-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Vendredi 29',  date: moment('29-05-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Samedi 30',    date: moment('30-05-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Dimanche 31',  date: moment('31-05-2015', 'DD-MM-YYYY').toDate() }
     ]
     Meteor.call 'createPlanning', 'Mai 2015', 5, 2015, days
     Meteor.call 'createPlanning', 'Juin 2015', 6, 2015, []
