@@ -125,7 +125,7 @@ Meteor.methods
         to: person.emails[0].address
         from: 'Planning 24 <no-reply@planning-24.meteor.com>'
         subject: "Vos disponilités pour #{month}"
-        html: 'Bonjour ' + person.profile.firstname + ',<br /><br />' +
+        html: "Bonjour #{person.profile.firstname},<br /><br />" +
               "Pouvez-vous nous indiquer vos disponibilités pour #{month} ?.<br /><br />" +
               "<a href='#{Meteor.absoluteUrl('planning/' + planning.slug)}'>Pour ce faire cliquez-ici</a><br /><br />" +
               'Merci !'
