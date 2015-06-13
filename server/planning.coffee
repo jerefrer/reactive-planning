@@ -43,21 +43,8 @@ markDutyAsSent = (planning, day, task, person) ->
   set["#{dutyKey}.$.emailSent"] = true
   Plannings.update condition, $set: set
 
-initializeTasks = ->
-  ['Banque alimentaire',
-   'Médiateur, responsable d\'équipe' ,
-   'Chercher pain'
-   'Ramasse Carrefour Market',
-   'Préparer soupe',
-   'Amener soupe',
-   'Camion',
-   'Chargement',
-   'Accueil & Distribution',
-   'Fourniture comptoir',
-   'Servir café & soupe',
-   'Déchargement & Vaisselle local',
-   'Suppléants'].each (name) ->
-    Tasks.insert name: name
+emailIsFake: (email) ->
+  /@fakemail\.com\z/.test(email)
 
 Meteor.methods
   createPlanning: (month, year, days) ->
@@ -121,29 +108,33 @@ Meteor.methods
     planning = Plannings.findOne(_id: planningId)
     month = planning.name
     Meteor.users.find().fetch().each (person) ->
-      mailgun().send
-        to: person.emails[0].address
-        from: 'Planning 24 <no-reply@planning-24.meteor.com>'
-        subject: "Vos disponilités pour #{month}"
-        html: "Bonjour #{person.profile.firstname},<br /><br />" +
-              "Pouvez-vous nous indiquer vos disponibilités pour #{month} ?.<br /><br />" +
-              "<a href='#{Meteor.absoluteUrl('planning/' + planning.slug)}'>Pour ce faire cliquez-ici</a><br /><br />" +
-              'Merci !'
+      email = person.emails[0].adress
+      unless emailIsFake(email)
+        mailgun().send
+          to: person.emails[0].address
+          from: 'Planning 24 <no-reply@planning-24.meteor.com>'
+          subject: "Vos disponilités pour #{month}"
+          html: "Bonjour #{person.profile.firstname},<br /><br />" +
+                "Pouvez-vous nous indiquer vos disponibilités pour #{month} ?.<br /><br />" +
+                "<a href='#{Meteor.absoluteUrl('planning/' + planning.slug)}'>Pour ce faire cliquez-ici</a><br /><br />" +
+                'Merci !'
     Plannings.update planningId, $set: { availabilityEmailSent: true }
   sendPresenceEmailNotifications: (planningId) ->
     @unblock()
     dutiesByPerson planningId, (planning, duties, person) ->
-      result = mailgun().send
-        to: person.emails[0].address
-        from: 'Planning 24 <no-reply@planning-24.meteor.com>'
-        subject: "Confirmation des dates pour le planning de #{planning.name}"
-        html: "Bonjour #{person.profile.firstname},<br /><br />" +
-              "Vous avez été désigné(e) pour une ou plusieurs tâches au planning de #{planning.name}<br /><br />" +
-              "<a href='#{Meteor.absoluteUrl('planning/' + planning.slug)}'>Cliquez-ici pour confirmer votre présence</a><br /><br />" +
-              'Merci !'
-      unless result.error
-        duties.each (duty) ->
-          markDutyAsSent(planning, duty.day, duty.task, person)
+      email = person.emails[0].adress
+      unless emailIsFake(email)
+        result = mailgun().send
+          to: person.emails[0].address
+          from: 'Planning 24 <no-reply@planning-24.meteor.com>'
+          subject: "Confirmation des dates pour le planning de #{planning.name}"
+          html: "Bonjour #{person.profile.firstname},<br /><br />" +
+                "Vous avez été désigné(e) pour une ou plusieurs tâches au planning de #{planning.name}<br /><br />" +
+                "<a href='#{Meteor.absoluteUrl('planning/' + planning.slug)}'>Cliquez-ici pour confirmer votre présence</a><br /><br />" +
+                'Merci !'
+        unless result.error
+          duties.each (duty) ->
+            markDutyAsSent(planning, duty.day, duty.task, person)
   answerNotification: (planningSlug, dayId, taskId, personId, confirmation) ->
     planning = Plannings.findOne(slug: planningSlug)
     duties = planning.duties
@@ -189,47 +180,6 @@ Meteor.methods
         set.peopleWhoAnswered = peopleWhoAnswered
     set['presences.' + dayId] = people
     Plannings.update planning._id, $set: set
-
-Meteor.startup ->
-  if Tasks.find().fetch().length == 0
-    initializeTasks()
-  if !Plannings.findOne(name: 'Mai 2015')
-    days = [
-      {_id: guid(), name: 'Vendredi 1er', date: moment('01-05-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Samedi 2',     date: moment('02-05-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Dimanche 3',   date: moment('03-05-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Vendredi 8',   date: moment('08-05-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Samedi 9',     date: moment('09-05-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Dimanche 10',  date: moment('10-05-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Vendredi 15',  date: moment('15-05-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Samedi 16',    date: moment('16-05-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Dimanche 17',  date: moment('17-05-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Vendredi 22',  date: moment('22-05-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Samedi 23',    date: moment('23-05-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Dimanche 24',  date: moment('24-05-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Vendredi 29',  date: moment('29-05-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Samedi 30',    date: moment('30-05-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Dimanche 31',  date: moment('31-05-2015', 'DD-MM-YYYY').toDate() }
-    ]
-    Meteor.call 'createPlanning', 5, 2015, days
-    Meteor.call 'createPlanning', 6, 2015, []
-
-    admin = Accounts.createUser
-      username: 'Jérémy Frere'
-      email: 'frere.jeremy@gmail.com'
-      password: 'canada'
-      profile:
-        firstname: 'Jérémy'
-    Roles.addUsersToRoles(admin, ["admin"]);
-    Meteor.users.update({username: 'Jérémy Frere'}, $set: {passwordEmailSent: true})
-
-    Accounts.createUser
-      username: 'Anne Benson'
-      email: 'tatamonique@gmail.com'
-      password: 'canada'
-      profile:
-        firstname: 'Anne'
-    Meteor.users.update({username: 'Anne Benson'}, $set: {passwordEmailSent: true})
 
 Meteor.publish 'users', ->
   Meteor.users.find()
