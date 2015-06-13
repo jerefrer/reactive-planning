@@ -68,7 +68,7 @@ ScheduleLine = React.createClass
   render: ->
     cells = @props.tasks.map (task) =>
       <ScheduleCell planning={@props.planning} day={@props.day} task={task} duties={@props.duties} presences={@props.presences} people={@props.people} onlyMe={@props.onlyMe} />
-    <tr>
+    <tr className="day-no-#{moment(@props.day.date).format('e')}">
       <th><DayName planningId={@props.planningId} day={@props.day} /></th>
       {cells}
     </tr>
