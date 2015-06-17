@@ -2,11 +2,32 @@ td
   .fa
     font-size: 30px
 
-.userPresence, .usersPresence
-  td
-    &:hover
-      cursor pointer
-      background: lightGray !important
+.fc-day-header
+  height: 50px
+  text-transform: capitalize
+
+.fc-day
+  background: #fafafa
+
+.fc-day-number
+  position: relative
+  z-index: 2
+
+.fc-event
+  position: relative
+  margin: -24px 0 -10px 0
+  padding: 28px
+  text-align: center
+  background: white
+  border: none
+  border-radius: 0
+  z-index: 1
+  &:hover
+    background: #1B9AD2
+    .fa
+      color: white
+  .fa
+    font-size: 40px
 
 .userPresence
   table

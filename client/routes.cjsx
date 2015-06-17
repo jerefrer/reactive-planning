@@ -70,15 +70,9 @@ Router.route 'UserPresence',
   path: '/planning/:slug/presences'
   waitOn: ->
     Meteor.subscribe 'plannings'
-  action: ->
-    planning = Plannings.findOne(slug: @params.slug)
-    @render 'Planning', planning: planning
-    setTimeout (->
-      React.render(
-        <UserPresence planning={planning} />,
-        document.getElementById('planning')
-      )
-    ), 100
+  data: ->
+    planning: Plannings.findOne(slug: @params.slug)
+    slug: @params.slug
 
 Router.route 'UsersPresence',
   path: '/planning/:slug/admin/presences'

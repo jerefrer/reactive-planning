@@ -23,24 +23,21 @@ Meteor.startup ->
 
   if Meteor.users.find().fetch().length == 0
     days = [
-      {_id: guid(), name: 'Vendredi 1er', date: moment('01-05-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Samedi 2',     date: moment('02-05-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Dimanche 3',   date: moment('03-05-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Vendredi 8',   date: moment('08-05-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Samedi 9',     date: moment('09-05-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Dimanche 10',  date: moment('10-05-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Vendredi 15',  date: moment('15-05-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Samedi 16',    date: moment('16-05-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Dimanche 17',  date: moment('17-05-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Vendredi 22',  date: moment('22-05-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Samedi 23',    date: moment('23-05-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Dimanche 24',  date: moment('24-05-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Vendredi 29',  date: moment('29-05-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Samedi 30',    date: moment('30-05-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Dimanche 31',  date: moment('31-05-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Vendredi 3',  date: moment('03-07-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Samedi 4',    date: moment('04-07-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Dimanche 5',  date: moment('05-07-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Vendredi 10', date: moment('10-07-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Samedi 11',   date: moment('11-07-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Dimanche 12', date: moment('12-07-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Vendredi 17', date: moment('17-07-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Samedi 18',   date: moment('18-07-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Dimanche 19', date: moment('19-07-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Vendredi 24', date: moment('24-07-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Samedi 25',   date: moment('25-07-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Dimanche 26', date: moment('26-07-2015', 'DD-MM-YYYY').toDate() }
     ]
-    Meteor.call 'createPlanning', 5, 2015, days
-    Meteor.call 'createPlanning', 6, 2015, []
+    Meteor.call 'createPlanning', 6, 2015, days
+    Meteor.call 'createPlanning', 7, 2015, []
 
     csv_text = Assets.getText('export_benevoles.csv')
     Papa.parse csv_text,
