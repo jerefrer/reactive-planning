@@ -1,11 +1,8 @@
 @Home = React.createClass
   render: ->
     plannings = @props.plannings.map (planning) ->
-      <div>
-        <Planning planning={planning} />
-        <hr />
-      </div>
-    <div>
+      <Planning planning={planning} />
+    <div className="dashboard">
       {plannings}
     </div>
 
@@ -16,38 +13,26 @@ Planning = React.createClass
       duties[dayTaskKey].findAll (duty) ->
         duty._id == Meteor.userId()
     ).flatten()
+  userProvidedHisAvailabilities: ->
+    @props.planning.peopleWhoAnswered.indexOf(Meteor.userId()) >= 0
+  render: ->
+    userDuties = @userDuties()
+    numberOfDuties = userDuties.length
+    userProvidedHisAvailabilities = @userProvidedHisAvailabilities()
+    if @props.planning.availabilityEmailSent
+      if userProvidedHisAvailabilities or numberOfDuties > 0
+        <DutiesCount planning={@props.planning} userDuties={userDuties} numberOfDuties={numberOfDuties} />
+      else
+        <AskForAvailabilities planning={@props.planning} />
+    else
+      <NotReady planning={@props.planning} />
+
+DutiesCount = React.createClass
+  goToAvailabilitiesPage: ->
+    window.location = "/planning/#{@props.planning.slug}/presences"
   numberOfDutiesToAnswerTo: (duties) ->
     duties.count (duty) ->
       duty.confirmation == undefined
-  userProvidedHisAvailabilities: ->
-    @props.planning.peopleWhoAnswered.indexOf(Meteor.userId()) >= 0
-  colorClass: (numberOfDutiesToAnswerTo) ->
-    if @props.planning.availabilityEmailSent
-      if not @userProvidedHisAvailabilities() or numberOfDutiesToAnswerTo > 0
-        'danger'
-      else
-        'success'
-    else
-      'warning'
-  render: ->
-    userDuties = @userDuties()
-    numberOfDutiesToAnswerTo = @numberOfDutiesToAnswerTo(userDuties)
-    colorClass = @colorClass(numberOfDutiesToAnswerTo)
-    <div className="row">
-      <div className="col-md-4" onClick={@openPlanning}>
-        <div className="background bg-#{colorClass} text-#{colorClass}">
-          <div className="content">{@props.planning.name}</div>
-        </div>
-      </div>
-      <div className="col-md-5">
-        <Status planning={@props.planning} userProvidedHisAvailabilities={@userProvidedHisAvailabilities()} numberOfDuties={userDuties.length} numberOfDutiesToAnswerTo={numberOfDutiesToAnswerTo}/>
-      </div>
-      <div className="col-md-3">
-        <Links planning={@props.planning} userProvidedHisAvailabilities={@userProvidedHisAvailabilities()} numberOfDuties={userDuties.length} />
-      </div>
-    </div>
-
-Status = React.createClass
   nextDuty: ->
     duties = @props.planning.duties
     day = @props.planning.days.find (day) ->
@@ -56,46 +41,87 @@ Status = React.createClass
     day and day.name
   render: ->
     lines = []
-    if @props.planning.availabilityEmailSent
-      nextDuty = @nextDuty()
-      numberOfDutiesToAnswerTo = @props.numberOfDutiesToAnswerTo
-      lines.push(<StatusLine  danger=true message="Vous n'avez pas encore indiqué vos disponilités" />) unless @props.userProvidedHisAvailabilities or @props.numberOfDuties > 0
-      if numberOfDutiesToAnswerTo > 0
-        lines.push(<StatusLine  danger=true message="Vous avez #{numberOfDutiesToAnswerTo} demande#{numberOfDutiesToAnswerTo > 1 && 's' || ''} en attente" />)
-      else if @props.userProvidedHisAvailabilities or @props.numberOfDuties > 0
-        message = <span>Vous avez été choisi <strong>{@props.numberOfDuties}</strong> fois</span>
-        lines.push(<StatusLine message={message} />)
-      if nextDuty
-        message = <span>Prochain rendez-vous : <strong>{nextDuty}</strong></span>
-        lines.push(<StatusLine message={message} />)
+    slug = @props.planning.slug
+    nextDuty = @nextDuty()
+    numberOfDutiesToAnswerTo = @numberOfDutiesToAnswerTo(@props.userDuties)
+    if numberOfDutiesToAnswerTo > 0
+      barColor = 'yellow'
+      lines.push(
+        <div className="status alerte">
+          <i className="fa fa-exclamation-circle" />
+          <span>
+            Vous avez
+            <strong> {"#{numberOfDutiesToAnswerTo} demande#{numberOfDutiesToAnswerTo > 1 && 's' || ''} en attente"} </strong>
+          </span>
+        </div>
+      )
     else
-      lines.push(<StatusLine warning=true message="Ce planning est toujours en cours d'élaboration" />)
-    <div className="content status">
-      <ul>{lines}</ul>
+      barColor = 'green'
+      lines.push(<span><span className="count">{@props.numberOfDuties}</span> rendez-vous</span>)
+      if nextDuty
+        lines.push(<span> – Le prochain <strong>{nextDuty}</strong></span>)
+    <div className="planning">
+      <StatusBar color={barColor} />
+      <div className="content">
+        <div className="left">
+          <div className="name">{@props.planning.name}</div>
+          <div className="status">{lines}</div>
+        </div>
+        <div className="links">
+          <a className="half-link" href={"/planning/#{slug}"}>
+            Voir le planning
+            <i className="fa fa-chevron-right"></i>
+          </a>
+          <a className="half-link bottom" href={"/planning/#{slug}/presences"}>
+            Mes disponibilités
+            <i className="fa fa-chevron-right"></i>
+          </a>
+        </div>
+      </div>
     </div>
 
-StatusLine = React.createClass
+AskForAvailabilities = React.createClass
+  goToAvailabilitiesPage: ->
+    window.location = "/planning/#{@props.planning.slug}/presences"
   render: ->
-    className = null
-    className = 'text-danger'  if @props.danger
-    className = 'text-warning' if @props.warning
-    <li className={className}>
-      {<i className="fa fa-warning" /> if @props.danger or @props.warning}
-      {@props.message}
-    </li>
-
-Links = React.createClass
-  render: ->
-    links = []
-    links.push(<Link text="Voir le planning" url="/planning/#{@props.planning.slug}" />) if @props.userProvidedHisAvailabilities or @props.numberOfDuties > 0
-    links.push(<Link text="Indiquer mes disponilités" url="/planning/#{@props.planning.slug}/presences" />) if @props.planning.availabilityEmailSent
-    <div className="content links">
-      {links}
+    <div className="planning hoverable" onClick={@goToAvailabilitiesPage}>
+      <StatusBar color='yellow' />
+      <div className="content">
+        <div className="left">
+          <div className="name">{@props.planning.name}</div>
+          <div className="status alerte">
+            <i className="fa fa-exclamation-circle" />
+            <span>
+              {"Vous n'avez pas encore indiqué"}
+              <strong> vos disponilités</strong>
+            </span>
+          </div>
+        </div>
+        <div className="links">
+          <a className="single-link">
+            <i className="fa fa-chevron-right"></i>
+          </a>
+        </div>
+      </div>
     </div>
 
-Link = React.createClass
+NotReady = React.createClass
   render: ->
-    <a href={@props.url} className="link-with-arrow">
-      {@props.text}
-      <i className="fa fa-chevron-right" />
-    </a>
+    <div className="planning">
+      <StatusBar color='yellow' />
+      <div className="content">
+        <div className="left">
+          <div className="name">{@props.planning.name}</div>
+          <div className="status">
+            <i className="fa fa-exclamation-circle" />
+            {"Toujours en cours d'élaboration"}
+          </div>
+        </div>
+      </div>
+    </div>
+
+StatusBar = React.createClass
+  render: ->
+    className = "status-bar "
+    className += @props.color
+    <div className={className}></div>

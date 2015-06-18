@@ -1,0 +1,79 @@
+.dashboard
+  .planning
+    position: relative
+    margin-bottom: 35px
+    border-radius: 8px
+    background-color: white
+    box-shadow: 0px 0px 4px gray
+    transition: all 0.3s ease-in-out
+    &.hoverable:hover
+      cursor: pointer
+      background-color: #fafafa
+    .status-bar
+      position: relative
+      top: 0
+      left: 0
+      right: 0
+      height: 10px
+      border-top-left-radius: 8px
+      border-top-right-radius: 8px
+      &.green
+        background-color: #2CB87B
+      &.yellow
+        background-color: #FFA654
+      &.red
+        background-color: #D30909
+    .content
+      height: 118px
+      .left
+        padding: 15px 15px 15px 30px
+        .name
+          font-size: 20px
+          font-weight: bold
+          color: gray
+          text-transform: uppercase
+        .status
+          font-size: 30px
+          color: #444
+          &.alerte
+            margin-top: 10px
+            .fa, >span
+              vertical-align: middle
+            .fa
+              color: #EC8C36
+          .count
+            font-size: 40px
+            font-weight: bold
+            color: #444444
+          .fa
+            margin-right: 15px
+            font-size: 40px
+      .links
+        position: absolute
+        top: 10px
+        right: 0
+        height: 118px
+        a
+          display: block
+          color: #878787
+          &.single-link
+            padding-right: 20px
+            font-size: 30px
+            line-height: 118px
+          &.half-link
+            padding: 0 20px
+            font-size: 25px
+            line-height: 58px
+            border-left: 1px solid lightGray
+            transition: all 0.3s ease-in-out
+            &:hover
+              background-color: #fafafa
+              text-decoration: none
+            span
+              display: inline-block
+              width: 210px
+            .fa
+              margin-left: 10px
+              vertical-align: middle
+            &:first-child
+              border-bottom: 1px solid lightGray
