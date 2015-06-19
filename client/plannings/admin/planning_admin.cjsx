@@ -200,10 +200,8 @@ Person = React.createClass
     person = @getPerson()
     if person
       confirmation = @props.person.confirmation
-      className = 'person alert '
-      if confirmation == undefined
-        className += 'neutral background-fade'
-      else if confirmation == true
+      className = 'person '
+      if confirmation == true
         className += 'good background-fade '
         className += 'hvr-wobble-vertical' if @state.wobble
       else if confirmation == false

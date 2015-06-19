@@ -105,12 +105,6 @@ ScheduleCell = React.createClass
     <td>{people}</td>
 
 Person = React.createClass
-  getInitialState: ->
-    { wobble: false }
-  componentWillReceiveProps: (nextProps) ->
-    if nextProps.person.confirmation != @props.person.confirmation
-      @setState
-        wobble: nextProps.person.confirmation != undefined
   getPerson: ->
     Meteor.users.findOne _id: @props.person._id
   randomWidth: ->
@@ -122,16 +116,12 @@ Person = React.createClass
   render: ->
     person = @getPerson()
     confirmation = @props.person.confirmation
-    className = 'person alert '
+    className = 'person '
     if @props.isCurrentUser
-      if confirmation == undefined
-        className += 'neutral background-fade'
-      else if confirmation == true
-        className += 'good background-fade '
-        className += 'hvr-wobble-vertical' if @state.wobble
+      if confirmation == true
+        className += 'text-success'
       else if confirmation == false
-        className += 'bad  background-fade '
-        className += 'hvr-wobble-horizontal' if @state.wobble
+        className += 'text-danger'
     else
       className += 'neutral background-fade'
     buttons = if @props.isCurrentUser

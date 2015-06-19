@@ -41,21 +41,44 @@ form
 
 .person
   text-align: center
-  margin-bottom: 5px
   padding: 5px
 
 #schedule
+  thead
+    th
+      min-width: 100px
+      padding: 15px 5px
+      font-weight: bold
+      text-transform: uppercase
+      background: white
+      border-bottom: 2px solid #1A9BD2
+  tbody
+    th
+      width: 110px
+      height: 100px
+      font-weight: bold
+      text-transform: uppercase
+    th, td
+      border-bottom: 1px solid #1A9BD2
+    td
+      vertical-align: middle
   .person
     width: 100%
+    font-size: 16px
+    font-weight: 500
+    white-space: nowrap
     img
       display: block
       margin: 0 auto
     .mail-to-be-sent
-      display: block
+      display: inline-block
+      margin-left: 10px
       font-size: 20px
+      vertical-align: top
     .buttons
-      margin-top: 5px
-      white-space: nowrap
+      display: inline-block
+      margin-left: 10px
+      vertical-align: middle
       .accept-duty, .reject-duty
         width: 28px
         padding: 2px
@@ -76,18 +99,10 @@ form
         color: white
 
 .person
-  &.neutral
-    color: #31708f
-    background-color: #d9edf7
-    border-color: #bce8f1
   &.bad
     color: #a94442
-    background-color: #f2dede
-    border-color: #ebccd1
   &.good
     color: #3c763d
-    background: #dff0d8
-    border-color: #d6e9c6
 
 .same-height-columns
   display: flex
