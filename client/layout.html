@@ -24,16 +24,16 @@
         </button>
         <a class="navbar-brand" href="/">
           <img src="/logo-maison-24.png" alt="Logo Maison 24">
-          Plannings Maison 24
+          <span class="hvr-underline-from-center">Plannings Maison 24</span>
         </a>
       </div>
 
       <div class="collapse navbar-collapse" id="menu-collapse">
-        <ul class="nav navbar-nav">
+        <ul class="nav navbar-nav menu">
           {{#if currentUser}}
             {{#if isInRole 'admin'}}
-              <li><a href="/plannings">Plannings</a></li>
-              <li><a href="/users">Bénévoles</a></li>
+              <li><a href="/plannings"><span class="hvr-underline-from-center">Plannings</span></a></li>
+              <li><a href="/users">    <span class="hvr-underline-from-center">Bénévoles</span></a></li>
             {{/if}}
           {{/if}}
         </ul>
