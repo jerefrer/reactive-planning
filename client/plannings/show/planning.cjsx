@@ -141,7 +141,7 @@ Person = React.createClass
       </div>
     if person
       <div className={className}>
-        {person.username}
+        {displayName(person)}
         {buttons}
       </div>
     else

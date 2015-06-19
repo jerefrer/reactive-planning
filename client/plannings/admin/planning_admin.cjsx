@@ -210,7 +210,7 @@ Person = React.createClass
         className += 'bad  background-fade '
         className += 'hvr-wobble-horizontal' if @state.wobble
       <div className={className} onDoubleClick={@cycleStatus} >
-        {person.username}
+        {displayName(person)}
         {<i className="mail-to-be-sent fa fa-envelope" /> if @props.mailStatus and not @props.person.emailSent}
       </div>
     else

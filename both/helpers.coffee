@@ -17,3 +17,11 @@
 
 @isAdmin = ->
   Roles.userIsInRole(Meteor.user(), 'admin')
+
+@displayName = (user) ->
+  if user.profile.firstname and user.profile.lastname
+    "#{user.profile.firstname.capitalize()} #{user.profile.lastname[0].toUpperCase()}."
+  else if user.profile.firstname
+    user.profile.firstname.capitalize()
+  else if user.profile.lastname
+    user.profile.lastname.capitalize()
