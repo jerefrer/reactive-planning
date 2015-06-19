@@ -1,11 +1,23 @@
+$bleu-maison24 = #1A9BD2
+
 body
-   background: url('beige_paper.png')
+  font-family: 'Roboto', sans-serif
+  background: url('beige_paper.png')
 
 .container
   position relative
 
 .navbar
+  background-color: white
+  border: none
+  box-shadow: 0 0 3px gray
+  border-top-right-radius: 0
+  border-top-left-radius: 0
   .navbar-brand
+    color: $bleu-maison24
+    font-weight: 500
+    &:hover
+      color: $bleu-maison24
     img
       display inline-block
       position relative
@@ -49,3 +61,6 @@ table.table-bordered
   th, td
     &:last-child
       border-right-width: 1px
+
+.btn-primary
+  background-color: $bleu-maison24
