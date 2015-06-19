@@ -2,7 +2,7 @@ moment.locale('fr')
 
 SoundsToPlay = new (Meteor.Collection)('sounds_to_play')
 
-dutiesByPerson = (planningId, callback) ->
+foreachDutiesByPerson = (planningId, callback) ->
   planning = Plannings.findOne(_id: planningId)
   dutiesByPerson = {}
   Object.keys(planning.duties).each (key) ->
@@ -121,7 +121,7 @@ Meteor.methods
     Plannings.update planningId, $set: { availabilityEmailSent: true }
   sendPresenceEmailNotifications: (planningId) ->
     @unblock()
-    dutiesByPerson planningId, (planning, duties, person) ->
+    foreachDutiesByPerson planningId, (planning, duties, person) ->
       email = person.emails[0].adress
       unless emailIsFake(email)
         result = mailgun().send
