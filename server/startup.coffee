@@ -44,18 +44,22 @@ Meteor.startup ->
       header: true
       skipEmptyLines: true
       delimiter: ';'
+      encoding: "UTF-8"
       step: (row) ->
         data = row.data[0]
+        email = data['Email'].split(';')[0].trim()
+        email = null if Meteor.users.find({'emails.address': email}).count() > 0
         Accounts.createUser
-          username: data['Prénom'] + ' ' + data['Nom']
-          email: data['Emails'].split(';')[0] || "#{generatePassword()}@fakemail.com"
+          username: [(data['Prénom'] + '').trim(), (data['Nom'] + '').trim()].join(' ').trim()
+          email: email || "#{generatePassword()}@fakemail.com"
           password: generatePassword()
           profile:
-            firstname: data['Prénom']
-            phone: data['Tél. 1']
-            adresse: data['Adresse']
-            code_postal: data['Code postal']
-            ville: data['Ville']
+            firstname: (data['Prénom'] + '').trim()
+            lastname: (data['Nom'] + '').trim()
+            phone: (data['Tél. 1'] + '').trim()
+            adresse: (data['Adresse'] + '').trim()
+            code_postal: (data['Code postal'] + '').trim()
+            ville: (data['Ville'] + '').trim()
 
     Meteor.users.update {username: 'Jérémy Frère'}, {$set: {username: 'Jérémy Frere', admin: true, passwordEmailSent: true}}
     jeremy = Meteor.users.find({"profile.firstname": "Jérémy"}).fetch()[0];
