@@ -1,4 +1,4 @@
-@Home = React.createClass
+@Dashboard = React.createClass
   render: ->
     plannings = @props.plannings.map (planning) ->
       <Planning planning={planning} />
@@ -112,7 +112,7 @@ NotReady = React.createClass
       <div className="content">
         <div className="left">
           <div className="name">{@props.planning.name}</div>
-          <div className="status">
+          <div className="status alerte">
             <i className="fa fa-exclamation-circle" />
             {"Toujours en cours d'élaboration"}
           </div>

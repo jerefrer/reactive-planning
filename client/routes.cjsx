@@ -10,17 +10,17 @@ Router.configure
   notFoundTemplate: 'NotFound'
 Router.onBeforeAction 'loading'
 
-Router.route 'Home',
+Router.route 'Dashboard',
   path: '/'
   waitOn: ->
     Meteor.subscribe 'plannings'
   action: ->
     plannings = Plannings.find().fetch()
-    @render 'Home'
+    @render 'Dashboard'
     setTimeout (->
       React.render(
-        <Home plannings={plannings} />,
-        document.getElementById('home')
+        <Dashboard plannings={plannings} />,
+        document.getElementById('dashboard')
       )
     ), 100
 
