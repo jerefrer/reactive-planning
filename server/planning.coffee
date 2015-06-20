@@ -132,7 +132,7 @@ Meteor.methods
           heading: "Bonjour #{person.profile.firstname}"
           message: "Vous avez été désigné(e) pour une ou plusieurs tâches au planning de #{planning.name}<br />"+
                    "Merci de nous confirmer si vous pourrez être présent ou non les jours proposés.<br />"+
-                   "Il vous suffit de cliquer au bon endroit : <img src='#{Meteor.absoluteUrl('confirm_presence_demo.png')}' />"
+                   "Il vous suffit de cliquer au bon endroit : <img src='#{Meteor.absoluteUrl('confirm_presence_demo.png')}' style='vertical-align: middle'/>"
           buttonUrl: "#{Meteor.absoluteUrl('planning/' + planning.slug)}"
           buttonText: "Confirmer mes rendez-vous"
         html = PrettyEmail.render 'call-to-action', options
