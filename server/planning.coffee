@@ -30,11 +30,6 @@ eachDuty = (planningId, callback) ->
       person = Meteor.users.findOne(_id: duty._id)
       callback planning, day, task, person
 
-anyEmailToSend = (duties) ->
-  Object.keys(duties).any (dayTaskKey) ->
-    duties[dayTaskKey].any (duty) ->
-      duty.emailSent == undefined
-
 markDutyAsSent = (planning, day, task, person) ->
   dutyKey = 'duties.' + day._id + ',' + task._id
   condition = _id: planning._id
@@ -62,7 +57,6 @@ Meteor.methods
       peopleWhoAnswered: []
       daysFilledIn: false
       availabilityEmailSent: false
-      emailsToSend: false
     slug
   removePlanning: (planningId) ->
     Plannings.remove planningId
@@ -85,7 +79,7 @@ Meteor.methods
     people = duties[day._id + ',' + task._id] || []
     if !people.find(_id: person._id)
       people.push _id: person._id
-      set = { emailsToSend: true, emailsSent: false }
+      set = {}
       set['duties.' + day._id + ',' + task._id] = people
       Plannings.update planning._id, $set: set
   removePerson: (planningId, day, task, person) ->
@@ -93,9 +87,7 @@ Meteor.methods
     duties = planning.duties
     people = duties[day._id + ',' + task._id]
     people.remove _id: person._id
-    emailsToSend = anyEmailToSend(duties)
-    set = { emailsToSend: emailsToSend }
-    set['emailsSent'] = false if emailsToSend
+    set = {}
     set['duties.' + day._id + ',' + task._id] = people
     Plannings.update planning._id, $set: set
   sendAvailabilityEmailNotifications: (planningId) ->

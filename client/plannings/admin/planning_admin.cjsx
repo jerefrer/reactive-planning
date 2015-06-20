@@ -21,8 +21,6 @@ ItemTypes = PERSON: 'person'
       state.tasks = @props.planning.tasks
       state.duties = @props.planning.duties
       state.presences = @props.planning.presences
-      state.emailsToSend = @props.planning.emailsToSend
-      state.emailsSent = @props.planning.emailsSent
       state.peopleWhoAnswered = @props.planning.peopleWhoAnswered
     state
   render: ->
@@ -41,7 +39,7 @@ ItemTypes = PERSON: 'person'
       <h2>
         {@props.planning.name}
         <SendAvailabilityEmailNotificationsButton planning={@props.planning} />
-        <SendPresenceEmailNotificationsButton planningId={@props.planning._id} emailsToSend={@state.emailsToSend} emailsSent={@state.emailsSent} />
+        <SendPresenceEmailNotificationsButton planning={@props.planning} />
         {<div className="pull-right"><SendPlanningCompleteButton planning={@props.planning} /></div>}
       </h2>
       <Schedule planning={@props.planning} tasks={@state.tasks} days={@state.days} duties={@state.duties} presences={@state.presences} people={@state.people} peopleWhoAnswered={@state.peopleWhoAnswered} />
@@ -81,19 +79,26 @@ SendAvailabilityEmailNotificationsButton = React.createClass
 
 SendPresenceEmailNotificationsButton = React.createClass
   getInitialState: ->
-    { sending: false }
+    sending: false
+    showingSuccess: false
+  anyEmailToSend: ->
+    duties = @props.planning.duties
+    Object.keys(duties).any (dayTaskKey) ->
+      duties[dayTaskKey].any (duty) ->
+        duty.emailSent == undefined
   sendPresenceEmailNotifications: (e) ->
     e.preventDefault()
     if confirm("Vous êtes sur le point d'envoyer un email à tout les bénévoles marqués d'une enveloppe pour leur demander de confirmer leur présence.\n\nÊtes-vous sûr ?")
-      if @props.emailsToSend
-        @setState sending: true
-        Meteor.call 'sendPresenceEmailNotifications', @props.planningId, (error, data) =>
-          @setState
-            sending: false
+      @setState sending: true
+      Meteor.call 'sendPresenceEmailNotifications', @props.planning._id, (error, data) =>
+        @setState
+          sending: false
+          showingSuccess: true
+        setTimeout (=> @setState showingSuccess: false), 5000
   render: ->
-    return null unless @props.emailsToSend
+    return null unless @anyEmailToSend() or @state.sending or @state.showingSuccess
     className = "send-emails-button send-confirmation-emails-button btn "
-    if @props.emailsSent
+    if @state.showingSuccess
       inner = <i className="fa fa-check-circle-o" />
       className += 'btn-success with-icon'
       style = width: '50px'
