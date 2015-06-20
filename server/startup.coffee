@@ -61,7 +61,9 @@ Meteor.startup ->
             postal_code: (data['Code postal'] + '').trim()
             city: (data['Ville'] + '').trim()
 
-    Meteor.users.update {username: 'Jérémy Frère'}, {$set: {username: 'Jérémy Frere', admin: true, passwordEmailSent: true}}
-    jeremy = Meteor.users.find({"profile.firstname": "Jérémy"}).fetch()[0];
+    Meteor.users.update {username: 'Jérémy Frère'}, {$set: {username: 'Jérémy Frere', passwordEmailSent: true}}
+    jeremy = Meteor.users.findOne('profile.firstname': 'Jérémy')
     Accounts.setPassword jeremy._id, 'canada', logout: false
-    Roles.addUsersToRoles(jeremy, ["admin"]);
+    Roles.addUsersToRoles jeremy, ['admin']
+    Roles.addUsersToRoles Meteor.users.findOne(username: 'Odile LM24'), ['admin']
+    Roles.addUsersToRoles Meteor.users.findOne(username: 'Palzang'), ['admin']
