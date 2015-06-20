@@ -59,7 +59,7 @@ DutiesCount = React.createClass
       barColor = 'green'
       lines.push(<span><span className="count">{@props.numberOfDuties}</span> rendez-vous</span>)
       if nextDuty
-        lines.push(<span> – Le prochain <strong>{nextDuty}</strong></span>)
+        lines.push(<span> – Le prochain est <strong>{nextDuty}</strong></span>)
     <div className="planning">
       <StatusBar color={barColor} />
       <div className="content">
