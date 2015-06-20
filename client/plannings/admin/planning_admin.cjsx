@@ -297,6 +297,8 @@ AddPersonModal = React.createClass
     </ReactBootstrap.Modal>
 
 PeopleList = React.createClass
+  getInitialState: ->
+    people: @props.people.sortBy('username')
   filterBySearchTerm: (term) ->
     @setState people: @props.people.findAll (user) ->
       getSlug(user.username).fuzzy getSlug(term)
@@ -323,8 +325,7 @@ PeopleList = React.createClass
   removePerson: (person) ->
     Meteor.call 'removePerson', @props.planningId, @props.day, @props.task, person
   render: ->
-    people = if @state then @state.people else @props.people
-    # Hack, seems that getInitialState gets called the first time when everything is empty, and not the second time when it's filled
+    people = @state.people
     availablePeople = @availablePeople(people)
     peopleWhoDidNotAnswer = @peopleWhoDidNotAnswer(people)
     unavailablePeople = @unavailablePeople(people, availablePeople, peopleWhoDidNotAnswer)
