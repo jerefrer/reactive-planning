@@ -53,12 +53,13 @@ SendAvailabilityEmailNotificationsButton = React.createClass
     showingSuccess: false
   sendAvailabilityEmailNotifications: (e) ->
     e.preventDefault()
-    @setState sending: true
-    Meteor.call 'sendAvailabilityEmailNotifications', @props.planning._id, (error, data) =>
-      @setState
-        sending: false
-        showingSuccess: true
-      setTimeout (=> @setState showingSuccess: false), 5000
+    if confirm("Vous êtes sur le point d'envoyer un email à TOUS les bénévoles pour leur demander leur disponibilités.\n\nÊtes-vous sûr ?")
+      @setState sending: true
+      Meteor.call 'sendAvailabilityEmailNotifications', @props.planning._id, (error, data) =>
+        @setState
+          sending: false
+          showingSuccess: true
+        setTimeout (=> @setState showingSuccess: false), 5000
   render: ->
     return null unless (not @props.planning.availabilityEmailSent) or @state.sending or @state.showingSuccess
     className = "send-emails-button send-availability-emails-button btn "
@@ -83,11 +84,12 @@ SendPresenceEmailNotificationsButton = React.createClass
     { sending: false }
   sendPresenceEmailNotifications: (e) ->
     e.preventDefault()
-    if @props.emailsToSend
-      @setState sending: true
-      Meteor.call 'sendPresenceEmailNotifications', @props.planningId, (error, data) =>
-        @setState
-          sending: false
+    if confirm("Vous êtes sur le point d'envoyer un email à tout les bénévoles marqués d'une enveloppe pour leur demander de confirmer leur présence.\n\nÊtes-vous sûr ?")
+      if @props.emailsToSend
+        @setState sending: true
+        Meteor.call 'sendPresenceEmailNotifications', @props.planningId, (error, data) =>
+          @setState
+            sending: false
   render: ->
     return null unless @props.emailsToSend
     className = "send-emails-button send-confirmation-emails-button btn "
