@@ -109,9 +109,11 @@ Meteor.methods
       unless emailIsFake(email)
         options = _.extend {},
           heading: "Bonjour #{person.profile.firstname}"
-          message: "Pouvez-vous nous indiquer vos disponibilités pour #{month} ?"+
-                   "Il vous suffit de cocher les jours où vous êtes disponibes.<br />"+
-                   "<img src='#{Meteor.absoluteUrl('availabilities_demo.png')}' /><br /><br />"
+          message: "Pouvez-vous nous indiquer vos disponibilités pour #{month} ?" +
+                   "Il vous suffit de cocher les jours où vous êtes disponibes.<br />" +
+                   '<div style="text-align: center">' +
+                     "<img src='#{Meteor.absoluteUrl('availabilities_demo.png')}' />" +
+                   '</div>'
           buttonUrl: "#{Meteor.absoluteUrl('planning/' + planning.slug + '/presences')}"
           buttonText: "Indiquer mes disponibilités"
         html = PrettyEmail.render 'call-to-action', options
@@ -137,7 +139,7 @@ Meteor.methods
         result = mailgun().send
           to: person.emails[0].address
           from: 'Planning 24 <no-reply@planning-24.meteor.com>'
-          subject: "Confirmation des dates pour le planning de #{planning.name} 2"
+          subject: "Confirmation des dates pour le planning de #{planning.name}"
           html: html
         unless result.error
           duties.each (duty) ->
