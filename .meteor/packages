@@ -36,3 +36,5 @@ ecwyne:nexmo-sms
 harrison:papa-parse
 rzymek:fullcalendar
 yogiben:pretty-email
+miktam:loggly
+pauldowman:dotenv
