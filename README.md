@@ -24,6 +24,8 @@ SMS à chacun des participants la veille de chaque jour de distribution.
 
 #### Nice to have
 
+* Permettre de se connecter soit avec l'email soit avec le username
+* Ignorer la casse dans le username au login
 * Débugger le "Modifier les rôles" et utiliser les rôles définis pour ordonner les personnes dans la modal d'ajout d'une tâche
 * Envoyer les emails dans un background job : https://github.com/vsivsi/meteor-job-collection
 * Faire que les Days soient vraiment des dates et non des strings pour pouvoir faire des choses en fonction de leur date et heure
