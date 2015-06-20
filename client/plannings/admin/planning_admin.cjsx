@@ -42,6 +42,7 @@ ItemTypes = PERSON: 'person'
         {@props.planning.name}
         <SendAvailabilityEmailNotificationsButton planning={@props.planning} />
         <SendPresenceEmailNotificationsButton planningId={@props.planning._id} emailsToSend={@state.emailsToSend} emailsSent={@state.emailsSent} />
+        {<div className="pull-right"><SendPlanningCompleteButton planning={@props.planning} /></div>}
       </h2>
       <Schedule planning={@props.planning} tasks={@state.tasks} days={@state.days} duties={@state.duties} presences={@state.presences} people={@state.people} peopleWhoAnswered={@state.peopleWhoAnswered} />
     </div>
@@ -104,6 +105,35 @@ SendPresenceEmailNotificationsButton = React.createClass
     <span>
       {' - '}
       <button className={className} style={style} onClick={@sendPresenceEmailNotifications}>{inner}</button>
+    </span>
+
+SendPlanningCompleteButton = React.createClass
+  getInitialState: ->
+    { sending: false }
+  sendPlanningCompleteEmail: (e) ->
+    e.preventDefault()
+    if confirm("Vous êtes sur le point d'envoyer un email à tout les bénévoles présents au planning pour les avertir que le planning est disponible.\n\nÊtes-vous sûr ?")
+      @setState sending: true
+      Meteor.call 'sendPlanningCompleteEmail', @props.planning._id, (error, data) =>
+        @setState
+          sending: false
+          showingSuccess: true
+        setTimeout (=> @setState showingSuccess: false), 5000
+  render: ->
+    return null unless (not @props.planning.complete) or @state.sending or @state.showingSuccess
+    className = "send-emails-button send-planning-complete-button btn btn-success "
+    if @state.showingSuccess
+      inner = <i className="fa fa-check-circle-o" />
+      className += 'with-icon'
+      style = width: '50px'
+    else if @state.sending
+      inner = <i className="fa fa-spinner fa-spin" />
+      className += 'with-icon'
+      style = width: '50px'
+    else
+      inner = <span><i className="fa fa-thumbs-up" />Valider le planning et avertir tout le monde</span>
+    <span>
+      <button className={className} style={style} onClick={@sendPlanningCompleteEmail}>{inner}</button>
     </span>
 
 Schedule = React.createClass

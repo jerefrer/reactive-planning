@@ -142,6 +142,26 @@ Meteor.methods
         unless result.error
           duties.each (duty) ->
             markDutyAsSent(planning, duty.day, duty.task, person)
+  sendPlanningCompleteEmail: (planningId) ->
+    @unblock()
+    planning = Plannings.findOne(_id: planningId)
+    month = planning.name
+    foreachDutiesByPerson planningId, (planning, duties, person) ->
+      email = person.emails[0].address
+      unless emailIsFake(email)
+        options = _.extend {},
+          heading: "Bonjour #{person.profile.firstname}"
+          headingSmall: "Le planning de #{month} est disponible"
+          message: "Et vous avez #{duties.length} rendez-vous de prévus."
+          buttonUrl: Meteor.absoluteUrl("planning/#{planning.slug}")
+          buttonText: "Voir le planning"
+        html = PrettyEmail.render 'call-to-action', options
+        mailgun().send
+          to: email
+          from: 'Planning 24 <no-reply@planning-24.meteor.com>'
+          subject: "Le planning de #{month} est disponible"
+          html: html
+    Plannings.update planningId, $set: { complete: true }
   answerNotification: (planningSlug, dayId, taskId, personId, confirmation) ->
     planning = Plannings.findOne(slug: planningSlug)
     duties = planning.duties

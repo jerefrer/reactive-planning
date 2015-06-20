@@ -20,7 +20,7 @@
     @setState onlyMe: value
   render: ->
     <div>
-      <div className="pull-right"><PersonFilter setOnlyMe={@setOnlyMe} onlyMe={@state.onlyMe} /></div>
+      {<div className="pull-right"><PersonFilter setOnlyMe={@setOnlyMe} onlyMe={@state.onlyMe} /></div> if @props.planning.completed}
       <h2>{@props.planning.name}</h2>
       <Schedule planning={@props.planning} tasks={@state.tasks} days={@state.days} duties={@state.duties} onlyMe={@state.onlyMe} />
     </div>
@@ -97,7 +97,7 @@ ScheduleCell = React.createClass
   render: ->
     peopleList = @props.duties[k(@props.day) + ',' + k(@props.task)]
     if peopleList
-      peopleList = peopleList.findAll (person) => person.confirmation == true or @isCurrentUser(person)
+      peopleList = peopleList.findAll (person) => @isCurrentUser(person) or @props.planning.completed
       if @props.onlyMe
         peopleList = peopleList.findAll (person) => @isCurrentUser(person)
       people = peopleList.map (person) =>
