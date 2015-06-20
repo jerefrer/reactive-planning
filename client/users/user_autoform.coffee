@@ -4,21 +4,37 @@ Schemas.UserProfile = new SimpleSchema
   firstname:
     type: String
     label: 'Prénom'
+  lastname:
+    type: String
+    label: 'Nom'
+    optional: true
   phone:
     type: String
     label: 'Téléphone'
     optional: true
+  address:
+    type: String
+    label: 'Adresse'
+    optional: true
+  postal_code:
+    type: String
+    label: 'Code postal'
+    optional: true
+  city:
+    type: String
+    label: 'Ville'
+    optional: true
 Schemas.User = new SimpleSchema
   username:
     type: String
-    label: 'Nom complet'
+    label: "Nom d'utilisateur"
   emails:
-      type: [Object]
+    type: [Object]
   "emails.$.address":
-      type: String
-      regEx: SimpleSchema.RegEx.Email
-      autoform:
-        label: false
+    type: String
+    regEx: SimpleSchema.RegEx.Email
+    autoform:
+      label: false
   profile:
     type: Schemas.UserProfile
   passwordEmailSent:

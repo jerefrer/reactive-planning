@@ -10,7 +10,11 @@
   {{#autoForm collection="Users" id="userForm" doc=selectedUser type=formType autosave=userIsSelected autosaveOnKeyup=userIsSelected trimStrings=false}}
     {{> afQuickField name='username'}}
     {{> afQuickField name='profile.firstname'}}
+    {{> afQuickField name='profile.lastname'}}
     {{> afQuickField name='profile.phone'}}
+    {{> afQuickField name='profile.address'}}
+    {{> afQuickField name='profile.postal_code'}}
+    {{> afQuickField name='profile.city'}}
     {{> afQuickField name='emails'}}
     {{#if userIsSelected}}
       {{> afQuickField name='passwordEmailSent' type='boolean-radios' trueLabel='Oui' falseLabel='Non'}}

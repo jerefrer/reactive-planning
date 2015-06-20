@@ -57,9 +57,9 @@ Meteor.startup ->
             firstname: (data['Prénom'] + '').trim()
             lastname: (data['Nom'] + '').trim()
             phone: (data['Tél. 1'] + '').trim()
-            adresse: (data['Adresse'] + '').trim()
-            code_postal: (data['Code postal'] + '').trim()
-            ville: (data['Ville'] + '').trim()
+            address: (data['Adresse'] + '').trim()
+            postal_code: (data['Code postal'] + '').trim()
+            city: (data['Ville'] + '').trim()
 
     Meteor.users.update {username: 'Jérémy Frère'}, {$set: {username: 'Jérémy Frere', admin: true, passwordEmailSent: true}}
     jeremy = Meteor.users.find({"profile.firstname": "Jérémy"}).fetch()[0];
