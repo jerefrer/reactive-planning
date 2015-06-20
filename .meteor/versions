@@ -20,6 +20,7 @@ boilerplate-generator@1.0.3
 brentjanderson:buzz@1.1.9
 callback-hook@1.0.3
 check@1.0.5
+cmather:handlebars-server@2.0.0
 coffeescript@1.0.6
 dburles:mongo-collection-instances@0.3.3
 ddp@1.1.0
@@ -34,6 +35,7 @@ fortawesome:fontawesome@4.3.0
 geojson-utils@1.0.3
 gfk:mailgun-api@1.1.0
 gwendall:session-json@0.1.7
+handlebars@1.0.3
 harrison:papa-parse@1.1.0
 html-tools@1.0.4
 htmljs@1.0.4
@@ -102,4 +104,5 @@ useraccounts:bootstrap@1.11.1
 useraccounts:core@1.11.1
 webapp@1.2.0
 webapp-hashing@1.0.3
+yogiben:pretty-email@0.0.5
 zimme:iron-router-auth@3.0.0

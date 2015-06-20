@@ -108,30 +108,40 @@ Meteor.methods
     planning = Plannings.findOne(_id: planningId)
     month = planning.name
     Meteor.users.find().fetch().each (person) ->
-      email = person.emails[0].adress
+      email = person.emails[0].address
       unless emailIsFake(email)
+        options = _.extend {},
+          heading: "Bonjour #{person.profile.firstname}"
+          message: "Pouvez-vous nous indiquer vos disponibilités pour #{month} ?"+
+                   "Il vous suffit de cocher les jours où vous êtes disponibes.<br />"+
+                   "<img src='#{Meteor.absoluteUrl('availabilities_demo.png')}' /><br /><br />"
+          buttonUrl: "#{Meteor.absoluteUrl('planning/' + planning.slug + '/presences')}"
+          buttonText: "Indiquer mes disponibilités"
+        html = PrettyEmail.render 'call-to-action', options
         mailgun().send
-          to: person.emails[0].address
+          to: email
           from: 'Planning 24 <no-reply@planning-24.meteor.com>'
           subject: "Vos disponilités pour #{month}"
-          html: "Bonjour #{person.profile.firstname},<br /><br />" +
-                "Pouvez-vous nous indiquer vos disponibilités pour #{month} ?.<br /><br />" +
-                "<a href='#{Meteor.absoluteUrl('planning/' + planning.slug)}'>Pour ce faire cliquez-ici</a><br /><br />" +
-                'Merci !'
+          html: html
     Plannings.update planningId, $set: { availabilityEmailSent: true }
   sendPresenceEmailNotifications: (planningId) ->
     @unblock()
     foreachDutiesByPerson planningId, (planning, duties, person) ->
-      email = person.emails[0].adress
+      email = person.emails[0].address
       unless emailIsFake(email)
+        options = _.extend {},
+          heading: "Bonjour #{person.profile.firstname}"
+          message: "Vous avez été désigné(e) pour une ou plusieurs tâches au planning de #{planning.name}<br />"+
+                   "Merci de nous confirmer si vous pourrez être présent ou non les jours proposés.<br />"+
+                   "Il vous suffit de cliquer au bon endroit : <img src='#{Meteor.absoluteUrl('confirm_presence_demo.png')}' />"
+          buttonUrl: "#{Meteor.absoluteUrl('planning/' + planning.slug)}"
+          buttonText: "Confirmer mes rendez-vous"
+        html = PrettyEmail.render 'call-to-action', options
         result = mailgun().send
           to: person.emails[0].address
           from: 'Planning 24 <no-reply@planning-24.meteor.com>'
-          subject: "Confirmation des dates pour le planning de #{planning.name}"
-          html: "Bonjour #{person.profile.firstname},<br /><br />" +
-                "Vous avez été désigné(e) pour une ou plusieurs tâches au planning de #{planning.name}<br /><br />" +
-                "<a href='#{Meteor.absoluteUrl('planning/' + planning.slug)}'>Cliquez-ici pour confirmer votre présence</a><br /><br />" +
-                'Merci !'
+          subject: "Confirmation des dates pour le planning de #{planning.name} 2"
+          html: html
         unless result.error
           duties.each (duty) ->
             markDutyAsSent(planning, duty.day, duty.task, person)
