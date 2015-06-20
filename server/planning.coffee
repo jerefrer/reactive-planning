@@ -43,9 +43,6 @@ markDutyAsSent = (planning, day, task, person) ->
   set["#{dutyKey}.$.emailSent"] = true
   Plannings.update condition, $set: set
 
-emailIsFake = (email) ->
-  /@fakemail\.com\z/.test(email)
-
 Meteor.methods
   createPlanning: (month, year, days) ->
     if !days
