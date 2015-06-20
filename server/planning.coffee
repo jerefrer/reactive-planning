@@ -107,7 +107,7 @@ Meteor.methods
       unless emailIsFake(email)
         options = _.extend {},
           heading: "Bonjour #{person.profile.firstname}"
-          message: "Pouvez-vous nous indiquer vos disponibilités pour #{month} ?" +
+          message: "Pouvez-vous nous indiquer vos disponibilités pour #{month} ?<br />" +
                    "Il vous suffit de cocher les jours où vous êtes disponibes.<br />" +
                    '<div style="text-align: center">' +
                      "<img src='#{Meteor.absoluteUrl('availabilities_demo.png')}' />" +
