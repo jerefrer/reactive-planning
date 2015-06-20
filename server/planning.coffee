@@ -99,8 +99,8 @@ Meteor.methods
       unless emailIsFake(email)
         options = _.extend {},
           heading: "Bonjour #{person.profile.firstname}"
-          message: "Pouvez-vous nous indiquer vos disponibilités pour #{month} ?<br />" +
-                   "Il vous suffit de cocher les jours où vous êtes disponibes.<br />" +
+          headingSmall: "Pouvez-vous nous indiquer vos disponibilités pour #{month} ?"
+          message: "Il vous suffit de cocher les jours où vous êtes disponibes.<br />" +
                    '<div style="text-align: center">' +
                      "<img src='#{Meteor.absoluteUrl('availabilities_demo.png')}' />" +
                    '</div>'
@@ -120,8 +120,8 @@ Meteor.methods
       unless emailIsFake(email)
         options = _.extend {},
           heading: "Bonjour #{person.profile.firstname}"
-          message: "Vous avez été désigné(e) pour une ou plusieurs tâches au planning de #{planning.name}<br />"+
-                   "Merci de nous confirmer si vous pourrez être présent ou non les jours proposés.<br />"+
+          headingSmall: "Vous avez été désigné(e) pour une ou plusieurs tâches au planning de #{planning.name}"
+          message: "Merci de nous confirmer si vous pourrez être présent ou non les jours proposés.<br />"+
                    "Il vous suffit de cliquer au bon endroit : <img src='#{Meteor.absoluteUrl('confirm_presence_demo.png')}' style='vertical-align: middle'/>"
           buttonUrl: Meteor.absoluteUrl("planning/#{planning.slug}")
           buttonText: "Confirmer mes rendez-vous"
@@ -144,7 +144,7 @@ Meteor.methods
         options = _.extend {},
           heading: "Bonjour #{person.profile.firstname}"
           headingSmall: "Le planning de #{month} est disponible"
-          message: "Et vous avez #{duties.length} rendez-vous de prévus."
+          message: "Et vous avez #{duties.length} rendez-vous de prévu#{duties.length > 1 && 's' || ''}."
           buttonUrl: Meteor.absoluteUrl("planning/#{planning.slug}")
           buttonText: "Voir le planning"
         html = PrettyEmail.render 'call-to-action', options

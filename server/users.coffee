@@ -35,8 +35,8 @@ Meteor.methods
                    '<div style="text-align: center">' +
                      "Vous pourrez vous connecter en cliquant sur le bouton \"Connexion\" " +
                      "puis en remplissant votre nom d'utilisateur et votre mot de passe, comme dans l'exemple ci-dessous.<br />" +
-                     "<strong>Il est important de respecter les majuscules et minuscules.</strong></br /><br />" +
-                     "<img src='#{Meteor.absoluteUrl('sign_in_demo.png')}' /><br />" +
+                     "<strong>Il est important de respecter les majuscules et minuscules.</strong><br /><br />" +
+                     "<img src='#{Meteor.absoluteUrl('sign_in_demo.png')}' /><br /><br />" +
                      "Si vous préférez choisir vous-même votre mot de passe, une fois connecté vous pourrez le modifier en " +
                      "cliquant sur votre nom en haut à droite puis sur \"Changer le mot de passe\", comme dans l'exemple ci-dessous.<br /><br />" +
                      "<img src='#{Meteor.absoluteUrl('update_password_demo.png')}' />" +
