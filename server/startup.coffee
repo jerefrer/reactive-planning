@@ -1,7 +1,7 @@
 initializeTasks = ->
   ['Banque alimentaire',
    'Médiateur, responsable d\'équipe' ,
-   'Chercher pain'
+   'Chercher pain Mesnard'
    'Ramasse Carrefour Market',
    'Préparer soupe',
    'Amener soupe',
