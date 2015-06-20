@@ -24,6 +24,7 @@ SMS à chacun des participants la veille de chaque jour de distribution.
 
 #### Nice to have
 
+* Débugger le "Modifier les rôles" et utiliser les rôles définis pour ordonner les personnes dans la modal d'ajout d'une tâche
 * Envoyer les emails dans un background job : https://github.com/vsivsi/meteor-job-collection
 * Faire que les Days soient vraiment des dates et non des strings pour pouvoir faire des choses en fonction de leur date et heure
 * Remplacer `reactjs:react` par `grove:react` : https://forums.meteor.com/t/a-better-package-for-integrating-with-react-grove-react/2225
