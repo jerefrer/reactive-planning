@@ -127,11 +127,13 @@ Schedule = React.createClass
         </thead>
         <tbody>
           {lines}
+        </tbody>
+        <tfoot>
           <tr>
             <th><AddDayCell planning={@props.planning} onAddDay={@handleAddDay} /></th>
             <th colSpan="5000"></th>
           </tr>
-        </tbody>
+        </tfoot>
       </table>
     </div>
 
