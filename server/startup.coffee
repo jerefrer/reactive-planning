@@ -1,5 +1,7 @@
 initializeTasks = ->
-  ['Banque alimentaire',
+  ['Entretiens individuels',
+   'Camion Plazac',
+   'Banque alimentaire',
    'Médiateur, responsable d\'équipe' ,
    'Chercher pain Mesnard'
    'Ramasse Carrefour Market',
