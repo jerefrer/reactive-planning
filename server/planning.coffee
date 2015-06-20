@@ -112,7 +112,7 @@ Meteor.methods
                    '<div style="text-align: center">' +
                      "<img src='#{Meteor.absoluteUrl('availabilities_demo.png')}' />" +
                    '</div>'
-          buttonUrl: "#{Meteor.absoluteUrl('planning/' + planning.slug + '/presences')}"
+          buttonUrl: Meteor.absoluteUrl("planning/#{planning.slug}/presences")
           buttonText: "Indiquer mes disponibilités"
         html = PrettyEmail.render 'call-to-action', options
         mailgun().send
@@ -131,7 +131,7 @@ Meteor.methods
           message: "Vous avez été désigné(e) pour une ou plusieurs tâches au planning de #{planning.name}<br />"+
                    "Merci de nous confirmer si vous pourrez être présent ou non les jours proposés.<br />"+
                    "Il vous suffit de cliquer au bon endroit : <img src='#{Meteor.absoluteUrl('confirm_presence_demo.png')}' style='vertical-align: middle'/>"
-          buttonUrl: "#{Meteor.absoluteUrl('planning/' + planning.slug)}"
+          buttonUrl: Meteor.absoluteUrl("planning/#{planning.slug}")
           buttonText: "Confirmer mes rendez-vous"
         html = PrettyEmail.render 'call-to-action', options
         result = mailgun().send

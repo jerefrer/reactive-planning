@@ -61,8 +61,6 @@ SendAvailabilityEmailNotificationsButton = React.createClass
   render: ->
     return null unless (not @props.planning.availabilityEmailSent) or @state.sending or @state.showingSuccess
     className = "send-emails-button send-availability-emails-button btn "
-    inner = undefined
-    style = undefined
     if @state.showingSuccess
       inner = <i className="fa fa-check-circle-o" />
       className += 'btn-success with-icon'
@@ -92,8 +90,6 @@ SendPresenceEmailNotificationsButton = React.createClass
   render: ->
     return null unless @props.emailsToSend
     className = "send-emails-button send-confirmation-emails-button btn "
-    inner = undefined
-    style = undefined
     if @props.emailsSent
       inner = <i className="fa fa-check-circle-o" />
       className += 'btn-success with-icon'
