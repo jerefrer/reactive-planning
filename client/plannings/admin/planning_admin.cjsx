@@ -354,6 +354,8 @@ PeopleList = React.createClass
     </div>
 
 PeopleFilters = React.createClass
+  componentDidMount: ->
+    @refs.name.getDOMNode().focus()
   handleChange: ->
     @props.onChange @refs.name.getDOMNode().value.trim()
   render: ->
