@@ -2,11 +2,11 @@
   mixins: [ ReactMeteor.Mixin ]
   startMeteorSubscriptions: ->
     Meteor.subscribe 'users'
+  getMeteorState: ->
+    emailsToSend: !!usersWithoutPassword().length
   getInitialState: ->
     sending: false
     showingSuccess: false
-  getMeteorState: ->
-    emailsToSend: !!usersWithoutPassword().length
   sendNotifications: (e) ->
     e.preventDefault()
     if @state.emailsToSend
