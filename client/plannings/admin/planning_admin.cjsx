@@ -25,10 +25,6 @@ ItemTypes = PERSON: 'person'
       state.emailsSent = @props.planning.emailsSent
       state.peopleWhoAnswered = @props.planning.peopleWhoAnswered
     state
-  clearDuties: (e) ->
-    e.preventDefault()
-    if confirm("Êtes-vous sûr ?")
-      Meteor.call 'clearDuties', @props.planning._id
   render: ->
     sound_to_play = SoundsToPlay.find().fetch()[0]
     if sound_to_play
@@ -44,8 +40,6 @@ ItemTypes = PERSON: 'person'
     <div>
       <h2>
         {@props.planning.name}
-        {' - '}
-        <button className="btn btn-danger" onClick={@clearDuties}>Tout effacer</button>
         <SendAvailabilityEmailNotificationsButton planning={@props.planning} />
         <SendPresenceEmailNotificationsButton planningId={@props.planning._id} emailsToSend={@state.emailsToSend} emailsSent={@state.emailsSent} />
       </h2>

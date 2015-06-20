@@ -98,8 +98,6 @@ Meteor.methods
     set['emailsSent'] = false if emailsToSend
     set['duties.' + day._id + ',' + task._id] = people
     Plannings.update planning._id, $set: set
-  clearDuties: (planningId) ->
-    Plannings.update planningId, $set: { duties: {}, emailsToSend: false }
   sendAvailabilityEmailNotifications: (planningId) ->
     @unblock()
     planning = Plannings.findOne(_id: planningId)
