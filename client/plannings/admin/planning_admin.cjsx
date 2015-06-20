@@ -223,8 +223,6 @@ Person = React.createClass
   cycleStatus: ->
     cell = @props.scheduleCell
     Meteor.call 'cycleStatus', cell.props.planningId, cell.props.day._id, cell.props.task._id, @props.person._id
-  randomWidth: ->
-    40 + Math.floor(Math.random() * 10)
   render: ->
     person = @getPerson()
     if person
