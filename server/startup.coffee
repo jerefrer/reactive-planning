@@ -82,7 +82,7 @@ Meteor.startup ->
       {_id: guid(), name: 'Dimanche 30', date: moment('30-07-2015', 'DD-MM-YYYY').toDate() }
       {_id: guid(), name: 'Lundi 31',    date: moment('31-07-2015', 'DD-MM-YYYY').toDate() }
     ]
-    septembreDays = [
+    septemberDays = [
       {_id: guid(), name: 'Mardi 1',     date: moment('01-09-2015', 'DD-MM-YYYY').toDate() }
       {_id: guid(), name: 'Jeudi 3',     date: moment('03-09-2015', 'DD-MM-YYYY').toDate() }
       {_id: guid(), name: 'Vendredi 4',  date: moment('04-09-2015', 'DD-MM-YYYY').toDate() }
@@ -136,9 +136,12 @@ Meteor.startup ->
             postal_code: (data['Code postal'] + '').trim()
             city: (data['Ville'] + '').trim()
 
-    Meteor.users.update {username: 'Jérémy Frère'}, {$set: {username: 'Jérémy Frere', passwordEmailSent: true}}
     jeremy = Meteor.users.findOne('profile.firstname': 'Jérémy')
+    odile = Meteor.users.findOne(username: 'Odile LM24')
+    Meteor.users.update {_id: jeremy._id}, {$set: {username: 'Jérémy Frere', passwordEmailSent: true}}
+    Meteor.users.update {_id: odile._id}, {$set: {passwordEmailSent: true}}
     Accounts.setPassword jeremy._id, 'canada', logout: false
+    Accounts.setPassword odile._id, '282621', logout: false
     Roles.addUsersToRoles jeremy, ['admin']
-    Roles.addUsersToRoles Meteor.users.findOne(username: 'Odile LM24'), ['admin']
+    Roles.addUsersToRoles odile, ['admin']
     Roles.addUsersToRoles Meteor.users.findOne(username: 'Palzang'), ['admin']
