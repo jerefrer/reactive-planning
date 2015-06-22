@@ -1,5 +1,6 @@
 initializeTasks = ->
-  ['Entretiens individuels',
+  ['Point chaud',
+   'Entretiens individuels',
    'Camion Plazac',
    'Banque alimentaire',
    'Médiateur, responsable d\'équipe' ,
