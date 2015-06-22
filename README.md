@@ -33,6 +33,7 @@ SMS à chacun des participants la veille de chaque jour de distribution.
 * Cronjob pour envoyer un SMS les jours de collecte quelques heures avant à tous les concernés.
 * Bouton "renvoyer la demande" pour ceux qui n'ont pas répondu
 * Bouton "Envoyer un message à tous"
+* Remplacer les 'confirm' par http://ethaizone.github.io/Bootstrap-Confirmation/#
 * Penser à des alertes pour l'admin, par exemple :
   * Si des cases sont vides X jours avant l'event
   * Quand quelqu'un refuse => beaucoup de mail, faire un récap journalier, hebdomadaire. Est-ce nécessaire ?
