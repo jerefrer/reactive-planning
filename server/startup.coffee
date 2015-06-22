@@ -1,5 +1,5 @@
 initializeTasks = ->
-  ['Point chaud',
+  ['Vesuna',
    'Entretiens individuels',
    'Camion Plazac',
    'Banque alimentaire',
