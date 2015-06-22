@@ -19,6 +19,7 @@ SMS à chacun des participants la veille de chaque jour de distribution.
 
 #### Before deployment
 
+* Emailisfake not working ?
 * Changer l'API key de Nexmo et l'extraire du code pour la mettre dans une variable d'environnement
 * Ajouter deux colonnes: "Camion Plazac" & "Entretiens individuels"
 
