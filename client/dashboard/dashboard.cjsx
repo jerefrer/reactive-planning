@@ -1,6 +1,6 @@
 @Dashboard = React.createClass
   render: ->
-    plannings = @props.plannings.map (planning) ->
+    plannings = sortPlannings(@props.plannings).map (planning) ->
       <Planning planning={planning} />
     <div className="dashboard">
       {plannings}

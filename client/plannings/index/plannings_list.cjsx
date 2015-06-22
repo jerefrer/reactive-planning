@@ -1,6 +1,6 @@
 @PlanningsList = React.createClass
   render: ->
-    plannings = @props.plannings.map (planning) ->
+    plannings = sortPlannings(@props.plannings).map (planning) ->
       <Planning planning={planning} name={planning.name} slug={planning.slug} />
     <div>
       {plannings}
