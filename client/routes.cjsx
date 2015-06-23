@@ -44,7 +44,7 @@ Router.route 'Planning',
     Meteor.subscribe 'plannings'
   action: ->
     planning = Plannings.findOne(slug: @params.slug)
-    @render 'Planning', planning: planning
+    @render 'Planning'
     setTimeout (->
       React.render(
         <Planning planning={planning} />,
@@ -58,7 +58,7 @@ Router.route 'PlanningAdmin',
     Meteor.subscribe 'plannings'
   action: ->
     planning = Plannings.findOne(slug: @params.slug)
-    @render 'PlanningAdmin', planning: planning
+    @render 'PlanningAdmin'
     setTimeout (->
       React.render(
         <PlanningAdmin planning={planning} />,
