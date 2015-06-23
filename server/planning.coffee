@@ -38,6 +38,26 @@ markDutyAsSent = (planning, day, task, person) ->
   set["#{dutyKey}.$.emailSent"] = true
   Plannings.update condition, $set: set
 
+sendAvailabilityEmail = (planning, users, subject) ->
+  users.each (person) ->
+    email = person.emails[0].address
+    unless emailIsFake(email)
+      options = _.extend {},
+        heading: "Bonjour #{person.profile.firstname}"
+        headingSmall: "Pouvez-vous nous indiquer vos disponibilités pour #{planning.name} ?"
+        message: "Il vous suffit de cocher les jours où vous êtes disponibes.<br />" +
+                 '<div style="text-align: center">' +
+                   "<img src='#{Meteor.absoluteUrl('availabilities_demo.png')}' />" +
+                 '</div>'
+        buttonUrl: Meteor.absoluteUrl("planning/#{planning.slug}/presences")
+        buttonText: "Indiquer mes disponibilités"
+      html = PrettyEmail.render 'call-to-action', options
+      mailgun().send
+        to: email
+        from: 'Planning 24 <no-reply@planning-24.meteor.com>'
+        subject: subject
+        html: html
+
 Meteor.methods
   createPlanning: (month, year, days) ->
     if !days
@@ -93,26 +113,14 @@ Meteor.methods
   sendAvailabilityEmailNotifications: (planningId) ->
     @unblock()
     planning = Plannings.findOne(_id: planningId)
-    month = planning.name
-    Meteor.users.find().fetch().each (person) ->
-      email = person.emails[0].address
-      unless emailIsFake(email)
-        options = _.extend {},
-          heading: "Bonjour #{person.profile.firstname}"
-          headingSmall: "Pouvez-vous nous indiquer vos disponibilités pour #{month} ?"
-          message: "Il vous suffit de cocher les jours où vous êtes disponibes.<br />" +
-                   '<div style="text-align: center">' +
-                     "<img src='#{Meteor.absoluteUrl('availabilities_demo.png')}' />" +
-                   '</div>'
-          buttonUrl: Meteor.absoluteUrl("planning/#{planning.slug}/presences")
-          buttonText: "Indiquer mes disponibilités"
-        html = PrettyEmail.render 'call-to-action', options
-        mailgun().send
-          to: email
-          from: 'Planning 24 <no-reply@planning-24.meteor.com>'
-          subject: "Vos disponilités pour #{month}"
-          html: html
+    sendAvailabilityEmail(planning, Meteor.users.find().fetch(), "Vos disponilités pour #{planning.name}")
     Plannings.update planningId, $set: { availabilityEmailSent: true }
+  sendAvailabilityReminder: (planningId) ->
+    @unblock()
+    planning = Plannings.findOne(_id: planningId)
+    usersWhoDidNotAnswer = Meteor.users.find().fetch().findAll (person) ->
+      planning.peopleWhoAnswered.indexOf(person._id) < 0
+    sendAvailabilityEmail(planning, usersWhoDidNotAnswer, "Vous n'avez pas encore donné vos disponilités pour #{planning.name}")
   sendPresenceEmailNotifications: (planningId) ->
     @unblock()
     foreachDutiesByPerson planningId, (planning, duties, person) ->

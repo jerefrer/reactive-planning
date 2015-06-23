@@ -74,15 +74,21 @@ Router.route 'UserPresence',
     planning: Plannings.findOne(slug: @params.slug)
     slug: @params.slug
 
-Router.route 'UsersPresence',
+Router.route 'UsersPresences',
   path: '/planning/:slug/admin/presences'
+  waitOn: ->
+    Meteor.subscribe 'plannings'
+    Meteor.subscribe 'users'
+  data: ->
+    planning: Plannings.findOne(slug: @params.slug)
+    users: sortUsers(Meteor.users.find().fetch())
   action: ->
     planning = Plannings.findOne(slug: @params.slug)
-    @render 'Planning', planning: planning
+    @render 'UsersPresences'
     setTimeout (->
       React.render(
-        <UsersPresence planning={planning} />,
-        document.getElementById('planning')
+        <SendAvailabilityReminderButton planning={planning} />,
+        document.getElementById('sendAvailabilityReminderButton')
       )
     ), 100
 

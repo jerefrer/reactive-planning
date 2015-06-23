@@ -1,0 +1,25 @@
+<template name="UsersPresences">
+  <h1>
+    Réponses pour les disponibilités de <a href="/planning/{{planning.slug}}/admin">{{planning.name}}</a>
+    <div class="pull-right">
+      <span id="sendAvailabilityReminderButton"></span>
+    </div>
+  </h1>
+  <div class="users-who-answered">
+    <div class="people-list">
+      <ul class="list-unstyled">
+        {{#each users}}
+          {{> userWithAnsweredState user=this parentContext=..}}
+        {{/each}}
+      </ul>
+    </div>
+  </div>
+</template>
+
+<template name="userWithAnsweredState">
+  <li class="{{answeredClass}}">
+    <span class="bullet"></span>
+    <span class="check"><i class="fa fa-check"></i></span>
+    <span class="name">{{displayName}}</span>
+  </li>
+</template>

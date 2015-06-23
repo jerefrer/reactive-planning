@@ -114,7 +114,7 @@ Meteor.startup ->
     Meteor.call 'createPlanning', 7, 2015, augustDays
     Meteor.call 'createPlanning', 8, 2015, septemberDays
 
-    csv_text = Assets.getText('export_benevoles.csv')
+    csv_text = Assets.getText('export_benevoles_test.csv')
     Papa.parse csv_text,
       header: true
       skipEmptyLines: true

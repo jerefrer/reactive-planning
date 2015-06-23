@@ -59,23 +59,31 @@ SendAvailabilityEmailNotificationsButton = React.createClass
           showingSuccess: true
         setTimeout (=> @setState showingSuccess: false), 5000
   render: ->
-    return null unless (not @props.planning.availabilityEmailSent) or @state.sending or @state.showingSuccess
-    className = "send-emails-button send-availability-emails-button btn "
-    if @state.showingSuccess
-      inner = <i className="fa fa-check-circle-o" />
-      className += 'btn-success with-icon'
-      style = width: '50px'
-    else if @state.sending
-      inner = <i className="fa fa-spinner fa-spin" />
-      className += 'btn-primary with-icon'
-      style = width: '50px'
+    if (not @props.planning.availabilityEmailSent) or @state.sending or @state.showingSuccess
+      className = "send-emails-button send-availability-emails-button btn "
+      if @state.showingSuccess
+        inner = <i className="fa fa-check-circle-o" />
+        className += 'btn-success with-icon'
+        style = width: '50px'
+      else if @state.sending
+        inner = <i className="fa fa-spinner fa-spin" />
+        className += 'btn-primary with-icon'
+        style = width: '50px'
+      else
+        inner = <span><i className="fa fa-envelope" />Demander les disponibilités</span>
+        className += 'btn-primary'
+      <span>
+        {' - '}
+        <button className={className} style={style} onClick={@sendAvailabilityEmailNotifications}>{inner}</button>
+      </span>
     else
-      inner = <span><i className="fa fa-envelope" />Demander les disponibilités</span>
-      className += 'btn-primary'
-    <span>
-      {' - '}
-      <button className={className} style={style} onClick={@sendAvailabilityEmailNotifications}>{inner}</button>
-    </span>
+      <span>
+        {' - '}
+        <a className="btn btn-primary send-emails-button" href="/planning/#{@props.planning.slug}/admin/presences">
+          <i className="fa fa-check" />
+          Voir les disponibilités
+        </a>
+      </span>
 
 SendPresenceEmailNotificationsButton = React.createClass
   getInitialState: ->
