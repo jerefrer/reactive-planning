@@ -54,33 +54,33 @@ Meteor.startup ->
       {_id: guid(), name: 'Vendredi 31', date: moment('31-07-2015', 'DD-MM-YYYY').toDate() }
     ]
     augustDays = [
-      {_id: guid(), name: 'Samedi 1',    date: moment('01-07-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Dimanche 2',  date: moment('02-07-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Lundi 3',     date: moment('03-07-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Mardi 4',     date: moment('04-07-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Jeudi 6',     date: moment('06-07-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Vendredi 7',  date: moment('07-07-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Samedi 8',    date: moment('08-07-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Dimanche 9',  date: moment('09-07-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Lundi 10',    date: moment('10-07-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Mardi 11',    date: moment('11-07-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Jeudi 13',    date: moment('13-07-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Vendredi 14', date: moment('14-07-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Samedi 15',   date: moment('15-07-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Dimanche 16', date: moment('16-07-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Lundi 17',    date: moment('17-07-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Mardi 18',    date: moment('18-07-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Jeudi 20',    date: moment('20-07-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Vendredi 21', date: moment('21-07-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Samedi 22',   date: moment('22-07-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Dimanche 23', date: moment('23-07-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Lundi 24',    date: moment('24-07-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Mardi 25',    date: moment('25-07-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Jeudi 27',    date: moment('27-07-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Vendredi 28', date: moment('28-07-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Samedi 29',   date: moment('29-07-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Dimanche 30', date: moment('30-07-2015', 'DD-MM-YYYY').toDate() }
-      {_id: guid(), name: 'Lundi 31',    date: moment('31-07-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Samedi 1',    date: moment('01-08-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Dimanche 2',  date: moment('02-08-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Lundi 3',     date: moment('03-08-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Mardi 4',     date: moment('04-08-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Jeudi 6',     date: moment('06-08-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Vendredi 7',  date: moment('07-08-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Samedi 8',    date: moment('08-08-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Dimanche 9',  date: moment('09-08-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Lundi 10',    date: moment('10-08-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Mardi 11',    date: moment('11-08-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Jeudi 13',    date: moment('13-08-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Vendredi 14', date: moment('14-08-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Samedi 15',   date: moment('15-08-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Dimanche 16', date: moment('16-08-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Lundi 17',    date: moment('17-08-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Mardi 18',    date: moment('18-08-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Jeudi 20',    date: moment('20-08-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Vendredi 21', date: moment('21-08-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Samedi 22',   date: moment('22-08-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Dimanche 23', date: moment('23-08-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Lundi 24',    date: moment('24-08-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Mardi 25',    date: moment('25-08-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Jeudi 27',    date: moment('27-08-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Vendredi 28', date: moment('28-08-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Samedi 29',   date: moment('29-08-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Dimanche 30', date: moment('30-08-2015', 'DD-MM-YYYY').toDate() }
+      {_id: guid(), name: 'Lundi 31',    date: moment('31-08-2015', 'DD-MM-YYYY').toDate() }
     ]
     septemberDays = [
       {_id: guid(), name: 'Mardi 1',     date: moment('01-09-2015', 'DD-MM-YYYY').toDate() }
