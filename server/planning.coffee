@@ -2,9 +2,10 @@ moment.locale('fr')
 
 SoundsToPlay = new (Meteor.Collection)('sounds_to_play')
 
-foreachDutiesByPerson = (planningId, callback) ->
+foreachDutiesByPerson = (planningId, callback, conditionFunction) ->
   planning = Plannings.findOne(_id: planningId)
   dutiesByPerson = {}
+  conditionFunction ||= (-> true)
   Object.keys(planning.duties).each (key) ->
     dayId = key.split(',')[0]
     taskId = key.split(',')[1]
@@ -13,10 +14,13 @@ foreachDutiesByPerson = (planningId, callback) ->
     duties = planning.duties[dayId + ',' + taskId]
     duties.each (duty) ->
       dutiesByPerson[duty._id] ||= []
-      dutiesByPerson[duty._id].push({day: day, task: task})
+      dutiesByPerson[duty._id].push({day: day, task: task}) if conditionFunction(duty)
   _.each dutiesByPerson, (duties, personId) ->
     person = Meteor.users.findOne(_id: personId)
-    callback planning, duties, person
+    callback planning, duties, person if duties.length > 0
+
+foreachDutiesNotSentByPerson =  (planningId, callback) ->
+  foreachDutiesByPerson planningId, callback, ((duty) -> not duty.emailSent)
 
 eachDuty = (planningId, callback) ->
   planning = Plannings.findOne(_id: planningId)
@@ -123,7 +127,7 @@ Meteor.methods
     sendAvailabilityEmail(planning, usersWhoDidNotAnswer, "Vous n'avez pas encore donné vos disponilités pour #{planning.name}")
   sendPresenceEmailNotifications: (planningId) ->
     @unblock()
-    foreachDutiesByPerson planningId, (planning, duties, person) ->
+    foreachDutiesNotSentByPerson planningId, (planning, duties, person) ->
       email = person.emails[0].address
       unless emailIsFake(email)
         options = _.extend {},
