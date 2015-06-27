@@ -150,13 +150,16 @@ Meteor.methods
     @unblock()
     planning = Plannings.findOne(_id: planningId)
     month = planning.name
+    excelExportPath = './tmp/' + planning.slug + '.xlsx'
+    excelExportPlanning(planning, excelExportPath)
     foreachDutiesByPerson planningId, (planning, duties, person) ->
       email = person.emails[0].address
       unless emailIsFake(email)
         options = _.extend {},
           heading: "Bonjour #{person.profile.firstname}"
           headingSmall: "Le planning de #{month} est disponible"
-          message: "Et vous avez #{duties.length} rendez-vous de prévu#{duties.length > 1 && 's' || ''}."
+          message: "Et vous avez #{duties.length} rendez-vous de prévu#{duties.length > 1 && 's' || ''}.<br /><br />" +
+                   "Vous trouverez également en pièce jointe le planning au format Excel. Il n'est pas encore aussi beau que l'ancien, mais on y travaille !"
           buttonUrl: Meteor.absoluteUrl("planning/#{planning.slug}")
           buttonText: "Voir le planning"
         html = PrettyEmail.render 'call-to-action', options
@@ -165,6 +168,7 @@ Meteor.methods
           from: 'Planning 24 <no-reply@planning-24.meteor.com>'
           subject: "Le planning de #{month} est disponible"
           html: html
+          attachment: excelExportPath
     Plannings.update planningId, $set: { complete: true }
   answerNotification: (planningSlug, dayId, taskId, personId, confirmation) ->
     planning = Plannings.findOne(slug: planningSlug)
