@@ -5,4 +5,4 @@ SyncedCron.add
   job: ->
     sendTextMessagesForTomorrowsDuties()
 
-SyncedCron.start()
+# SyncedCron.start()
