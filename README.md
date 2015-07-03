@@ -17,14 +17,28 @@ SMS à chacun des participants la veille de chaque jour de distribution.
 
 ### TODO
 
-#### Before deployment
+#### Urgent
+- Tri users par ordre alphabétique dans les bénévoles
+- Ne pas envoyer les emails à ceux qui ne sont pas dispos pour le mois
+- Ajouter unavailableTheWholeMonth: [] à tous les plannings
 
+#### Suggestions
+
+* Anne - Pourquoi que Mesnard ? Y'a 4 boulangeries
+* Laetitia - Passer dans usersWhoAnswered dès affichage de la page, pas au premier click (pour ceux qui ne peuvent pas être dispos du tout)
+* Jérémy - Indiquer dans l'email des dispos que si on est pas dispo du tout il faut quand même se rendre sur la page, ou mieux ajouter un lien "je ne suis pas dispo" qui va vers la page avec un message disant que ça a été pris en compte
+* Anne-Marie : Attacher un message perso sur les disponibilités
+* Jérémy : Cacher les plannings "en cour d'élaboration"
+
+#### BUGS
+
+* Invalid character in IE. See https://github.com/ongoworks/meteor-speakingurl/issues/7
 * Emailisfake not working ?
 * Changer l'API key de Nexmo et l'extraire du code pour la mettre dans une variable d'environnement
-* Ajouter deux colonnes: "Camion Plazac" & "Entretiens individuels"
 
 #### Nice to have
 
+* Ajouter un message personnalisable par personne
 * Permettre de se connecter soit avec l'email soit avec le username
 * Ignorer la casse dans le username au login
 * Débugger le "Modifier les rôles" et utiliser les rôles définis pour ordonner les personnes dans la modal d'ajout d'une tâche
