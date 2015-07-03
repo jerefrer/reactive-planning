@@ -9,7 +9,7 @@ Template.UserPresence.helpers
     id: 'user-presence-calendar'
     height: 600
     lang: 'fr'
-    defaultDate: Plannings.findOne(slug: @slug).days.first().date
+    defaultDate: @planning.days.first().date
     columnFormat: 'dddd'
     header: false
     events: (start, end, timezone, callback) =>
@@ -27,7 +27,6 @@ Template.UserPresence.helpers
       element.find('.fc-content').html "<i class='#{checkboxClass}' />"
       element
     eventClick: (event, jsEvent, view) =>
-      console.log(event.day._id)
       Meteor.call 'togglePresence', @planning._id, event.day._id, Meteor.userId(), ->
         $('#user-presence-calendar').fullCalendar('refetchEvents')
 
