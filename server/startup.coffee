@@ -4,7 +4,7 @@ initializeTasks = ->
    'Camion Plazac',
    'Banque alimentaire',
    'Médiateur, responsable d\'équipe' ,
-   'Chercher pain Mesnard'
+   'Chercher pain',
    'Ramasse Carrefour Market',
    'Préparer soupe',
    'Amener soupe',
