@@ -20,6 +20,7 @@ boilerplate-generator@1.0.3
 brentjanderson:buzz@1.1.9
 callback-hook@1.0.3
 check@1.0.5
+chrismbeckett:toastr@2.1.0
 cmather:handlebars-server@2.0.0
 coffeescript@1.0.6
 dburles:mongo-collection-instances@0.3.3

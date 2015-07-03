@@ -107,6 +107,7 @@ ScheduleLine = React.createClass
 
 ScheduleCell = React.createClass
   answerDuty: (personId, value) ->
+    successPopup()
     Meteor.call('answerNotification', @props.planning.slug, @props.day._id, @props.task._id, personId, value)
   isCurrentUser: (person) ->
     person._id == Meteor.userId()

@@ -27,9 +27,11 @@ Template.UserPresence.helpers
       element.find('.fc-content').html "<i class='#{checkboxClass}' />"
       element
     eventClick: (event, jsEvent, view) =>
+      successPopup()
       Meteor.call 'togglePresence', @planning._id, event.day._id, Meteor.userId(), ->
         $('#user-presence-calendar').fullCalendar('refetchEvents')
 
 Template.UserPresence.events
   'click button.notAvailable': (event) ->
+    successPopup()
     Meteor.call 'markAsUnavailableForTheMonth', @planning._id, Meteor.userId()
