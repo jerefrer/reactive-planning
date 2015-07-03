@@ -1,3 +1,11 @@
+userHasDutyForDay = (planning, day) ->
+  _.find planning.duties, (duties, key) ->
+    key.split(',')[0] == day._id and duties.find (duty) -> duty._id == Meteor.userId()
+
+userHasDutyForTask = (planning, task) ->
+  _.find planning.duties, (duties, key) ->
+    key.split(',')[1] == task._id and duties.find (duty) -> duty._id == Meteor.userId()
+
 @Planning = React.createClass
   mixins: [ ReactMeteor.Mixin ]
   startMeteorSubscriptions: ->
@@ -11,18 +19,31 @@
       people: Meteor.users.find().fetch()
       onlyMe: Session.get('onlyMe')
     if @props.planning
-      state.days = @props.planning.days
-      state.tasks = @props.planning.tasks
       state.duties = @props.planning.duties
+      if state.onlyMe
+        state.days = @props.planning.days.findAll (day) => userHasDutyForDay(@props.planning, day)
+        state.tasks = @props.planning.tasks.findAll (task) => userHasDutyForTask(@props.planning, task)
+      else
+        state.days = @props.planning.days
+        state.tasks = @props.planning.tasks
     state
   setOnlyMe: (value) ->
     Session.set('onlyMe', value)
-    @setState onlyMe: value
+    if value == true
+      @setState
+        onlyMe: true
+        days: @props.planning.days.findAll (day) => userHasDutyForDay(@props.planning, day)
+        tasks: @props.planning.tasks.findAll (task) => userHasDutyForTask(@props.planning, task)
+    else
+      @setState
+        onlyMe: false
+        days: @props.planning.days
+        tasks: @props.planning.tasks
   render: ->
     <div>
       {<div className="pull-right"><PersonFilter setOnlyMe={@setOnlyMe} onlyMe={@state.onlyMe} /></div> if @props.planning.complete}
       <h2>{@props.planning.name}</h2>
-      <Schedule planning={@props.planning} tasks={@state.tasks} days={@state.days} duties={@state.duties} onlyMe={@state.onlyMe} />
+      <Schedule planning={@props.planning} tasks={@state.tasks} days={@state.days} duties={@state.duties} />
     </div>
 
 PersonFilter = React.createClass
@@ -43,7 +64,7 @@ PersonFilter = React.createClass
 Schedule = React.createClass
   render: ->
     lines = @props.days.map (day) =>
-      <ScheduleLine planning={@props.planning} tasks={@props.tasks} day={day} duties={@props.duties} onlyMe={@props.onlyMe} />
+      <ScheduleLine planning={@props.planning} tasks={@props.tasks} day={day} duties={@props.duties} />
     <div className="schedule-wrapper">
       <table id="schedule" className="table table-striped table-bordered">
         <thead>
@@ -67,7 +88,7 @@ ScheduleHeader = React.createClass
 ScheduleLine = React.createClass
   render: ->
     cells = @props.tasks.map (task) =>
-      <ScheduleCell planning={@props.planning} day={@props.day} task={task} duties={@props.duties} presences={@props.presences} people={@props.people} onlyMe={@props.onlyMe} />
+      <ScheduleCell planning={@props.planning} day={@props.day} task={task} duties={@props.duties} presences={@props.presences} people={@props.people} />
     <tr className="day-no-#{moment(@props.day.date).format('e')}">
       <th><DayName planningId={@props.planningId} day={@props.day} /></th>
       {cells}
@@ -95,11 +116,7 @@ ScheduleCell = React.createClass
   isCurrentUser: (person) ->
     person._id == Meteor.userId()
   render: ->
-    peopleList = @props.duties[k(@props.day) + ',' + k(@props.task)]
-    if peopleList
-      peopleList = peopleList.findAll (person) => @isCurrentUser(person) or @props.planning.complete
-      if @props.onlyMe
-        peopleList = peopleList.findAll (person) => @isCurrentUser(person)
+    if peopleList = @props.duties[k(@props.day) + ',' + k(@props.task)]
       people = peopleList.map (person) =>
         <Person person={person} avatar=true mailStatus=true answerDuty={@answerDuty} isCurrentUser={@isCurrentUser(person)} />
     <td>{people}</td>
