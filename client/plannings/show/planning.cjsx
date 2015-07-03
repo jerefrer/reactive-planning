@@ -79,12 +79,15 @@ Schedule = React.createClass
 ScheduleHeader = React.createClass
   render: ->
     tasks = @props.tasks.map (task) ->
-      <ReactBootstrap.OverlayTrigger trigger='hover' placement='bottom' rootClose={true} overlay={<ReactBootstrap.Popover><strong>{task.description}</strong></ReactBootstrap.Popover>}>
-        <th>
-          <strong>{task.name}</strong>
-          <i className="info-popover fa fa-question"></i>
-        </th>
-      </ReactBootstrap.OverlayTrigger>
+      if task.description and task.description.trim() != ''
+        <ReactBootstrap.OverlayTrigger trigger='hover' placement='bottom' rootClose={true} overlay={<ReactBootstrap.Popover><strong>{task.description}</strong></ReactBootstrap.Popover>}>
+          <th className="with-info">
+            <strong>{task.name}</strong>
+            <i className="info-popover fa fa-question"></i>
+          </th>
+        </ReactBootstrap.OverlayTrigger>
+      else
+        <th><strong>{task.name}</strong></th>
     <tr>
       <th></th>
       {tasks}

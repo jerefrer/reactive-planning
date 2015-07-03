@@ -1,19 +1,21 @@
-#schedule thead th
-  position: relative
-  cursor: pointer
-  transition: all 0.5s ease-in-out
-  .info-popover
-    position: absolute
-    top: 30%
-    left: 0
-    width: 100%
-    margin: 0 auto
-    font-size: 38px
-    color: white
-    opacity: 0
-  &:hover
-    background: #1a9bd2
-    strong
-      opacity: 0.2
-    .info-popover
-      opacity: 1
+#schedule
+  thead
+    th.with-info
+      position: relative
+      cursor: pointer
+      transition: all 0.5s ease-in-out
+      .info-popover
+        position: absolute
+        top: 30%
+        left: 0
+        width: 100%
+        margin: 0 auto
+        font-size: 38px
+        color: white
+        opacity: 0
+      &:hover
+        background: #1a9bd2
+        strong
+          opacity: 0.2
+        .info-popover
+          opacity: 1
