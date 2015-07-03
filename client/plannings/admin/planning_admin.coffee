@@ -6,3 +6,7 @@ $.fn.datepicker.dates['fr'] =
   monthsShort: ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Aoû", "Sep", "Oct", "Nov", "Déc"]
   today: "Aujourd'hui"
   clear: "Effacer"
+
+Template.PlanningAdmin.events
+  'click .downloadPlanning': ->
+    downloadPlanning(@planning)

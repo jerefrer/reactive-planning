@@ -106,6 +106,7 @@ underscore@1.0.3
 url@1.0.4
 useraccounts:bootstrap@1.11.1
 useraccounts:core@1.11.1
+vsivsi:file-collection@1.1.4
 webapp@1.2.0
 webapp-hashing@1.0.3
 yogiben:pretty-email@0.0.5

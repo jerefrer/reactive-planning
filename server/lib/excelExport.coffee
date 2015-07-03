@@ -1,4 +1,4 @@
-@excelExportPlanning = (planning, filePath) ->
+@buildExcelForPlanning = (planning) ->
   excel = new Excel('xlsx')
   workbook = excel.createWorkbook()
   worksheet = excel.createWorksheet()
@@ -19,8 +19,11 @@
           displayName(Meteor.users.findOne(_id: duty._id))
         worksheet.writeToCell row + 1, column + 1, peopleNames.join(', ')
 
-  # Write file
   workbook.addSheet "Planning de #{planning.name}", worksheet
+  workbook
+
+@excelExportPlanning = (planning, filePath) ->
+  workbook = buildExcelForPlanning(planning)
   mkdirp 'tmp', Meteor.bindEnvironment (err) ->
     if err
       console.log 'Error creating tmp dir', err

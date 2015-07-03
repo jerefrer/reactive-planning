@@ -42,6 +42,8 @@ Router.route 'Planning',
   path: '/planning/:slug'
   waitOn: ->
     Meteor.subscribe 'plannings'
+  data: ->
+    planning: Plannings.findOne(slug: @params.slug)
   action: ->
     planning = Plannings.findOne(slug: @params.slug)
     @render 'Planning'
@@ -56,6 +58,8 @@ Router.route 'PlanningAdmin',
   path: '/planning/:slug/admin'
   waitOn: ->
     Meteor.subscribe 'plannings'
+  data: ->
+    planning: Plannings.findOne(slug: @params.slug)
   action: ->
     planning = Plannings.findOne(slug: @params.slug)
     @render 'PlanningAdmin'

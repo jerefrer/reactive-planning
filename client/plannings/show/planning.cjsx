@@ -42,7 +42,10 @@ userHasDutyForTask = (planning, task) ->
   render: ->
     <div>
       {<div className="pull-right"><PersonFilter setOnlyMe={@setOnlyMe} onlyMe={@state.onlyMe} /></div> if @props.planning.complete}
-      <h2>{@props.planning.name}</h2>
+      <h2>
+        {@props.planning.name}
+        {<button className="downloadPlanning btn btn-primary"><i className="fa fa-download"></i>Télécharger le planning</button> if @props.planning.complete}
+      </h2>
       <Schedule planning={@props.planning} tasks={@state.tasks} days={@state.days} duties={@state.duties} />
     </div>
 

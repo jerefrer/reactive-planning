@@ -38,6 +38,7 @@ ItemTypes = PERSON: 'person'
     <div>
       <h2>
         {@props.planning.name}
+        <button className="downloadPlanning btn btn-primary"><i className="fa fa-download"></i>Télécharger le planning</button>
         <SendAvailabilityEmailNotificationsButton planning={@props.planning} />
         <SendPresenceEmailNotificationsButton planning={@props.planning} />
         {<div className="pull-right"><SendPlanningCompleteButton planning={@props.planning} /></div>}
