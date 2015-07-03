@@ -1,4 +1,10 @@
 <template name="UserPresence">
   <h1>Vos disponibilités pour {{planning.name}}</h1>
+  {{#unless hasAnswered}}
+    <button class='notAvailable btn btn-danger'>
+      <i class="fa fa-times-circle-o"></i>
+      Je ne suis pas disponible ou ne connais pas encore mes disponibilités
+    </button>
+  {{/unless}}
   {{> fullcalendar calendarOptions }}
 </template>

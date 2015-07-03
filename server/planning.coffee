@@ -52,6 +52,13 @@ sendAvailabilityEmail = (planning, users, subject) ->
         message: "Il vous suffit de cocher les jours où vous êtes disponibes.<br />" +
                  '<div style="text-align: center">' +
                    "<img src='#{Meteor.absoluteUrl('availabilities_demo.png')}' />" +
+                 '</div>' +
+                 '<br />' +
+                 "<strong>Si vous n'êtes pas disponible du tout ou n'êtes pas encore sûr de vos disponibilités, merci de nous l'indiquer en cliquant sur le bouton comme indiqué ci-dessous.</strong>" +
+                 '<br />' +
+                 'Vous pourrez toujours revenir modifier votre choix plus tard.' +
+                 '<div style="text-align: center">' +
+                   "<img src='#{Meteor.absoluteUrl('unavailable_demo.png')}' />" +
                  '</div>'
         buttonUrl: Meteor.absoluteUrl("planning/#{planning.slug}/presences")
         buttonText: "Indiquer mes disponibilités"
@@ -215,6 +222,11 @@ Meteor.methods
         set.peopleWhoAnswered = peopleWhoAnswered
     set['presences.' + dayId] = people
     Plannings.update planning._id, $set: set
+  markAsUnavailableForTheMonth: (planningId, personId) ->
+    planning = Plannings.findOne(_id: planningId)
+    peopleWhoAnswered = planning.peopleWhoAnswered || []
+    peopleWhoAnswered.push(personId)
+    Plannings.update planning._id, $set: peopleWhoAnswered: peopleWhoAnswered
 
 Meteor.publish 'users', ->
   Meteor.users.find()

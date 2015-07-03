@@ -3,6 +3,8 @@ userPresentForDay = (planning, day) ->
     key.split(',')[0] == day._id and dutiesForDay.find (duty) -> duty._id == Meteor.userId()
 
 Template.UserPresence.helpers
+  hasAnswered: ->
+    @planning.peopleWhoAnswered.indexOf(Meteor.userId()) >= 0
   calendarOptions: ->
     id: 'user-presence-calendar'
     height: 600
@@ -28,3 +30,7 @@ Template.UserPresence.helpers
       console.log(event.day._id)
       Meteor.call 'togglePresence', @planning._id, event.day._id, Meteor.userId(), ->
         $('#user-presence-calendar').fullCalendar('refetchEvents')
+
+Template.UserPresence.events
+  'click button.notAvailable': (event) ->
+    Meteor.call 'markAsUnavailableForTheMonth', @planning._id, Meteor.userId()
