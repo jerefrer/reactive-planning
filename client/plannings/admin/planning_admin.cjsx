@@ -158,7 +158,7 @@ Schedule = React.createClass
     <div className="schedule-wrapper">
       <table id="schedule" className="table table-bordered">
         <thead>
-          <ScheduleHeader tasks={@props.tasks} />
+          <ScheduleHeader planning={@props.planning} tasks={@props.tasks} />
         </thead>
         <tbody>
           {lines}
@@ -174,12 +174,47 @@ Schedule = React.createClass
 
 ScheduleHeader = React.createClass
   render: ->
-    tasks = @props.tasks.map (task) ->
-      <th><strong>{task.name}</strong></th>
+    tasks = @props.tasks.map (task) =>
+      <TaskCell planning={@props.planning} task={task} />
     <tr>
       <th className="day-column"></th>
       {tasks}
     </tr>
+
+TaskCell = React.createClass
+  getInitialState: ->
+    showForm: false
+  showForm: ->
+    @setState showForm: true
+  hideForm: ->
+    @setState showForm: false
+  updateTask: (name, description) ->
+    Meteor.call 'updateTask', @props.planning._id, @props.task._id, name, description
+    @setState showForm: false
+  render: ->
+    if @state.showForm
+      <th><TaskForm task={@props.task} updateTask={@updateTask} onCancel={@hideForm} /></th>
+    else
+      <th onClick={@showForm}><strong>{@props.task.name}</strong></th>
+
+TaskForm = React.createClass
+  componentDidMount: ->
+    @refs.name.getDOMNode().value = @props.task.name
+    @refs.description.getDOMNode().value = @props.task.description
+  handleSubmit: (e) ->
+    e.preventDefault()
+    name = @refs.name.getDOMNode().value
+    description = @refs.description.getDOMNode().value
+    @props.updateTask(name, description)
+  render: ->
+    <div className="taskForm">
+      <form onSubmit={@handleSubmit}>
+        <input ref="name" className="form-control" />
+        <textarea ref="description" className="form-control" />
+        <button className="btn btn-primary pull-left">Valider</button>
+      </form>
+      <a href="#" onClick={@props.onCancel} className="cancel pull-right">Annuler</a>
+    </div>
 
 ScheduleLine = React.createClass
   render: ->
@@ -199,7 +234,7 @@ DayName = React.createClass
     @setState formIsVisible: false
   updateDay: (dayName, dayDate) ->
     @hideForm()
-    Meteor.call 'updateDay', @props.planningId, @props.day, dayName, dayDate
+    Meteor.call 'updateDay', @props.planning._id, @props.day._id, dayName, dayDate
   render: ->
     if @state.formIsVisible
       <DayForm planning={@props.planning} originalDayDate={@props.day.date} originalDayName={@props.day.name} onSubmit={@updateDay} onCancel={@hideForm} />

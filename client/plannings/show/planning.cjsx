@@ -79,7 +79,12 @@ Schedule = React.createClass
 ScheduleHeader = React.createClass
   render: ->
     tasks = @props.tasks.map (task) ->
-      <th><strong>{task.name}</strong></th>
+      <ReactBootstrap.OverlayTrigger trigger='hover' placement='bottom' rootClose={true} overlay={<ReactBootstrap.Popover><strong>{task.description}</strong></ReactBootstrap.Popover>}>
+        <th>
+          <strong>{task.name}</strong>
+          <i className="info-popover fa fa-question"></i>
+        </th>
+      </ReactBootstrap.OverlayTrigger>
     <tr>
       <th></th>
       {tasks}
@@ -90,25 +95,9 @@ ScheduleLine = React.createClass
     cells = @props.tasks.map (task) =>
       <ScheduleCell planning={@props.planning} day={@props.day} task={task} duties={@props.duties} presences={@props.presences} people={@props.people} />
     <tr className="day-no-#{moment(@props.day.date).format('e')}">
-      <th><DayName planningId={@props.planningId} day={@props.day} /></th>
+      <th><strong>{@props.day.name}</strong></th>
       {cells}
     </tr>
-
-DayName = React.createClass
-  getInitialState: ->
-    { formIsVisible: false }
-  showForm: ->
-    @setState formIsVisible: true
-  hideForm: ->
-    @setState formIsVisible: false
-  updateDayName: (dayName) ->
-    @hideForm()
-    Meteor.call 'updateDayName', @props.planningId, @props.day, dayName
-  render: ->
-    if @state.formIsVisible
-      <DayForm originalValue={@props.day.name} onSubmit={@updateDayName} onCancel={@hideForm} />
-    else
-      <strong onClick={@showForm} title="Cliquez pour modifier">{@props.day.name}</strong>
 
 ScheduleCell = React.createClass
   answerDuty: (personId, value) ->

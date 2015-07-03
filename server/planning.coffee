@@ -99,11 +99,16 @@ Meteor.methods
       name: dayName
       date: moment(dayDate, 'DD-MM-YYYY').toDate()
     Plannings.update planning._id, $set: days: days
-  updateDay: (planningId, day, newName, newDate) ->
+  updateDay: (planningId, dayId, name, date) ->
     Plannings.update {
       _id: planningId
-      days: $elemMatch: _id: day._id
-    }, $set: 'days.$.name': newName, 'days.$.date': moment(newDate, 'DD-MM-YYYY').toDate()
+      days: $elemMatch: _id: dayId
+    }, $set: 'days.$.name': name, 'days.$.date': moment(date, 'DD-MM-YYYY').toDate()
+  updateTask: (planningId, taskId, name, description) ->
+    Plannings.update {
+      _id: planningId
+      tasks: $elemMatch: _id: taskId
+    }, $set: 'tasks.$.name': name, 'tasks.$.description': description
   addPerson: (planningId, day, task, person) ->
     planning = Plannings.findOne(_id: planningId)
     duties = planning.duties
