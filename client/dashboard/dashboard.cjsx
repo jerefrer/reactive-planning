@@ -25,7 +25,7 @@ Planning = React.createClass
       else
         <AskForAvailabilities planning={@props.planning} />
     else
-      <NotReady planning={@props.planning} />
+      null
 
 DutiesCount = React.createClass
   goToAvailabilitiesPage: ->
@@ -101,21 +101,6 @@ AskForAvailabilities = React.createClass
           <a className="single-link">
             <i className="fa fa-chevron-right"></i>
           </a>
-        </div>
-      </div>
-    </div>
-
-NotReady = React.createClass
-  render: ->
-    <div className="planning">
-      <StatusBar color='yellow' />
-      <div className="content">
-        <div className="left">
-          <div className="name">{@props.planning.name}</div>
-          <div className="status alerte">
-            <i className="fa fa-exclamation-circle" />
-            {"Toujours en cours d'élaboration"}
-          </div>
         </div>
       </div>
     </div>

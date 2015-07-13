@@ -24,7 +24,6 @@ SMS à chacun des participants la veille de chaque jour de distribution.
 
 * Anne - Pourquoi que Mesnard ? Y'a 4 boulangeries
 * Anne-Marie : Attacher un message perso sur les disponibilités
-* Jérémy : Cacher les plannings "en cour d'élaboration"
 
 #### BUGS
 
