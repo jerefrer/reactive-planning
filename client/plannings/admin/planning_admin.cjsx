@@ -201,7 +201,7 @@ TaskCell = React.createClass
 TaskForm = React.createClass
   componentDidMount: ->
     @refs.name.getDOMNode().value = @props.task.name
-    @refs.description.getDOMNode().value = @props.task.description
+    @refs.description.getDOMNode().value = @props.task.description if @props.task.description
   handleSubmit: (e) ->
     e.preventDefault()
     name = @refs.name.getDOMNode().value
