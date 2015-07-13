@@ -1,10 +1,19 @@
 <template name="UserPresence">
-  <h1>Vos disponibilités pour {{planning.name}}</h1>
-  {{#unless hasAnswered}}
-    <button class='notAvailable btn btn-danger'>
-      <i class="fa fa-times-circle-o"></i>
-      Je ne suis pas disponible ou ne connais pas encore mes disponibilités
-    </button>
-  {{/unless}}
-  {{> fullcalendar calendarOptions }}
+  <h1>
+    Vos disponibilités pour {{planning.name}}
+    {{#if unavailableTheWholeMonth}}
+      <button class='becomeAvailable btn btn-success'>
+        <i class="fa fa-check-circle-o"></i>
+        <span>Finalement je suis disponible</span>
+      </button>
+    {{else}}
+      <button class='notAvailable btn btn-danger'>
+        <i class="fa fa-times-circle"></i>
+        <span>Je ne suis pas disponible ou ne connais pas encore mes disponibilités</span>
+      </button>
+    {{/if}}
+  </h1>
+  <div class="{{unavailableTheWholeMonthClass}}">
+    {{> fullcalendar calendarOptions }}
+  </div>
 </template>

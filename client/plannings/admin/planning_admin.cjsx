@@ -15,6 +15,7 @@ ItemTypes = PERSON: 'person'
       duties: []
       presences: []
       peopleWhoAnswered: []
+      unavailableTheWholeMonth: []
       people: Meteor.users.find().fetch()
     if @props.planning
       state.days = @props.planning.days
@@ -22,6 +23,7 @@ ItemTypes = PERSON: 'person'
       state.duties = @props.planning.duties
       state.presences = @props.planning.presences
       state.peopleWhoAnswered = @props.planning.peopleWhoAnswered
+      state.unavailableTheWholeMonth = @props.planning.unavailableTheWholeMonth
     state
   render: ->
     sound_to_play = SoundsToPlay.find().fetch()[0]
@@ -43,7 +45,7 @@ ItemTypes = PERSON: 'person'
         <SendPresenceEmailNotificationsButton planning={@props.planning} />
         {<div className="pull-right"><SendPlanningCompleteButton planning={@props.planning} /></div>}
       </h2>
-      <Schedule planning={@props.planning} tasks={@state.tasks} days={@state.days} duties={@state.duties} presences={@state.presences} people={@state.people} peopleWhoAnswered={@state.peopleWhoAnswered} />
+      <Schedule planning={@props.planning} tasks={@state.tasks} days={@state.days} duties={@state.duties} presences={@state.presences} people={@state.people} peopleWhoAnswered={@state.peopleWhoAnswered} unavailableTheWholeMonth={@state.unavailableTheWholeMonth} />
     </div>
 
 SendAvailabilityEmailNotificationsButton = React.createClass
@@ -155,7 +157,7 @@ SendPlanningCompleteButton = React.createClass
 Schedule = React.createClass
   render: ->
     lines = @props.days.map (day) =>
-      <ScheduleLine planning={@props.planning} tasks={@props.tasks} day={day} duties={@props.duties} presences={@props.presences} people={@props.people} peopleWhoAnswered={@props.peopleWhoAnswered}/>
+      <ScheduleLine planning={@props.planning} tasks={@props.tasks} day={day} duties={@props.duties} presences={@props.presences} people={@props.people} peopleWhoAnswered={@props.peopleWhoAnswered} unavailableTheWholeMonth={@props.unavailableTheWholeMonth} />
     <div className="schedule-wrapper">
       <table id="schedule" className="table table-bordered">
         <thead>
@@ -220,7 +222,7 @@ TaskForm = React.createClass
 ScheduleLine = React.createClass
   render: ->
     cells = @props.tasks.map (task) =>
-      <ScheduleCell planningId={@props.planning._id} day={@props.day} task={task} duties={@props.duties} presences={@props.presences} people={@props.people} peopleWhoAnswered={@props.peopleWhoAnswered} />
+      <ScheduleCell planningId={@props.planning._id} day={@props.day} task={task} duties={@props.duties} presences={@props.presences} people={@props.people} peopleWhoAnswered={@props.peopleWhoAnswered} unavailableTheWholeMonth={@props.unavailableTheWholeMonth} />
     <tr className="day-no-#{moment(@props.day.date).format('e')}">
       <th><DayName planning={@props.planning} day={@props.day} /></th>
       {cells}
@@ -249,7 +251,7 @@ ScheduleCell = React.createClass
     if peopleList
       people = peopleList.map (personObject) =>
         <Person person={personObject} avatar=true mailStatus=true />
-    <ReactBootstrap.ModalTrigger modal={<AddPersonModal planningId={@props.planningId} day={@props.day} task={@props.task} duties={@props.duties} presences={@props.presences} people={@props.people} peopleWhoAnswered={@props.peopleWhoAnswered} />}>
+    <ReactBootstrap.ModalTrigger modal={<AddPersonModal planningId={@props.planningId} day={@props.day} task={@props.task} duties={@props.duties} presences={@props.presences} people={@props.people} peopleWhoAnswered={@props.peopleWhoAnswered} unavailableTheWholeMonth={@props.unavailableTheWholeMonth} />}>
       <td>
         {people}
       </td>
@@ -358,7 +360,7 @@ AddPersonModal = React.createClass
   render: ->
     <ReactBootstrap.Modal {...@props} bsStyle='primary' bsSize='large' animation>
       <div className='modal-body add-person-modal'>
-        <PeopleList planningId={@props.planningId} people={@props.people} day={@props.day} task={@props.task} duties={@props.duties} presences={@props.presences} peopleWhoAnswered={@props.peopleWhoAnswered} title={"#{@props.day.name} - #{@props.task.name}"}/>
+        <PeopleList planningId={@props.planningId} people={@props.people} day={@props.day} task={@props.task} duties={@props.duties} presences={@props.presences} peopleWhoAnswered={@props.peopleWhoAnswered} unavailableTheWholeMonth={@props.unavailableTheWholeMonth} title={"#{@props.day.name} - #{@props.task.name}"}/>
       </div>
       <div className='modal-footer'>
         <ReactBootstrap.Button onClick={@props.onRequestHide}>Fermer</ReactBootstrap.Button>
@@ -377,8 +379,8 @@ PeopleList = React.createClass
   availablePeople: (people) ->
     dutiesForDay = getPeople(@props.duties, @props.day, @props.task)
     presencesForDay = @props.presences[@props.day._id]
-    people.findAll (person) ->
-      presencesForDay and presencesForDay.find(_id: person._id)
+    people.findAll (person) =>
+      presencesForDay and presencesForDay.find(_id: person._id) and not (@props.unavailableTheWholeMonth.indexOf(person._id) >= 0)
   peopleWhoDidNotAnswer: (people) ->
     people.findAll (person) =>
       @props.peopleWhoAnswered.indexOf(person._id) < 0

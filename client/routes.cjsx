@@ -77,6 +77,13 @@ Router.route 'UserPresence',
   data: ->
     planning: Plannings.findOne(slug: @params.slug)
     slug: @params.slug
+  action: ->
+    planning = Plannings.findOne(slug: @params.slug)
+    @render 'UserPresence'
+    setTimeout (->
+      if planning.unavailableTheWholeMonth.indexOf(Meteor.userId()) >= 0
+        $('#user-presence-calendar').append('<div class="inactive-overlay"></div>')
+    ), 100
 
 Router.route 'UsersPresences',
   path: '/planning/:slug/admin/presences'

@@ -86,6 +86,7 @@ Meteor.methods
       presences: {}
       duties: {}
       peopleWhoAnswered: []
+      unavailableTheWholeMonth: []
       daysFilledIn: false
       availabilityEmailSent: false
     slug
@@ -134,9 +135,9 @@ Meteor.methods
   sendAvailabilityReminder: (planningId) ->
     @unblock()
     planning = Plannings.findOne(_id: planningId)
-    usersWhoDidNotAnswer = Meteor.users.find().fetch().findAll (person) ->
-      planning.peopleWhoAnswered.indexOf(person._id) < 0
-    sendAvailabilityEmail(planning, usersWhoDidNotAnswer, "Vous n'avez pas encore donné vos disponilités pour #{planning.name}")
+    usersToSendReminderTo = Meteor.users.find().fetch().findAll (person) ->
+      planning.peopleWhoAnswered.indexOf(person._id) < 0 and not unavailableTheWholeMonth(planning, person)
+    sendAvailabilityEmail(planning, usersToSendReminderTo, "Vous n'avez pas encore donné vos disponilités pour #{planning.name}")
   sendPresenceEmailNotifications: (planningId) ->
     @unblock()
     foreachDutiesNotSentByPerson planningId, (planning, duties, person) ->
@@ -166,7 +167,7 @@ Meteor.methods
     excelExportPlanning(planning, excelExportPath)
     foreachDutiesByPerson planningId, (planning, duties, person) ->
       email = person.emails[0].address
-      unless emailIsFake(email)
+      unless emailIsFake(email) or unavailableTheWholeMonth(planning, person)
         options = _.extend {},
           heading: "Bonjour #{person.profile.firstname}"
           headingSmall: "Le planning de #{month} est disponible"
@@ -230,8 +231,18 @@ Meteor.methods
   markAsUnavailableForTheMonth: (planningId, personId) ->
     planning = Plannings.findOne(_id: planningId)
     peopleWhoAnswered = planning.peopleWhoAnswered || []
-    peopleWhoAnswered.push(personId)
-    Plannings.update planning._id, $set: peopleWhoAnswered: peopleWhoAnswered
+    set = {}
+    unless peopleWhoAnswered.indexOf(personId) >= 0
+      peopleWhoAnswered.push(personId)
+      set.peopleWhoAnswered = peopleWhoAnswered
+    set.unavailableTheWholeMonth = planning.unavailableTheWholeMonth || []
+    set.unavailableTheWholeMonth.push(personId)
+    Plannings.update planning._id, $set: set
+  markAsAvailableForTheMonth: (planningId, personId) ->
+    planning = Plannings.findOne(_id: planningId)
+    unavailableTheWholeMonth = planning.unavailableTheWholeMonth
+    unavailableTheWholeMonth.remove(personId)
+    Plannings.update planning._id, $set: unavailableTheWholeMonth: unavailableTheWholeMonth
 
 Meteor.publish 'users', ->
   Meteor.users.find()

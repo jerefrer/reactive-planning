@@ -1,6 +1,25 @@
-.notAvailable
-  margin: -20px 0 20px
+.notAvailable, .becomeAvailable
+  float: right
+  width: 300px
+  white-space: normal
+  i, span
+    display: inline-block
+    vertical-align: middle
   i
     margin-right: 5px
     font-size: 20px
-    vertical-align: top
+  span
+    width: 240px
+
+.unavailableTheWholeMonth
+  #user-presence-calendar
+    position: relative
+    .inactive-overlay
+      position: absolute
+      top: 0
+      left: 0
+      right: 0
+      bottom: 0
+      background-color: rgba(0, 0, 0, 0.4)
+      z-index: 10
+      -webkit-user-select: none

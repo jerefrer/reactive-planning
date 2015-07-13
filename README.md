@@ -19,14 +19,10 @@ SMS à chacun des participants la veille de chaque jour de distribution.
 
 #### Urgent
 - Tri users par ordre alphabétique dans les bénévoles
-- Ne pas envoyer les emails à ceux qui ne sont pas dispos pour le mois
-- Ajouter unavailableTheWholeMonth: [] à tous les plannings
 
 #### Suggestions
 
 * Anne - Pourquoi que Mesnard ? Y'a 4 boulangeries
-* Laetitia - Passer dans usersWhoAnswered dès affichage de la page, pas au premier click (pour ceux qui ne peuvent pas être dispos du tout)
-* Jérémy - Indiquer dans l'email des dispos que si on est pas dispo du tout il faut quand même se rendre sur la page, ou mieux ajouter un lien "je ne suis pas dispo" qui va vers la page avec un message disant que ça a été pris en compte
 * Anne-Marie : Attacher un message perso sur les disponibilités
 * Jérémy : Cacher les plannings "en cour d'élaboration"
 

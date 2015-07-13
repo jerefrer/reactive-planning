@@ -25,3 +25,6 @@
     user.profile.firstname.capitalize()
   else if user.profile.lastname
     user.profile.lastname.capitalize()
+
+@unavailableTheWholeMonth = (planning, user) ->
+  planning.unavailableTheWholeMonth.indexOf(user._id) >= 0
