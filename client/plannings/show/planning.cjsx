@@ -20,7 +20,7 @@ userHasDutyForTask = (planning, task) ->
       onlyMe: Session.get('onlyMe')
     if @props.planning
       state.duties = @props.planning.duties
-      if state.onlyMe
+      if state.onlyMe || !@props.planning.complete
         state.days = @props.planning.days.findAll (day) => userHasDutyForDay(@props.planning, day)
         state.tasks = @props.planning.tasks.findAll (task) => userHasDutyForTask(@props.planning, task)
       else
@@ -57,10 +57,10 @@ PersonFilter = React.createClass
   render: ->
     <ul className="nav nav-pills">
       <li className={'active' if @props.onlyMe}>
-        <a onClick={@setOnlyMeToTrue}>Uniquement moi</a>
+        <a onClick={@setOnlyMeToTrue}>Voir uniquement mes jours</a>
       </li>
       <li className={'active' unless @props.onlyMe}>
-        <a onClick={@setOnlyMeToFalse}>Tout le monde</a>
+        <a onClick={@setOnlyMeToFalse}>Voir tout le planning</a>
       </li>
     </ul>
 
@@ -113,8 +113,11 @@ ScheduleCell = React.createClass
     person._id == Meteor.userId()
   render: ->
     if peopleList = @props.duties[k(@props.day) + ',' + k(@props.task)]
+      unless @props.planning.complete
+        peopleList = peopleList.findAll (person) =>
+          @isCurrentUser(person)
       people = peopleList.map (person) =>
-        <Person person={person} avatar=true mailStatus=true answerDuty={@answerDuty} isCurrentUser={@isCurrentUser(person)} />
+        <Person person={person} planning={@props.planning} avatar=true mailStatus=true answerDuty={@answerDuty} isCurrentUser={@isCurrentUser(person)} />
     <td>{people}</td>
 
 Person = React.createClass
@@ -144,7 +147,7 @@ Person = React.createClass
       </div>
     if person
       <div className={className}>
-        {displayName(person)}
+        {displayName(person) if @props.planning.complete}
         {buttons}
       </div>
     else
