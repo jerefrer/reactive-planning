@@ -40,13 +40,22 @@ ItemTypes = PERSON: 'person'
     <div>
       <h2>
         {@props.planning.name}
-        <button className="downloadPlanning btn btn-primary"><i className="fa fa-download"></i>Télécharger le planning</button>
+        <DownloadPlanningButton />
         <SendAvailabilityEmailNotificationsButton planning={@props.planning} />
         <SendPresenceEmailNotificationsButton planning={@props.planning} />
-        {<div className="pull-right"><SendPlanningCompleteButton planning={@props.planning} /></div>}
+        <div className="pull-right">
+          <SendPlanningCompleteButton planning={@props.planning} />
+        </div>
+        <PlanningStatusSwitch planning={@props.planning} />
       </h2>
       <Schedule planning={@props.planning} tasks={@state.tasks} days={@state.days} duties={@state.duties} presences={@state.presences} people={@state.people} peopleWhoAnswered={@state.peopleWhoAnswered} unavailableTheWholeMonth={@state.unavailableTheWholeMonth} />
     </div>
+
+DownloadPlanningButton = React.createClass
+  render: ->
+    <ReactBootstrap.OverlayTrigger placement='bottom' overlay={<ReactBootstrap.Tooltip>Télécharger le planning</ReactBootstrap.Tooltip>}>
+      <button className="downloadPlanning btn btn-primary"><i className="fa fa-download"></i></button>
+    </ReactBootstrap.OverlayTrigger>
 
 SendAvailabilityEmailNotificationsButton = React.createClass
   getInitialState: ->
@@ -138,7 +147,7 @@ SendPlanningCompleteButton = React.createClass
           showingSuccess: true
         setTimeout (=> @setState showingSuccess: false), 5000
   render: ->
-    return null unless (not @props.planning.complete) or @state.sending or @state.showingSuccess
+    return null unless (not @props.planning.excelFileSent) or @state.sending or @state.showingSuccess
     className = "send-emails-button send-planning-complete-button btn btn-success "
     if @state.showingSuccess
       inner = <i className="fa fa-check-circle-o" />
@@ -149,10 +158,26 @@ SendPlanningCompleteButton = React.createClass
       className += 'with-icon'
       style = width: '50px'
     else
-      inner = <span><i className="fa fa-thumbs-up" />Valider le planning et avertir tout le monde</span>
+      inner = <span><i className="fa fa-thumbs-up" />Envoyer le planning par e-mail</span>
     <span>
       <button className={className} style={style} onClick={@sendPlanningCompleteEmail}>{inner}</button>
     </span>
+
+PlanningStatusSwitch = React.createClass
+  getInitialState: ->
+    checked: @props.planning.complete
+  togglePlanningComplete: ->
+    @setState checked: !@state.checked
+    Meteor.call 'togglePlanningComplete', @props.planning._id
+  render: ->
+    checked = @props.planning.complete && 'checked' || ''
+    <div className="onoffswitch">
+      <input type="checkbox" className="onoffswitch-checkbox" id="planning-complete" checked={@state.checked} />
+      <label className="onoffswitch-label" for="planning-complete" onClick={@togglePlanningComplete}>
+        <span className="onoffswitch-inner"></span>
+        <span className="onoffswitch-switch"></span>
+      </label>
+    </div>
 
 Schedule = React.createClass
   render: ->

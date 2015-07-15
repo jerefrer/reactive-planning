@@ -159,6 +159,9 @@ Meteor.methods
         unless result.error
           duties.each (duty) ->
             markDutyAsSent(planning, duty.day, duty.task, person)
+  togglePlanningComplete: (planningId) ->
+    planning = Plannings.findOne(_id: planningId)
+    Plannings.update planningId, $set: { complete: !planning.complete }
   sendPlanningCompleteEmail: (planningId) ->
     @unblock()
     planning = Plannings.findOne(_id: planningId)
@@ -182,7 +185,7 @@ Meteor.methods
           subject: "Le planning de #{month} est disponible"
           html: html
           attachment: excelExportPath
-    Plannings.update planningId, $set: { complete: true }
+    Plannings.update planningId, $set: { excelFileSent: true }
   answerNotification: (planningSlug, dayId, taskId, personId, confirmation) ->
     planning = Plannings.findOne(slug: planningSlug)
     duties = planning.duties
