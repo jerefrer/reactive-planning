@@ -40,7 +40,8 @@ miktam:loggly
 pauldowman:dotenv
 netanelgilad:excel
 netanelgilad:mkdirp
-vsivsi:file-collection
 chrismbeckett:toastr
 meteorhacks:kadira
 meteorhacks:zones
+houston:admin
+vsivsi:file-collection

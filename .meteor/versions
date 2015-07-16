@@ -38,6 +38,7 @@ gfk:mailgun-api@1.1.0
 gwendall:session-json@0.1.7
 handlebars@1.0.3
 harrison:papa-parse@1.1.0
+houston:admin@2.0.3
 html-tools@1.0.4
 htmljs@1.0.4
 http@1.1.0
@@ -102,6 +103,7 @@ spacebars-compiler@1.0.5
 srp@1.0.3
 stylus@1.0.7
 templating@1.1.0
+tmeasday:paginated-subscription@0.2.4
 tracker@1.0.6
 twbs:bootstrap@3.3.4
 u2622:persistent-session@0.3.2
