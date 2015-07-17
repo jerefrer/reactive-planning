@@ -65,13 +65,19 @@ PersonFilter = React.createClass
     </ul>
 
 Schedule = React.createClass
+  getInitialState: ->
+    tasks: @props.tasks
+  filterTasks: (term) ->
+    filteredTasks = @props.tasks.findAll (task) ->
+      getSlug(task.name).fuzzy getSlug(term)
+    @setState tasks: filteredTasks
   render: ->
     lines = @props.days.map (day) =>
-      <ScheduleLine planning={@props.planning} tasks={@props.tasks} day={day} duties={@props.duties} />
+      <ScheduleLine planning={@props.planning} tasks={@state.tasks} day={day} duties={@props.duties} />
     <div className="schedule-wrapper">
-      <table id="schedule" className="table table-striped table-bordered">
+      <table id="schedule" className="table-striped table-bordered">
         <thead>
-          <ScheduleHeader tasks={@props.tasks} />
+          <ScheduleHeader tasks={@state.tasks} filterTasks={@filterTasks} />
         </thead>
         <tbody>
           {lines}
@@ -80,6 +86,8 @@ Schedule = React.createClass
     </div>
 
 ScheduleHeader = React.createClass
+  onInputChange: ->
+    @props.filterTasks @refs.search.getDOMNode().value.trim()
   render: ->
     tasks = @props.tasks.map (task) ->
       if task.description and task.description.trim() != ''
@@ -92,7 +100,9 @@ ScheduleHeader = React.createClass
       else
         <th><strong>{task.name}</strong></th>
     <tr>
-      <th></th>
+      <th>
+        <input type="text" ref="search" onChange={@onInputChange} className="form-control filterTasks" placeholder="Rechercher une tâche" />
+      </th>
       {tasks}
     </tr>
 
