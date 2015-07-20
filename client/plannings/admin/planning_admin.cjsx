@@ -180,13 +180,19 @@ PlanningStatusSwitch = React.createClass
     </div>
 
 Schedule = React.createClass
+  getInitialState: ->
+    tasks: @props.tasks
+  filterTasks: (term) ->
+    filteredTasks = @props.tasks.findAll (task) ->
+      getSlug(task.name).fuzzy getSlug(term)
+    @setState tasks: filteredTasks
   render: ->
     lines = @props.days.map (day) =>
-      <ScheduleLine planning={@props.planning} tasks={@props.tasks} day={day} duties={@props.duties} presences={@props.presences} people={@props.people} peopleWhoAnswered={@props.peopleWhoAnswered} unavailableTheWholeMonth={@props.unavailableTheWholeMonth} />
+      <ScheduleLine planning={@props.planning} tasks={@state.tasks} day={day} duties={@props.duties} presences={@props.presences} people={@props.people} peopleWhoAnswered={@props.peopleWhoAnswered} unavailableTheWholeMonth={@props.unavailableTheWholeMonth} />
     <div className="schedule-wrapper">
-      <table id="schedule" className="table table-bordered">
+      <table id="schedule" className="table-bordered">
         <thead>
-          <ScheduleHeader planning={@props.planning} tasks={@props.tasks} />
+          <ScheduleHeader planning={@props.planning} tasks={@state.tasks} filterTasks={@filterTasks} />
         </thead>
         <tbody>
           {lines}
@@ -201,11 +207,15 @@ Schedule = React.createClass
     </div>
 
 ScheduleHeader = React.createClass
+  onInputChange: ->
+    @props.filterTasks @refs.search.getDOMNode().value.trim()
   render: ->
     tasks = @props.tasks.map (task) =>
       <TaskCell planning={@props.planning} task={task} />
     <tr>
-      <th className="day-column"></th>
+      <th className="day-column">
+        <input type="text" ref="search" onChange={@onInputChange} className="form-control filterTasks" placeholder="Rechercher une tâche" />
+      </th>
       {tasks}
     </tr>
 

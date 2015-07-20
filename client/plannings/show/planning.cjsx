@@ -75,7 +75,7 @@ Schedule = React.createClass
     lines = @props.days.map (day) =>
       <ScheduleLine planning={@props.planning} tasks={@state.tasks} day={day} duties={@props.duties} />
     <div className="schedule-wrapper">
-      <table id="schedule" className="table-striped table-bordered">
+      <table id="schedule" className="table-bordered">
         <thead>
           <ScheduleHeader tasks={@state.tasks} filterTasks={@filterTasks} />
         </thead>
