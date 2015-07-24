@@ -145,3 +145,5 @@ Meteor.startup ->
     Roles.addUsersToRoles odile, ['admin']
   if palzang = Meteor.users.findOne(username: 'Palzang')
     Roles.addUsersToRoles palzang, ['admin']
+  if noemie = Meteor.users.findOne(username: 'noemie maldorane')
+    Roles.addUsersToRoles noemie, ['admin']
