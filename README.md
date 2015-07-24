@@ -52,3 +52,7 @@ SMS à chacun des participants la veille de chaque jour de distribution.
   * Si des cases sont vides X jours avant l'event
   * Quand quelqu'un refuse => beaucoup de mail, faire un récap journalier, hebdomadaire. Est-ce nécessaire ?
 * Add proper restrictions for non-admin users
+
+#### Refactoring
+
+* Unify some methods on collections, maybe with the collection-helpers package ?
