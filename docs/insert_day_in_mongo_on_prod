@@ -1,0 +1,17 @@
+db.plannings.update(
+   { _id: 'pSNWzhhhjQkoCbN4P' },
+   {
+     $push: {
+        days: {
+           $each: [
+             {
+               "_id" : "a554ec29-0141-576a-c89c-db32b1719999",
+               "name" : "Samedi 22 soir (camion Vesuna)",
+               "date" : ISODate("2015-08-22T00:00:00Z")
+             },
+           ],
+           $position: 22
+        }
+     }
+   }
+)
