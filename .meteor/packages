@@ -34,7 +34,6 @@ rajit:bootstrap3-datepicker
 percolate:synced-cron
 ecwyne:nexmo-sms
 harrison:papa-parse
-rzymek:fullcalendar
 yogiben:pretty-email
 miktam:loggly
 pauldowman:dotenv
@@ -46,3 +45,5 @@ meteorhacks:zones
 houston:admin
 vsivsi:file-collection
 kadira:debug
+ericksond:clndr
+underscore
