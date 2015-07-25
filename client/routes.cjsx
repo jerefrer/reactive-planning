@@ -90,16 +90,14 @@ Router.route 'UsersPresences',
   waitOn: ->
     Meteor.subscribe 'plannings'
     Meteor.subscribe 'users'
-  data: ->
-    planning: Plannings.findOne(slug: @params.slug)
-    users: sortUsers(Meteor.users.find().fetch())
   action: ->
     planning = Plannings.findOne(slug: @params.slug)
+    users = sortUsers(Meteor.users.find().fetch())
     @render 'UsersPresences'
     setTimeout (->
       React.render(
-        <SendAvailabilityReminderButton planning={planning} />,
-        document.getElementById('sendAvailabilityReminderButton')
+        <UsersPresences planning={planning} users={users} />,
+        document.getElementById('users-presences')
       )
     ), 100
 
