@@ -138,10 +138,10 @@ Meteor.startup ->
 
   if jeremy = Meteor.users.findOne('profile.firstname': 'Jérémy')
     Meteor.users.update {_id: jeremy._id}, {$set: {username: 'Jérémy Frere', passwordEmailSent: true}}
+    Accounts.setPassword jeremy._id, 'canada', logout: false
     Roles.addUsersToRoles jeremy, ['admin']
   if odile = Meteor.users.findOne(username: 'Odile D')
     Meteor.users.update {_id: odile._id}, {$set: {passwordEmailSent: true}}
-    Accounts.setPassword jeremy._id, 'canada', logout: false
     Roles.addUsersToRoles odile, ['admin']
   if palzang = Meteor.users.findOne(username: 'Palzang')
     Roles.addUsersToRoles palzang, ['admin']
