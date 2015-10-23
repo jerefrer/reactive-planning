@@ -1,0 +1,1 @@
+db.users.update({'emails.address': 'john@doe.com'}, {$set: {roles: ['admin']}})

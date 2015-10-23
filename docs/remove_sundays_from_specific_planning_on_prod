@@ -1,0 +1,5 @@
+db.plannings.update(
+    { _id: 'uC4xhvBvr24b4jnBi' },
+    { $pull: { days: { name: { $regex: /Dimanche/ } } } },
+    { multi: true }
+)
