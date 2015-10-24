@@ -11,48 +11,55 @@
     position: relative
     width: calc(100% / 7)
     height: 100px
+    padding-top: 40px
     background: #fafafa
     text-align: center
     vertical-align: middle
     .day-number
       position: absolute
-      top: 10px
-      right: 10px
+      top: 0
+      left: 0
+      right: 0
+      padding: 5px
       z-index: 2
-    .checkbox
-      margin: 0
-    &.with-one-event, &.with-multiple-events
+    &.with-events
       background: white
-    &.with-one-event
-      .checkbox
-        position: absolute
-        top: 0
-        left: 0
-        right: 0
-        bottom: 0
-        padding-top: 32px
-        .fa
-          font-size: 40px
-    &.with-multiple-events
-      .checkbox
-        display: inline-block
-        padding: 5px 10px
-        border-radius: 4px
-        .detail, .fa
-          vertical-align: middle
-        .detail
+      .day-number
+        font-weight: bold
+        border-bottom: 1px solid #DDD
+      .group
+        border-bottom: 1px solid rgb(221, 221, 221)
+        padding-bottom: 5px
+        margin-bottom: 5px
+        &:last-child
+          border: none
+          margin: 0
+          padding: 0
+        .checkbox
           display: inline-block
-          width: 36px
-          margin-right: 4px
-          text-align: right
-          font-weight: bold
-          color: #5E5E5E
-        .fa
-          font-size: 30px
-    &.with-one-event, &.with-multiple-events
-      cursor: pointer
-      .checkbox
-        &:hover
-          background: #1B9AD2
-          .detail, .fa
-            color: white
+          margin: 0
+          padding: 5px 10px
+          line-height: 16px
+          border-radius: 4px
+          cursor: pointer
+          &:hover
+            background: #1B9AD2
+            .name, .fa
+              color: white
+            .name span
+              color: #fafafa
+          .name, .fa
+            vertical-align: middle
+          .name
+            display: inline-block
+            width: 94px
+            margin-right: 4px
+            font-size: 15px
+            font-weight: bold
+            color: #5E5E5E
+            span
+              display: block
+              color: #838383
+              font-weight: normal
+          .fa
+            font-size: 30px
