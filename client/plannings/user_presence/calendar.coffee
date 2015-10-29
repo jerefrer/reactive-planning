@@ -30,9 +30,11 @@ Template.UserPresence.rendered = ->
                            <div class="day-number"><%= days[d].day %></div>
                            <% if (dayHasEvents) { %>
                              <% _.each(eventsForDayByGroup, function(eventsGroup) { %>
+                               <% var requiredEvent = eventsGroup.find({required: true}) %>
                                <div class="group">
                                  <% _.each(eventsGroup, function(event) { %>
-                                   <div class="checkbox" data-event-id="<%= event._id %>">
+                                   <% var optionalEventShouldBeDisabled = requiredEvent && event != requiredEvent && !requiredEvent.present %>
+                                   <div class="checkbox <%= optionalEventShouldBeDisabled && "disabled" || "" %>" data-event-id="<%= event._id %>">
                                      <div class="name">
                                        <%= event.name %>
                                        <% if (event.detail) { %>
@@ -87,7 +89,7 @@ Template.UserPresence.rendered = ->
       user_presence_calendar.setEvents buildEvents(planning.events)
 
 Template.UserPresence.events
-  'click #user-presence-calendar .checkbox': (event) ->
+  'click #user-presence-calendar .checkbox:not(.disabled)': (event) ->
     successPopup()
     eventId = $(event.currentTarget).data('event-id')
     Meteor.call 'togglePresence', @planning._id, eventId, Meteor.userId()

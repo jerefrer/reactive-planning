@@ -246,21 +246,24 @@ Meteor.methods
     Plannings.update planning._id, $set: set
   togglePresence: (planningId, eventId, personId, fromAdmin) ->
     planning = Plannings.findOne(_id: planningId)
-    availablePeople = planning.events.find(_id: eventId).availablePeople
+    events = planning.events
+    event = events.find(_id: eventId)
+    availablePeople = event.availablePeople
     peopleWhoAnswered = planning.peopleWhoAnswered || []
     set = {}
     if availablePeople.indexOf(personId) >= 0
       availablePeople.remove(personId)
+      if event.required
+        optionalEventsForSameEventGroup = events.findAll(date: event.date, group_id: event.group_id, required: false)
+        optionalEventsForSameEventGroup.each (optionalEvent) ->
+          optionalEvent.availablePeople.remove(personId)
     else
       availablePeople.push personId
       unless fromAdmin || (peopleWhoAnswered.indexOf(personId) >= 0)
         peopleWhoAnswered.push(personId)
         set.peopleWhoAnswered = peopleWhoAnswered
-    set["events.$.availablePeople"] = availablePeople
-    conditions =
-      _id: planningId,
-      events: $elemMatch: _id: eventId
-    Plannings.update conditions, $set: set
+    set.events = events
+    Plannings.update { _id: planningId }, $set: set
   markAsUnavailableForTheMonth: (planningId, personId) ->
     planning = Plannings.findOne(_id: planningId)
     peopleWhoAnswered = planning.peopleWhoAnswered || []

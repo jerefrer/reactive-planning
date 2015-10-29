@@ -42,12 +42,15 @@
           line-height: 16px
           border-radius: 4px
           cursor: pointer
-          &:hover
+          &:hover:not(.disabled)
             background: #1B9AD2
             .name, .fa
               color: white
             .name span
               color: #fafafa
+          &.disabled
+            opacity: 0.5
+            cursor: not-allowed
           .name, .fa
             vertical-align: middle
           .name
