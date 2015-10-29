@@ -12,17 +12,11 @@
           <SendAvailabilityReminderButton planning={@props.planning} />
         </div>
       </h1>
-      <div className="row">
-        <div className="col-md-8">
-          <PresencesTable planning={@props.planning} usersWhoAnswered={@usersWhoAnswered()}/>
-        </div>
-        <div className="col-md-4 people-list">
-          <h2>{"N'ont pas répondu"}</h2>
-          <ul className="list-unstyled people-who-did-not-answer">
-            {@usersWhoDidNotAnswer().map (user) -> <User user={user} />}
-          </ul>
-        </div>
-      </div>
+      <PresencesTable planning={@props.planning} usersWhoAnswered={@usersWhoAnswered()}/>
+      <h2>{"N'ont pas répondu"}</h2>
+      <ul className="list-unstyled people-who-did-not-answer">
+        {@usersWhoDidNotAnswer().map (user) -> <User user={user} />}
+      </ul>
     </div>
 
 SendAvailabilityReminderButton = React.createClass
@@ -54,33 +48,43 @@ SendAvailabilityReminderButton = React.createClass
     <button className={className} style={style} onClick={@sendAvailabilityReminder}>{inner}</button>
 
 @PresencesTable = React.createClass
+  rows: ->
+    eventsByDate = @props.planning.events.groupBy('date')
+    _.flatten Object.keys(eventsByDate).map (date) =>
+      events = eventsByDate[date]
+      events.map (event, index) =>
+        rowspan = events.length if index == 0
+        <Rows planning={@props.planning} usersWhoAnswered={@props.usersWhoAnswered} date={date} event={event} rowspan={rowspan} />
   render: ->
-    rows = @props.planning.days.map (day) =>
-      <Row planning={@props.planning} usersWhoAnswered={@props.usersWhoAnswered} day={day} />
     <table className="table table-bordered user-presences-table">
       <tr>
-        <th></th>
+        <th colSpan="2"></th>
         <th>Disponibles</th>
         <th>Non disponibles</th>
       </tr>
-      {rows}
+      {@rows()}
     </table>
 
-Row = React.createClass
+Rows = React.createClass
   usersWhoCheckedPresence: ->
-    if presencesForDay = @props.planning.presences[@props.day._id]
-      presencesForDay.map (presence) =>
-        @props.usersWhoAnswered.find _id: presence._id
-    else
-      []
+    @props.event.availablePeople.map (userId) =>
+      @props.usersWhoAnswered.find _id: userId
   availableUsers: ->
     @usersWhoCheckedPresence().findAll (user) =>
       @props.planning.unavailableTheWholeMonth.indexOf(user._id) < 0
   unavailableUsers: ->
     _.difference @props.usersWhoAnswered, @availableUsers()
+  dateColumn: ->
+    <th className="event-date" rowSpan={@props.rowspan}>
+      {moment(@props.event.date).format('dddd DD').humanize()}
+    </th>
   render: ->
     <tr>
-      <th className="day-name">{@props.day.name}</th>
+      {@dateColumn() if @props.rowspan}
+      <th className="event-name">
+        {@props.event.name}
+        <span className="event-detail">{@props.event.detail}</span>
+      </th>
       <td className="people-list">
         <ul className="list-unstyled available-people">
           {@availableUsers().map (user) -> <User user={user} />}

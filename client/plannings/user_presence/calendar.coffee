@@ -1,14 +1,14 @@
-userPresentForDay = (planning, day) ->
-  !!_.find planning.presences, (dutiesForDay, key) ->
-    key.split(',')[0] == day._id and dutiesForDay.find (duty) -> duty._id == Meteor.userId()
+userPresentForDay = (event) ->
+  event.availablePeople.indexOf(Meteor.userId()) >= 0
 
-buildEvents = (planning) ->
-  planning.days.map (day) =>
-    date: day.date
-    id: day._id
-    present: userPresentForDay(planning, day)
+buildEvents = (events) ->
+  events.map (event) ->
+    Object.extended(event).merge
+      present: userPresentForDay(event)
 
 Template.UserPresence.rendered = ->
+  startOfMonth = @data.planning.events.first().date
+  endOfMonth = @data.planning.events.last().date
   user_presence_calendar = $('#user-presence-calendar').clndr
     template: '<table class="clndr-table table table-bordered" border="0" cellspacing="0" cellpadding="0">
                  <thead>
@@ -24,33 +24,40 @@ Template.UserPresence.rendered = ->
                        <% for(var j = 0; j < 7; j++) { %>
                          <% var d = j + i * 7; %>
                          <% var events = days[d].events %>
-                         <td class="<%= days[d].classes %> <% if (events.length == 1) { %>with-one-event<% } else if (events.length > 1) { %>with-multiple-events<% } %>">
+                         <% var eventsForDayByGroup = events.groupBy("group_id"); %>
+                         <% var dayHasEvents = Object.keys(eventsForDayByGroup).length > 0 && days[d].classes.indexOf("inactive") < 0 %>
+                         <td class="<%= days[d].classes %> <% if (dayHasEvents) { %>with-events<% } %>">
                            <div class="day-number"><%= days[d].day %></div>
-                           <% _.each(events, function(event, index) { %>
-                             <div class="checkbox" data-day-id="<%= event.id %>">
-                               <% if (events.length > 1) { %>
-                                 <div class="detail">
-                                   <% if (index == 0) { %>
-                                     Matin
-                                   <% } else { %>
-                                     Soir
-                                   <% } %>
-                                 </div>
-                               <% } %>
-                               <% if (event.present) { %>
-                                 <i class="fa fa-check-square-o text-success" />
-                               <% } else { %>
-                                 <i class="fa fa-square-o text-muted" />
-                               <% } %>
-                             </div>
-                           <% }); %>
+                           <% if (dayHasEvents) { %>
+                             <% _.each(eventsForDayByGroup, function(eventsGroup) { %>
+                               <% var requiredEvent = eventsGroup.find({required: true}) %>
+                               <div class="group">
+                                 <% _.each(eventsGroup, function(event) { %>
+                                   <% var optionalEventShouldBeDisabled = requiredEvent && event != requiredEvent && !requiredEvent.present %>
+                                   <div class="checkbox <%= optionalEventShouldBeDisabled && "disabled" || "" %>" data-event-id="<%= event._id %>">
+                                     <div class="name">
+                                       <%= event.name %>
+                                       <% if (event.detail) { %>
+                                         <span><%= event.detail %></span>
+                                       <% } %>
+                                     </div>
+                                     <% if (event.present) { %>
+                                       <i class="fa fa-check-square-o text-success" />
+                                     <% } else { %>
+                                       <i class="fa fa-square-o text-muted" />
+                                     <% } %>
+                                   </div>
+                                 <% }); %>
+                               </div>
+                             <% }); %>
+                           <% } %>
                          </td>
                        <% } %>
                      </tr>
                    <% } %>
                  </tbody>
                </table>'
-    startWithMonth: @data.planning.days.first().date
+    startWithMonth: startOfMonth
     weekOffset: 1
     daysOfTheWeek: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi']
     targets:
@@ -70,19 +77,19 @@ Template.UserPresence.rendered = ->
       adjacentMonth: "adjacent-month"
       inactive: "inactive"
       selected: "selected"
-    events: buildEvents(@data.planning)
+    events: buildEvents(@data.planning.events)
     showAdjacentMonths: true
     forceSixRows: null
     constraints:
-      startDate: moment(@data.planning.days.first().date).startOf('month')
-      endDate: moment(@data.planning.days.first().date).endOf('month')
+      startDate: startOfMonth
+      endDate: endOfMonth
   Plannings.find().observeChanges
     changed: (id) ->
       planning = Plannings.findOne(id)
-      user_presence_calendar.setEvents buildEvents(planning)
+      user_presence_calendar.setEvents buildEvents(planning.events)
 
 Template.UserPresence.events
-  'click #user-presence-calendar .checkbox': (event) ->
+  'click #user-presence-calendar .checkbox:not(.disabled)': (event) ->
     successPopup()
-    dayId = $(event.currentTarget).data('day-id')
-    Meteor.call 'togglePresence', @planning._id, dayId, Meteor.userId()
+    eventId = $(event.currentTarget).data('event-id')
+    Meteor.call 'togglePresence', @planning._id, eventId, Meteor.userId()

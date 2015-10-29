@@ -69,6 +69,33 @@ sendAvailabilityEmail = (planning, users, subject) ->
         subject: subject
         html: html
 
+weeklyEvents = [
+  { "weekDay": 0, "name": "13:00 - 15:00", "detail": "Chargement",         "required": false, "group_id": 1 },
+  { "weekDay": 0, "name": "15:00 - 17:00", "detail": "Distribution colis", "required": false, "group_id": 1 },
+
+  { "weekDay": 1, "name": "17:30 - 18:00", "detail": "Chargement",         "required": false, "group_id": 2 },
+  { "weekDay": 1, "name": "18:00 - 19:30", "detail": "Distribution",       "required":  true, "group_id": 2 },
+  { "weekDay": 1, "name": "19:30 - 20:30", "detail": "Déchargement",       "required": false, "group_id": 2 },
+
+  { "weekDay": 3, "name": "17:30 - 18:00", "detail": "Chargement",         "required": false, "group_id": 3 },
+  { "weekDay": 3, "name": "18:00 - 19:30", "detail": "Distribution",       "required":  true, "group_id": 3 },
+  { "weekDay": 3, "name": "19:30 - 20:30", "detail": "Déchargement",       "required": false, "group_id": 3 },
+
+  { "weekDay": 5, "name": "09:00 - 11:00", "detail": "Chargement",         "required": false, "group_id": 4 },
+  { "weekDay": 5, "name": "17:30 - 18:00", "detail": "Distribution",       "required": false, "group_id": 4 },
+  { "weekDay": 5, "name": "17:30 - 18:00", "detail": "Chargement",         "required": false, "group_id": 5 },
+  { "weekDay": 5, "name": "18:00 - 19:30", "detail": "Distribution",       "required":  true, "group_id": 5 },
+  { "weekDay": 5, "name": "19:30 - 20:30", "detail": "Déchargement",       "required": false, "group_id": 5 }
+]
+
+buildEventFromWeeklyEvents = (month, year) ->
+  daysInMonth = moment({day: 1, month: month, year: year}).daysInMonth()
+  _.flatten _.map [1..daysInMonth], (day) =>
+    date = new Date(year, month, day)
+    weeklyEventsForDay = weeklyEvents.findAll weekDay: moment(date).weekday()
+    weeklyEventsForDay.map (event) ->
+      Object.extended(event).clone().merge(_id: Random.id(), date: date, availablePeople: [])
+
 Meteor.methods
   createPlanning: (month, year, days) ->
     if !days
@@ -89,6 +116,7 @@ Meteor.methods
       unavailableTheWholeMonth: []
       daysFilledIn: false
       availabilityEmailSent: false
+      events: buildEventFromWeeklyEvents(month, year)
     slug
   removePlanning: (planningId) ->
     Plannings.remove planningId
@@ -216,21 +244,26 @@ Meteor.methods
       person.emailSent = false
     set['duties.' + key] = people
     Plannings.update planning._id, $set: set
-  togglePresence: (planningId, dayId, personId, fromAdmin) ->
+  togglePresence: (planningId, eventId, personId, fromAdmin) ->
     planning = Plannings.findOne(_id: planningId)
-    presences = planning.presences
-    people = presences[dayId] || []
+    events = planning.events
+    event = events.find(_id: eventId)
+    availablePeople = event.availablePeople
     peopleWhoAnswered = planning.peopleWhoAnswered || []
     set = {}
-    if people.find(_id: personId)
-      people.remove _id: personId
+    if availablePeople.indexOf(personId) >= 0
+      availablePeople.remove(personId)
+      if event.required
+        optionalEventsForSameEventGroup = events.findAll(date: event.date, group_id: event.group_id, required: false)
+        optionalEventsForSameEventGroup.each (optionalEvent) ->
+          optionalEvent.availablePeople.remove(personId)
     else
-      people.push _id: personId
+      availablePeople.push personId
       unless fromAdmin || (peopleWhoAnswered.indexOf(personId) >= 0)
         peopleWhoAnswered.push(personId)
         set.peopleWhoAnswered = peopleWhoAnswered
-    set['presences.' + dayId] = people
-    Plannings.update planning._id, $set: set
+    set.events = events
+    Plannings.update { _id: planningId }, $set: set
   markAsUnavailableForTheMonth: (planningId, personId) ->
     planning = Plannings.findOne(_id: planningId)
     peopleWhoAnswered = planning.peopleWhoAnswered || []
