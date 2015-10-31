@@ -9,7 +9,7 @@
 
 Planning = React.createClass
   openPlanningAdmin: (e) ->
-    window.location = "/planning/" + @props.slug + "/admin"
+    window.location = "/planning/" + @props.slug + "/admin/presences"
   removePlanning: (e) ->
     e.preventDefault()
     e.stopPropagation()
@@ -28,7 +28,7 @@ NewPlanning = React.createClass
     monthInput = @refs.planningMonth.getDOMNode()
     yearInput = @refs.planningYear.getDOMNode()
     Meteor.call 'createPlanning', monthInput.value, yearInput.value, (error, slug) ->
-      window.location = "/planning/#{slug}/admin"
+      window.location = "/planning/#{slug}/admin/presences"
   render: ->
     nextMonth = moment().add('month', 1)
     <div className="col-md-3">

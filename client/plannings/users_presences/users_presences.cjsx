@@ -7,7 +7,7 @@
   render: ->
     <div>
       <h1>
-        Réponses pour les disponibilités de <a href="/planning/{@props.planning.slug}/admin">{@props.planning.name}</a>
+        Réponses pour les disponibilités de {@props.planning.name}
         <div className="pull-right">
           <SendAvailabilityReminderButton planning={@props.planning} />
         </div>
