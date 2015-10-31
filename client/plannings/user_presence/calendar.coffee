@@ -6,6 +6,28 @@ buildEvents = (events) ->
     Object.extended(event).merge
       present: userPresentForDay(event)
 
+addAvailabilitiesDisabledMessage = ->
+  if moment().date() < 10
+    title = "<img src='/later.png' /><span>La récolte des disponibilités n'a pas encore commencé</span>"
+    message =
+      'Elle a lieu du 10 au 20 de chaque mois.<br /><br />' +
+      '<strong>Veuillez attendre le 10 pour pouvoir indiquer vos disponibilités.<br />Merci !</strong>'
+  else
+    title = '<img src="/late.png" /><span>La récolte des disponibilités est passée !</span>'
+    message =
+      'Elle a lieu du 10 au 20 de chaque mois<br /><br />' +
+      '<strong>' +
+        'Si vos disponibilités ont évolué, contactez Noémie !<br />' +
+        '<div class="contact-info"><i class="fa fa-envelope" /> <a href="mailto:noemie.maldorane@gmail.com">noemie.maldorane@gmail.com</a></div>' +
+        '<div class="contact-info"><i class="fa fa-phone"    /> 06 68 59 15 46</div>' +
+      '</strong>'
+  $('#user-presence-calendar').append(
+    '<div class="availabilities-disabled-message">' +
+      "<h2>#{title}</h2>" +
+      message
+    '</div>'
+  )
+
 Template.UserPresence.rendered = ->
   startOfMonth = @data.planning.events.first().date
   endOfMonth = @data.planning.events.last().date
@@ -87,6 +109,9 @@ Template.UserPresence.rendered = ->
     changed: (id) ->
       planning = Plannings.findOne(id)
       user_presence_calendar.setEvents buildEvents(planning.events)
+  unless availabilitiesActive()
+    addOverlay()
+    addAvailabilitiesDisabledMessage()
 
 Template.UserPresence.events
   'click #user-presence-calendar .checkbox:not(.disabled)': (event) ->

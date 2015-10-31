@@ -1,20 +1,25 @@
 <template name="UserPresence">
   <h1>
     Vos disponibilités pour {{planning.name}}
-    {{#if unavailableTheWholeMonth}}
-      <button class='becomeAvailable btn btn-success'>
-        <i class="fa fa-check-circle-o"></i>
-        <span>Finalement je suis disponible</span>
-      </button>
-    {{else}}
-      <button class='notAvailable btn btn-danger'>
-        <i class="fa fa-times-circle"></i>
-        <span>Je ne suis pas disponible ou ne connais pas encore mes disponibilités</span>
-      </button>
+    {{#if planningActive}}
+      {{#if unavailableTheWholeMonth}}
+        <button class='becomeAvailable btn btn-success'>
+          <i class="fa fa-check-circle-o"></i>
+          <span>Finalement je suis disponible</span>
+        </button>
+      {{else}}
+        <button class='notAvailable btn btn-danger'>
+          <i class="fa fa-times-circle"></i>
+          <span>Je ne suis pas disponible ou ne connais pas encore mes disponibilités</span>
+        </button>
+      {{/if}}
     {{/if}}
   </h1>
-  <div class="{{unavailableTheWholeMonthClass}}">
+  <div class="{{availabilitiesDisabledClass}}">
     <div id="user-presence-calendar"></div>
   </div>
+  <footer>
+    <strong>Credits:</strong> Late Bus Icon by Richard Cordero from the Noun Project – Schedule Icon by Aha-Soft from the Noun Project
+  </footer>
 </template>
 

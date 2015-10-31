@@ -1,14 +1,10 @@
-removeOverlay = ->
-  $('#user-presence-calendar').find('.inactive-overlay').remove()
-addOverlay = ->
-  removeOverlay()
-  $('#user-presence-calendar').append('<div class="inactive-overlay"></div>')
-
 Template.UserPresence.helpers
   unavailableTheWholeMonth: ->
     unavailableTheWholeMonth(@planning, Meteor.user())
-  unavailableTheWholeMonthClass: ->
-    'unavailableTheWholeMonth' if unavailableTheWholeMonth(@planning, Meteor.user())
+  availabilitiesActive: ->
+    availabilitiesActive()
+  availabilitiesDisabledClass: ->
+    'availabilities-disabled' if !availabilitiesActive() || unavailableTheWholeMonth(@planning, Meteor.user())
 
 Template.UserPresence.events
   'click button.notAvailable': (event) ->
