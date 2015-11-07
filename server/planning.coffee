@@ -63,22 +63,14 @@ sendAvailabilityEmail = (planning, users, subject) ->
         html: html
 
 weeklyEvents = [
-  { "weekDay": 0, "name": "13:00 - 15:00", "detail": "Chargement",         "required": false, "group_id": 1 },
-  { "weekDay": 0, "name": "15:00 - 17:00", "detail": "Distribution colis", "required": false, "group_id": 1 },
+  { "weekDay": 0, "name": "13:00 - 17:00", "detail": "Distribution Local",         "required": false, "group_id": 1 },
 
-  { "weekDay": 1, "name": "17:30 - 18:00", "detail": "Chargement",         "required": false, "group_id": 2 },
-  { "weekDay": 1, "name": "18:00 - 19:30", "detail": "Distribution",       "required":  true, "group_id": 2 },
-  { "weekDay": 1, "name": "19:30 - 20:30", "detail": "Déchargement",       "required": false, "group_id": 2 },
+  { "weekDay": 1, "name": "17:15 - 20:30", "detail": "Distribution Camion Vesuna", "required": false, "group_id": 2 },
 
-  { "weekDay": 3, "name": "17:30 - 18:00", "detail": "Chargement",         "required": false, "group_id": 3 },
-  { "weekDay": 3, "name": "18:00 - 19:30", "detail": "Distribution",       "required":  true, "group_id": 3 },
-  { "weekDay": 3, "name": "19:30 - 20:30", "detail": "Déchargement",       "required": false, "group_id": 3 },
+  { "weekDay": 3, "name": "17:15 - 20:30", "detail": "Distribution Camion Vesuna", "required": false, "group_id": 3 },
 
-  { "weekDay": 5, "name": "09:00 - 11:00", "detail": "Chargement",         "required": false, "group_id": 4 },
-  { "weekDay": 5, "name": "17:30 - 18:00", "detail": "Distribution",       "required": false, "group_id": 4 },
-  { "weekDay": 5, "name": "17:30 - 18:00", "detail": "Chargement",         "required": false, "group_id": 5 },
-  { "weekDay": 5, "name": "18:00 - 19:30", "detail": "Distribution",       "required":  true, "group_id": 5 },
-  { "weekDay": 5, "name": "19:30 - 20:30", "detail": "Déchargement",       "required": false, "group_id": 5 }
+  { "weekDay": 5, "name": "09:00 - 11:00", "detail": "Distribution ???",           "required": false, "group_id": 4 },
+  { "weekDay": 5, "name": "17:15 - 20:30", "detail": "Distribution Camion Vesuna", "required": false, "group_id": 5 },
 ]
 
 buildEventFromWeeklyEvents = (month, year) ->
