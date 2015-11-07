@@ -29,8 +29,6 @@ addAvailabilitiesDisabledMessage = ->
   )
 
 Template.UserPresence.rendered = ->
-  startOfMonth = @data.planning.events.first().date
-  endOfMonth = @data.planning.events.last().date
   user_presence_calendar = $('#user-presence-calendar').clndr
     template: '<table class="clndr-table table table-bordered" border="0" cellspacing="0" cellpadding="0">
                  <thead>
@@ -75,7 +73,7 @@ Template.UserPresence.rendered = ->
                    <% } %>
                  </tbody>
                </table>'
-    startWithMonth: startOfMonth
+    startWithMonth: @data.planning.events.first().date
     weekOffset: 1
     daysOfTheWeek: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi']
     targets:
@@ -98,9 +96,6 @@ Template.UserPresence.rendered = ->
     events: buildEvents(@data.planning.events)
     showAdjacentMonths: true
     forceSixRows: null
-    constraints:
-      startDate: startOfMonth
-      endDate: endOfMonth
   Plannings.find().observeChanges
     changed: (id) ->
       planning = Plannings.findOne(id)
