@@ -28,9 +28,14 @@ addAvailabilitiesDisabledMessage = ->
     '</div>'
   )
 
+addMessages = (planning) ->
+  $('.day-message').each ->
+    React.render(<DayMessage planning={planning} date={$(@).data('date')}/>, @)
+
 Template.UserPresence.rendered = ->
-  startOfMonth = @data.planning.events.first().date
-  endOfMonth = @data.planning.events.last().date
+  planning = @data.planning
+  startOfMonth = planning.events.first().date
+  endOfMonth = planning.events.last().date
   user_presence_calendar = $('#user-presence-calendar').clndr
     template: '<table class="clndr-table table table-bordered" border="0" cellspacing="0" cellpadding="0">
                  <thead>
@@ -51,6 +56,7 @@ Template.UserPresence.rendered = ->
                          <td class="<%= days[d].classes %> <% if (dayHasEvents) { %>with-events<% } %>">
                            <div class="day-number"><%= days[d].day %></div>
                            <% if (dayHasEvents) { %>
+                             <div class="day-message" data-date="<%= moment(days[d].date).format("DD/MM/YYYY") %>"></div>
                              <% _.each(eventsForDayByGroup, function(eventsGroup) { %>
                                <% var requiredEvent = eventsGroup.find({required: true}) %>
                                <div class="group">
@@ -99,7 +105,7 @@ Template.UserPresence.rendered = ->
       adjacentMonth: "adjacent-month"
       inactive: "inactive"
       selected: "selected"
-    events: buildEvents(@data.planning.events)
+    events: buildEvents(planning.events)
     showAdjacentMonths: true
     forceSixRows: null
     constraints:
@@ -109,9 +115,11 @@ Template.UserPresence.rendered = ->
     changed: (id) ->
       planning = Plannings.findOne(id)
       user_presence_calendar.setEvents buildEvents(planning.events)
+      addMessages(planning)
   unless availabilitiesActive()
     addOverlay()
     addAvailabilitiesDisabledMessage()
+  addMessages(planning)
 
 Template.UserPresence.events
   'click #user-presence-calendar .checkbox:not(.disabled)': (event) ->
