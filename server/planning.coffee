@@ -51,14 +51,7 @@ sendAvailabilityEmail = (planning, users, subject) ->
         headingSmall: "Pouvez-vous nous indiquer vos disponibilités pour #{planning.name} ?"
         message: "Il vous suffit de cocher les jours où vous êtes disponibes.<br />" +
                  '<div style="text-align: center">' +
-                   "<img src='#{Meteor.absoluteUrl('availabilities_demo.png')}' />" +
-                 '</div>' +
-                 '<br />' +
-                 "<strong>Si vous n'êtes pas disponible du tout ou n'êtes pas encore sûr de vos disponibilités, merci de nous l'indiquer en cliquant sur le bouton comme indiqué ci-dessous.</strong>" +
-                 '<br />' +
-                 'Vous pourrez toujours revenir modifier votre choix plus tard.' +
-                 '<div style="text-align: center">' +
-                   "<img src='#{Meteor.absoluteUrl('unavailable_demo.png')}' />" +
+                   "<img src='#{Meteor.absoluteUrl('click_availability.gif')}' />" +
                  '</div>'
         buttonUrl: Meteor.absoluteUrl("planning/#{planning.slug}/presences")
         buttonText: "Indiquer mes disponibilités"
