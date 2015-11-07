@@ -51,14 +51,18 @@ SendAvailabilityReminderButton = React.createClass
   rows: ->
     eventsByDate = @props.planning.events.groupBy('date')
     _.flatten Object.keys(eventsByDate).map (date) =>
-      events = eventsByDate[date]
-      events.map (event, index) =>
-        rowspan = events.length if index == 0
-        <Rows planning={@props.planning} usersWhoAnswered={@props.usersWhoAnswered} date={date} event={event} rowspan={rowspan} />
+      eventsForDate = eventsByDate[date]
+      eventsByGroup = eventsForDate.groupBy('group_id')
+      _.flatten Object.keys(eventsByGroup).map (group_id) =>
+        eventsForGroup = eventsByGroup[group_id]
+        eventsForGroup.map (event, index) =>
+          dateRowspan = eventsForDate.length if eventsByDate[date].indexOf(event) == 0
+          groupRowspan = eventsForGroup.length if index == 0
+          <Rows planning={@props.planning} usersWhoAnswered={@props.usersWhoAnswered} date={date} event={event} dateRowspan={dateRowspan} groupRowspan={groupRowspan} />
   render: ->
     <table className="table table-bordered user-presences-table">
       <tr>
-        <th colSpan="2"></th>
+        <th colSpan="3"></th>
         <th>Disponibles</th>
         <th>Non disponibles</th>
       </tr>
@@ -75,15 +79,19 @@ Rows = React.createClass
   unavailableUsers: ->
     _.difference @props.usersWhoAnswered, @availableUsers()
   dateColumn: ->
-    <th className="event-date" rowSpan={@props.rowspan}>
+    <th className="event-date" rowSpan={@props.dateRowspan}>
       {moment(@props.event.date).format('dddd DD').humanize()}
+    </th>
+  groupNameColumn: ->
+    <th className="event-name" rowSpan={@props.groupRowspan}>
+      {@props.event.name}
     </th>
   render: ->
     <tr>
-      {@dateColumn() if @props.rowspan}
-      <th className="event-name">
-        {@props.event.name}
-        <span className="event-detail">{@props.event.detail}</span>
+      {@dateColumn() if @props.dateRowspan}
+      {@groupNameColumn() if @props.groupRowspan}
+      <th className="event-detail">
+        {@props.event.detail}
       </th>
       <td className="people-list">
         <ul className="list-unstyled available-people">

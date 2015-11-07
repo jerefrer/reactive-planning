@@ -54,15 +54,11 @@ Template.UserPresence.rendered = ->
                              <% _.each(eventsForDayByGroup, function(eventsGroup) { %>
                                <% var requiredEvent = eventsGroup.find({required: true}) %>
                                <div class="group">
+                                 <div class="name"><%= eventsGroup[0].name %></div>
                                  <% _.each(eventsGroup, function(event) { %>
                                    <% var optionalEventShouldBeDisabled = requiredEvent && event != requiredEvent && !requiredEvent.present %>
                                    <div class="checkbox <%= optionalEventShouldBeDisabled && "disabled" || "" %>" data-event-id="<%= event._id %>">
-                                     <div class="name">
-                                       <%= event.name %>
-                                       <% if (event.detail) { %>
-                                         <span><%= event.detail %></span>
-                                       <% } %>
-                                     </div>
+                                     <div class="detail"><%= event.detail %></div>
                                      <% if (event.present) { %>
                                        <i class="fa fa-check-square-o text-success" />
                                      <% } else { %>
