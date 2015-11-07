@@ -87,6 +87,7 @@ Rows = React.createClass
       {@props.event.name}
     </th>
   render: ->
+    formattedDate = moment(@props.date).format('DD/MM/YYYY')
     <tr>
       {@dateColumn() if @props.dateRowspan}
       {@groupNameColumn() if @props.groupRowspan}
@@ -95,18 +96,29 @@ Rows = React.createClass
       </th>
       <td className="people-list">
         <ul className="list-unstyled available-people">
-          {@availableUsers().map (user) -> <User user={user} />}
+          {@availableUsers().map (user) => <User user={user} planning={@props.planning} date={formattedDate} />}
         </ul>
       </td>
       <td className="people-list">
         <ul className="list-unstyled unavailable-people">
-          {@unavailableUsers().map (user) -> <User user={user} />}
+          {@unavailableUsers().map (user) => <User user={user} planning={@props.planning} date={formattedDate} />}
         </ul>
       </td>
     </tr>
 
 User = React.createClass
+  message: ->
+    if @props.planning
+      if messagesForDay = @props.planning.messagesForAvailabilityDays[@props.date]
+        if messageForDay = messagesForDay.find(userId: @props.user._id)
+          messageForDay.message
+  messageIcon: ->
+    if message = @message()
+      <ReactBootstrap.OverlayTrigger trigger="hover" placement="top" bsSize="large" overlay={<ReactBootstrap.Popover>{message}</ReactBootstrap.Popover>}>
+        <i className='fa fa-comment' />
+      </ReactBootstrap.OverlayTrigger>
   render: ->
     <li>
       {displayName(@props.user)}
+      {@messageIcon()}
     </li>

@@ -114,6 +114,7 @@ Meteor.methods
       daysFilledIn: false
       availabilityEmailSent: false
       events: buildEventFromWeeklyEvents(month, year)
+      messagesForAvailabilityDays: {}
     slug
   removePlanning: (planningId) ->
     Plannings.remove planningId
@@ -261,6 +262,28 @@ Meteor.methods
         set.peopleWhoAnswered = peopleWhoAnswered
     set.events = events
     Plannings.update { _id: planningId }, $set: set
+  setMessageForAvailabilityDay: (planningId, date, personId, message) ->
+    planning = Plannings.findOne(_id: planningId)
+    if messagesForDay = planning.messagesForAvailabilityDays[date]
+      if messagesForDay.find(userId: personId)
+        condition = _id: planningId
+        condition["messagesForAvailabilityDays.#{date}"] = $elemMatch: userId: personId
+        set = {}
+        set["messagesForAvailabilityDays.#{date}.$"] = userId: personId, message: message
+        Plannings.update condition, $set: set
+      else
+        push = {}
+        push["messagesForAvailabilityDays.#{date}"] = { userId: personId, message: message }
+        Plannings.update { _id: planningId }, $push: push
+    else
+      set = {}
+      set["messagesForAvailabilityDays.#{date}"] = [{ userId: personId, message: message}]
+      Plannings.update { _id: planningId }, $set: set
+    Plannings.update { _id: planningId }, $push: peopleWhoAnswered: personId
+  removeMessageForAvailabilityDay: (planningId, date, personId) ->
+    pull = {}
+    pull["messagesForAvailabilityDays.#{date}"] = { userId: personId }
+    Plannings.update { _id: planningId }, $pull: pull
   markAsUnavailableForTheMonth: (planningId, personId) ->
     planning = Plannings.findOne(_id: planningId)
     peopleWhoAnswered = planning.peopleWhoAnswered || []

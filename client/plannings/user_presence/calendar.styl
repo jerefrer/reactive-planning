@@ -1,10 +1,12 @@
+$bleu24 = #1A9BD2
+
 #user-presence-calendar
   .header-days
     .header-day
       font-weight: bold
       line-height: 50px
       background: white
-      border-bottom: 2px solid #1A9BD2
+      border-bottom: 2px solid $bleu24
       text-transform: uppercase
       text-align: center
   td.day
@@ -27,6 +29,19 @@
       .day-number
         font-weight: bold
         border-bottom: 1px solid #DDD
+      .day-message
+        position: absolute
+        top: 5px
+        right: 10px
+        cursor: pointer
+        z-index: 3
+        .on .on, .off:hover .on
+          display: inline-block
+          color: $bleu24
+        .on:hover .off
+          display: inline-block
+        .on .off, .off .on, .on:hover .on, .off:hover .off
+          display: none
       .group
         margin-bottom: 10px
         &:last-child
@@ -68,3 +83,27 @@
             margin-left: 3px
             font-size: 30px
             text-align: left
+.day-message-form
+  margin-bottom: 0
+  padding: 20px
+  h2
+    margin: 5px 0 10px 0
+    .fa
+      position: relative
+      top: -1px
+      margin-right: 10px
+      color: $bleu24
+  .subtitle
+    font-size: 16px
+    color: #333
+    margin-bottom: 15px
+  textarea
+    width: 100%
+    height: 100px
+    margin-bottom: 10px
+    font-size: 16px
+    border-radius: 3px
+  button, a
+    float: right
+    width: 200px
+    margin-left: 10px
