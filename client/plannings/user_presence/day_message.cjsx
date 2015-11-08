@@ -23,8 +23,9 @@ MessageButton = React.createClass
 
 MessageModal = React.createClass
   dayName: ->
-    moment(@props.date).format('dddd DD ').capitalize() +
-    moment(@props.date).format('MMMM').capitalize()
+    momentDate = moment(@props.date, 'DD/MM/YYYY')
+    momentDate.format('dddd DD ').capitalize() +
+    momentDate.format('MMMM').capitalize()
   componentDidMount: ->
     @refs.message.getDOMNode().value = @props.message if @props.message
     @refs.message.getDOMNode().focus()
