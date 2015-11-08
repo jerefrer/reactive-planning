@@ -49,9 +49,15 @@ sendAvailabilityEmail = (planning, users, subject) ->
       options = _.extend {},
         heading: "Bonjour #{person.profile.firstname}"
         headingSmall: "Pouvez-vous nous indiquer vos disponibilités pour #{planning.name} ?"
-        message: "Il vous suffit de cocher les jours où vous êtes disponibes.<br />" +
+        message: "Cliquez sur le bouton bleu ci-dessous pour accéder à l'application.<br />"+
+                 "<hr />" +
+                 '<h4 style="text-align: center">Pour remplir vos disponibilités, il suffit de cocher les postes qui vous intéressent.</h4><br />' +
                  '<div style="text-align: center">' +
                    "<img src='#{Meteor.absoluteUrl('click_availability.gif')}' />" +
+                 '</div>' +
+                 '<h4 style="text-align: center">Nous avons aussi ajouté la possibilité de laisser un message directement sur le planning.</h4><br />' +
+                 '<div style="text-align: center">' +
+                   "<img src='#{Meteor.absoluteUrl('add_message_on_availability.gif')}' />" +
                  '</div>'
         buttonUrl: Meteor.absoluteUrl("planning/#{planning.slug}/presences")
         buttonText: "Indiquer mes disponibilités"
