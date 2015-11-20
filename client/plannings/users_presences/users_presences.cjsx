@@ -25,9 +25,15 @@ SendAvailabilityReminderButton = React.createClass
     showingSuccess: false
   sendAvailabilityReminder: (e) ->
     e.preventDefault()
-    if confirm("Vous êtes sur le point d'envoyer une relance à tous les bénévoles qui n'ont pas encore donné leurs disponibilités.\n\nÊtes-vous sûr ?")
+    if @props.planning.availabilityEmailSent
+      confirmMessage = "Vous êtes sur le point d'envoyer une relance à tous les bénévoles qui n'ont pas encore donné leurs disponibilités.\n\nÊtes-vous sûr ?"
+      serverMethodToCall = 'sendAvailabilityReminder'
+    else
+      confirmMessage = "Vous êtes sur le point d'envoyer l'email de collecte des disponibilités à tous les bénévoles.\n\nÊtes-vous sûr ?"
+      serverMethodToCall = 'sendAvailabilityEmailNotifications'
+    if confirm(confirmMessage)
       @setState sending: true
-      Meteor.call 'sendAvailabilityReminder', @props.planning._id, (error, data) =>
+      Meteor.call serverMethodToCall, @props.planning._id, (error, data) =>
         @setState
           sending: false
           showingSuccess: true
@@ -43,7 +49,8 @@ SendAvailabilityReminderButton = React.createClass
       className += 'btn-primary with-icon'
       style = width: '50px'
     else
-      inner = <span><i className="fa fa-envelope" />Envoyer un e-mail de relance</span>
+      buttonText = @props.planning.availabilityEmailSent && "Envoyer un e-mail de relance" || "Envoyer l'email de collecte"
+      inner = <span><i className="fa fa-envelope" />{buttonText}</span>
       className += 'btn-primary'
     <button className={className} style={style} onClick={@sendAvailabilityReminder}>{inner}</button>
 
