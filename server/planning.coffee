@@ -72,23 +72,17 @@ weeklyEvents = [
   { "weekDay": 0, "name": "13:00 - 17:00", "detail": "Distribution", "required": false, "group_id": 1 },
   { "weekDay": 0, "name": "13:00 - 17:00", "detail": "Accueil",      "required": false, "group_id": 1 },
 
-  { "weekDay": 1, "name": "17:15 - 20:30", "detail": "Chargement",   "required": false, "group_id": 1 },
   { "weekDay": 1, "name": "17:15 - 20:30", "detail": "Distribution", "required": false, "group_id": 1 },
-  { "weekDay": 1, "name": "17:15 - 20:30", "detail": "Déchargement", "required": false, "group_id": 1 },
   { "weekDay": 1, "name": "17:15 - 20:30", "detail": "Voiture ?",    "required": false, "group_id": 1 },
 
-  { "weekDay": 3, "name": "17:15 - 20:30", "detail": "Chargement",   "required": false, "group_id": 1 },
   { "weekDay": 3, "name": "17:15 - 20:30", "detail": "Distribution", "required": false, "group_id": 1 },
-  { "weekDay": 3, "name": "17:15 - 20:30", "detail": "Déchargement", "required": false, "group_id": 1 },
   { "weekDay": 3, "name": "17:15 - 20:30", "detail": "Voiture ?",    "required": false, "group_id": 1 },
 
-  { "weekDay": 5, "name": "09:00 - 12:00", "detail": "Chargement",   "required": false, "group_id": 1 },
   { "weekDay": 5, "name": "09:00 - 12:00", "detail": "Distribution", "required": false, "group_id": 1 },
   { "weekDay": 5, "name": "09:00 - 12:00", "detail": "Déchargement", "required": false, "group_id": 1 },
-  { "weekDay": 5, "name": "09:00 - 12:00", "detail": "Voiture ?",    "required": false, "group_id": 1 },
+  { "weekDay": 5, "name": "09:00 - 12:00", "detail": "Accueil",      "required": false, "group_id": 1 }
   { "weekDay": 5, "name": "17:15 - 20:30", "detail": "Distribution", "required": false, "group_id": 2 },
-  { "weekDay": 5, "name": "17:15 - 20:30", "detail": "Déchargement", "required": false, "group_id": 2 },
-  { "weekDay": 5, "name": "17:15 - 20:30", "detail": "Accueil",      "required": false, "group_id": 2 }
+  { "weekDay": 5, "name": "17:15 - 20:30", "detail": "Voiture ?",    "required": false, "group_id": 2 },
 ]
 
 buildEventFromWeeklyEvents = (month, year) ->
