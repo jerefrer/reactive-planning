@@ -5,9 +5,15 @@ Meteor.isClient && Template.registerHelper('TabularTables', TabularTables);
 TabularTables.Users = new Tabular.Table({
   name: "Users",
   collection: Meteor.users,
+  extraFields: ['passwordEmailSent'],
+  responsive: true,
+  autoWidth: false,
   columns: [
     {data: "username", title: "Nom"},
-    {data: "emails[0].address", title: "E-mail"},
+    {data: "emails[0].address", title: "E-mail", render: function (email, type, doc) {
+      if (doc.passwordEmailSent) return email;
+      else                       return email + ' <i class="fa fa-envelope">';
+    }},
     {data: "profile.phone", title: "Téléphone"},
     {data: "createdAt", title: "Ajouté le", render: function(date, type, doc) { return moment(date).format('DD-MM-YYYY à HH:SS') } }
   ],
