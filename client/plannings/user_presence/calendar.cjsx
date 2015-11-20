@@ -15,7 +15,7 @@ addAvailabilitiesDisabledMessage = ->
   else
     title = '<img src="/late.png" /><span>La récolte des disponibilités est passée !</span>'
     message =
-      'Elle a lieu du 10 au 20 de chaque mois<br /><br />' +
+      'Elle a lieu du 10 au 20 de chaque mois.<br /><br />' +
       '<strong>' +
         'Si vos disponibilités ont évolué, contactez Noémie !<br />' +
         '<div class="contact-info"><i class="fa fa-envelope" /> <a href="mailto:noemie.maldorane@gmail.com">noemie.maldorane@gmail.com</a></div>' +
