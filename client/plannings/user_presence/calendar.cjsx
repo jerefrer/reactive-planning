@@ -10,12 +10,12 @@ addAvailabilitiesDisabledMessage = ->
   if moment().date() < 10
     title = "<img src='/later.png' /><span>La récolte des disponibilités n'a pas encore commencé</span>"
     message =
-      'Elle a lieu du 10 au 20 de chaque mois.<br /><br />' +
+      'Elle a lieu exceptionnellement du 20 au 27 ce mois-ci, puis du 10 au 20 de chaque mois à partir du mois prochain.<br /><br />' +
       '<strong>Veuillez attendre le 10 pour pouvoir indiquer vos disponibilités.<br />Merci !</strong>'
   else
     title = '<img src="/late.png" /><span>La récolte des disponibilités est passée !</span>'
     message =
-      'Elle a lieu du 10 au 20 de chaque mois.<br /><br />' +
+      'Elle a lieu exceptionnellement du 20 au 27 ce mois-ci, puis du 10 au 20 de chaque mois à partir du mois prochain.<br /><br />' +
       '<strong>' +
         'Si vos disponibilités ont évolué, contactez Noémie !<br />' +
         '<div class="contact-info"><i class="fa fa-envelope" /> <a href="mailto:noemie.maldorane@gmail.com">noemie.maldorane@gmail.com</a></div>' +
