@@ -15,10 +15,12 @@ Template.Users.events
     dataTable = $(event.target).closest('table').DataTable()
     user = dataTable.row(event.currentTarget).data()
     Session.set 'selectedUserId', user._id
-    React.render(
-      <UserTasksForm userId={user._id} />,
-      document.getElementById('user-tasks-form-trigger')
-    )
+    setTimeout ->
+      React.render(
+        <ChangePasswordModalTrigger user={user} />,
+        document.getElementById('change-password-modal-trigger')
+      )
+    , 200
 
 userIsSelected = ->
   !!Session.get('selectedUserId')

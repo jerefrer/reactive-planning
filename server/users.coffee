@@ -49,3 +49,5 @@ Meteor.methods
           from: 'Planning 24 <no-reply@planning-24.meteor.com>'
           subject: 'Vos informations de connexion'
           html: html
+  updatePassword: (userId, password) ->
+    Accounts.setPassword(userId, password, logout: false)
