@@ -18,11 +18,8 @@ SMS à chacun des participants la veille de chaque jour de distribution.
 ### TODO
 
 #### Urgent
-- Ajouter un onglet "tâches" pour pouvoir gérer les tâches par défaut, et reprendre le modèle d'Août
-- Le téléchargement du planning marche pas sur http://planning.lamaison24.fr/planning/juillet-2015
-- Pouvoir ré-ordonner les colonnes des tâches
-- Pouvoir ré-ordonner les lignes des jours
-- THEAD toujours visible
+- Pouvoir s'inscrire soi-même avec validation des admins avant connexion, donc email après validation
+- Pouvoir modifier soi-même ses informations
 
 #### Suggestions
 
