@@ -6,4 +6,4 @@
 
 @availabilitiesActive = ->
   dayNumber = moment().date()
-  dayNumber >= 20 && dayNumber <= 27
+  dayNumber >= 10 && dayNumber <= 20
