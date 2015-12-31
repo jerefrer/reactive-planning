@@ -64,7 +64,7 @@ sendAvailabilityEmail = (planning, users, subject) ->
       html = PrettyEmail.render 'call-to-action', options
       mailgun().send
         to: email
-        from: 'Planning 24 <no-reply@planning-24.meteor.com>'
+        from: 'Planning Maison 24 <no-reply@planning.lamaison24.fr>'
         subject: subject
         html: html
 
@@ -179,7 +179,7 @@ Meteor.methods
         html = PrettyEmail.render 'call-to-action', options
         result = mailgun().send
           to: person.emails[0].address
-          from: 'Planning 24 <no-reply@planning-24.meteor.com>'
+          from: 'Planning Maison 24 <no-reply@planning.lamaison24.fr>'
           subject: "Confirmation des dates pour le planning de #{planning.name}"
           html: html
         unless result.error
@@ -207,7 +207,7 @@ Meteor.methods
         html = PrettyEmail.render 'call-to-action', options
         mailgun().send
           to: email
-          from: 'Planning 24 <no-reply@planning-24.meteor.com>'
+          from: 'Planning Maison 24 <no-reply@planning.lamaison24.fr>'
           subject: "Le planning de #{month} est disponible"
           html: html
           attachment: excelExportPath

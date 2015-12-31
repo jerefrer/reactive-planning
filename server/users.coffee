@@ -17,7 +17,7 @@ Meteor.methods
       unless emailIsFake(email)
         options = _.extend {},
           heading: "Bonjour #{user.profile.firstname}"
-          headingSmall: '<br />Et bienvenue dans Planning 24,<br />le nouvel outil de gestion des plannings de La Maison 24'
+          headingSmall: "<br />Et bienvenue dans l'outil de gestion des plannings de La Maison 24"
           message: 'Voici vos identifiants personnels pour vous y connecter'+
                    '<table style="margin: 0 auto">' +
                       '<tr>' +
@@ -42,11 +42,11 @@ Meteor.methods
                      "<img src='#{Meteor.absoluteUrl('update_password_demo.png')}' />" +
                    '</div>'
           buttonUrl: Meteor.absoluteUrl('/')
-          buttonText: "Me connecter à Planning 24"
+          buttonText: "Me connecter à la plateforme"
         html = PrettyEmail.render 'call-to-action', options
         mailgun().send
           to: email
-          from: 'Planning 24 <no-reply@planning-24.meteor.com>'
+          from: 'Planning Maison 24 <no-reply@planning.lamaison24.fr>'
           subject: 'Vos informations de connexion'
           html: html
   updatePassword: (userId, password) ->
