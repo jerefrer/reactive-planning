@@ -4,6 +4,12 @@
       {{selectedUser.username}}
       <div class="pull-right" id="change-password-modal-trigger"></div>
     </h3>
+    {{#if showInactiveUsers}}
+      <button type="submit" class="confirmSelectedUser btn btn-success">Confirmer<i class="fa fa-thumbs-up margin-left"></i></button>
+      {{#quickRemoveButton collection="Users" _id=selectedUser._id beforeRemove=beforeRemove class="btn btn-danger"}}Rejeter<i class="fa fa-thumbs-down margin-left"></i>{{/quickRemoveButton}}
+      <br />
+      <br />
+    {{/if}}
   {{else}}
     <h3>Nouveau bénévole</h3>
   {{/if}}
@@ -17,8 +23,9 @@
     {{> afQuickField name='profile.city'}}
     {{> afQuickField name='emails'}}
     {{#if userIsSelected}}
-      {{> afQuickField name='passwordEmailSent' type='boolean-radios' trueLabel='Oui' falseLabel='Non'}}
-      {{#quickRemoveButton collection="Users" _id=selectedUser._id beforeRemove=beforeRemove class="btn btn-danger"}}Supprimer ce(tte) bénévole{{/quickRemoveButton}}
+      {{#unless showInactiveUsers}}
+        {{#quickRemoveButton collection="Users" _id=selectedUser._id beforeRemove=beforeRemove class="btn btn-danger"}}Supprimer ce(tte) bénévole{{/quickRemoveButton}}
+      {{/unless}}
     {{else}}
       <button type="submit" class="btn btn-block btn-primary">Ajouter</button>
     {{/if}}

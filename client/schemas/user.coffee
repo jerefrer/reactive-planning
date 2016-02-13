@@ -37,10 +37,6 @@ Schemas.User = new SimpleSchema
       label: false
   profile:
     type: Schemas.UserProfile
-  passwordEmailSent:
-    type: Boolean
-    label: 'A reçu un e-mail avec son mot de passe ? Mettre à non pour regénérer un mot de passe et le renvoyer par email au prochain clic sur "Envoyer les mots de passe"'
-    optional: true
 
 SimpleSchema.messages
   "required emails": "L'email doit être rempli. Si la personne n'a pas d'email, il faut lui mettre un email du type prenom_nom@fakemail.com. Le fait que l'email se termine par @fakemail.com est très important car il permet d'éviter qu'on envoie de vrais emails à cette adresse. Merci de respecter ça !"

@@ -1,0 +1,22 @@
+<template name="EditProfile">
+  <div class="col-sm-12">
+    <h1>Modifier mon profil</h1>
+  </div>
+  {{#autoForm collection="Users" id="editProfileForm" doc=currentUser type="update"}}
+    <div class="col-sm-6">
+      {{> afQuickField name='username'}}
+      {{> afQuickField name='profile.firstname'}}
+      {{> afQuickField name='profile.lastname'}}
+    </div>
+    <div class="col-sm-6">
+      {{> afQuickField name='profile.phone'}}
+      {{> afQuickField name='profile.address'}}
+      {{> afQuickField name='profile.postal_code'}}
+      {{> afQuickField name='profile.city'}}
+    </div>
+    <div class="col-sm-offset-4 col-sm-4">
+      <hr />
+      <button type="submit" class="btn btn-block btn-lg btn-primary">Valider</button>
+    </div>
+  {{/autoForm}}
+</template>

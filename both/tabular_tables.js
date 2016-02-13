@@ -11,8 +11,9 @@ TabularTables.Users = new Tabular.Table({
   columns: [
     {data: "username", title: "Nom"},
     {data: "emails[0].address", title: "E-mail", render: function (email, type, doc) {
-      if (doc.passwordEmailSent) return email;
-      else                       return email + ' <i class="fa fa-envelope">';
+      var string = email;
+      if (!doc.passwordEmailSent && !Session.get('showInactiveUsers')) string += ' <i class="fa fa-envelope">';
+      return string;
     }},
     {data: "profile.phone", title: "Téléphone"},
     {data: "createdAt", title: "Ajouté le", render: function(date, type, doc) { return moment(date).format('DD-MM-YYYY à HH:SS') } }
@@ -42,4 +43,3 @@ TabularTables.Users = new Tabular.Table({
     }
   }
 });
-

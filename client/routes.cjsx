@@ -2,7 +2,16 @@ moment.locale('fr')
 
 @Plannings = new Meteor.Collection('plannings')
 
+Tracker.autorun ->
+  Meteor.subscribe 'users'
+
 Router.plugin 'auth'
+
+Router.onBeforeAction 'authorize',
+  authorize:
+    allow: -> !!Meteor.user().active
+    template: 'NotActivated'
+  except: ['login', 'EditProfile']
 
 Router.configure
   layoutTemplate: 'Layout'
@@ -89,7 +98,6 @@ Router.route 'UsersPresences',
   path: '/planning/:slug/admin/presences'
   waitOn: ->
     Meteor.subscribe 'plannings'
-    Meteor.subscribe 'users'
   action: ->
     planning = Plannings.findOne(slug: @params.slug)
     users = sortUsers(Meteor.users.find().fetch())
@@ -119,16 +127,18 @@ Router.route 'DeclineDuty',
 
 Router.route 'Users',
   path: '/users'
-  waitOn: ->
-    Meteor.subscribe 'users'
   action: ->
     @render 'Users'
     setTimeout (->
-      React.render(
-        <SendPasswordEmailsButton />,
-        document.getElementById('sendPasswordEmailsButton')
-      )
-    ), 100
+      if $('#sendPasswordEmailsButton').length
+        React.render(
+          <SendPasswordEmailsButton />,
+          document.getElementById('sendPasswordEmailsButton')
+        )
+    ), 200
+
+Router.route 'EditProfile',
+  path: '/modifier-mon-profil'
 
 Router.route 'login',
   path: '/connectez-vous'
