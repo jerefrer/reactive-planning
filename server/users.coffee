@@ -54,7 +54,7 @@ Meteor.methods
         html = PrettyEmail.render 'call-to-action', options
         mailgun().send
           to: email
-          from: 'Planning Maison 24 <no-reply@planning.lamaison24.fr>'
+          from: 'Planning Maison 24 <planning@lamaison24.fr>'
           subject: 'Vos informations de connexion'
           html: html
   updatePassword: (userId, password) ->
@@ -78,7 +78,7 @@ Meteor.methods
     html = PrettyEmail.render 'call-to-action', options
     mailgun().send
       to: email
-      from: 'Planning Maison 24 <no-reply@planning.lamaison24.fr>'
+      from: 'Planning Maison 24 <planning@lamaison24.fr>'
       subject: 'Bienvenue !'
       html: html
 
