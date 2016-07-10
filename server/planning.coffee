@@ -59,7 +59,7 @@ sendAvailabilityEmail = (planning, users, subject) ->
                  '<div style="text-align: center">' +
                    "<img src='#{Meteor.absoluteUrl('add_message_on_availability.gif')}' />" +
                  '</div>'
-        buttonUrl: Meteor.absoluteUrl("planning/#{planning.slug}/presences")
+        buttonUrl: loginUrlTo("planning/#{planning.slug}/presences")
         buttonText: "Indiquer mes disponibilités"
       html = PrettyEmail.render 'call-to-action', options
       mailgun().send
@@ -174,7 +174,7 @@ Meteor.methods
           headingSmall: "Vous avez été désigné(e) pour une ou plusieurs tâches au planning de #{planning.name}"
           message: "Merci de nous confirmer si vous pourrez être présent ou non les jours proposés.<br />"+
                    "Il vous suffit de cliquer au bon endroit : <img src='#{Meteor.absoluteUrl('confirm_presence_demo.png')}' style='vertical-align: middle'/>"
-          buttonUrl: Meteor.absoluteUrl("planning/#{planning.slug}")
+          buttonUrl: loginUrlTo("planning/#{planning.slug}")
           buttonText: "Confirmer mes rendez-vous"
         html = PrettyEmail.render 'call-to-action', options
         result = mailgun().send
@@ -202,7 +202,7 @@ Meteor.methods
           headingSmall: "Le planning de #{month} est disponible"
           message: "Et vous avez #{duties.length} rendez-vous de prévu#{duties.length > 1 && 's' || ''}.<br /><br />" +
                    "Vous trouverez également en pièce jointe le planning au format Excel. Il n'est pas encore aussi beau que l'ancien, mais on y travaille !"
-          buttonUrl: Meteor.absoluteUrl("planning/#{planning.slug}")
+          buttonUrl: loginUrlTo("planning/#{planning.slug}")
           buttonText: "Voir le planning"
         html = PrettyEmail.render 'call-to-action', options
         mailgun().send

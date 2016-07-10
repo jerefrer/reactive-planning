@@ -36,7 +36,7 @@ Meteor.methods
                    '</table>' +
                    '<br />' +
                    '<div style="text-align: center">' +
-                     "Pour vous connecter à la plateforme, <a href='#{Meteor.absoluteUrl('/')}'>cliquez-ici</a> " +
+                     "Pour vous connecter à la plateforme, <a href='#{loginUrlTo('', user)}'>cliquez-ici</a> " +
                      "ou sur le bouton bleu à la fin de cet e-mail." +
                    '</div>' +
                    '<br />' +
@@ -49,7 +49,7 @@ Meteor.methods
                      "cliquant sur votre nom en haut à droite puis sur \"Changer mon mot de passe\", comme dans l'exemple ci-dessous.<br /><br />" +
                      "<img src='#{Meteor.absoluteUrl('change_password_demo.gif')}' />" +
                    '</div>'
-          buttonUrl: Meteor.absoluteUrl('/')
+          buttonUrl: loginUrlTo('', user)
           buttonText: "Me connecter à la plateforme"
         html = PrettyEmail.render 'call-to-action', options
         mailgun().send
@@ -73,7 +73,7 @@ Meteor.methods
                  'Vous pouvez maintenant vous connecter à la plateforme en ' +
                  'cliquant sur le bouton ci-dessous.' +
                '</div>'
-      buttonUrl: Meteor.absoluteUrl('/')
+      buttonUrl: loginUrlTo('', user)
       buttonText: 'Me connecter à la plateforme'
     html = PrettyEmail.render 'call-to-action', options
     mailgun().send
@@ -92,7 +92,7 @@ sendNewUserToConfirmEmailTo = (responsable_inscription, user) ->
                'Pour valider ou refuser son inscription, cliquez sur le bouton bleu ci-dessous.<br /><br />' +
                "<img src='#{Meteor.absoluteUrl('admin_confirm_user_demo.gif')}' style='width: 100%' />" +
              '</div>'
-    buttonUrl: Meteor.absoluteUrl('/users')
+    buttonUrl: loginUrlTo('users')
     buttonText: "Accéder à la liste des bénévoles"
   html = PrettyEmail.render 'call-to-action', options
   mailgun().send
