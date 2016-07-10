@@ -279,7 +279,8 @@ Meteor.methods
       set = {}
       set["messagesForAvailabilityDays.#{date}"] = [{ userId: personId, message: message}]
       Plannings.update { _id: planningId }, $set: set
-    Plannings.update { _id: planningId }, $push: peopleWhoAnswered: personId
+    unless planning.peopleWhoAnswered.indexOf(personId) >= 0
+      Plannings.update { _id: planningId }, $push: peopleWhoAnswered: personId
   removeMessageForAvailabilityDay: (planningId, date, personId) ->
     pull = {}
     pull["messagesForAvailabilityDays.#{date}"] = { userId: personId }
