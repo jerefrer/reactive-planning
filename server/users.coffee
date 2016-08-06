@@ -36,7 +36,7 @@ Meteor.methods
                    '</table>' +
                    '<br />' +
                    '<div style="text-align: center">' +
-                     "Pour vous connecter à la plateforme, <a href='#{loginUrlTo('', user)}'>cliquez-ici</a> " +
+                     "Pour vous connecter à la plateforme, <a href='#{loginUrlTo('/', user)}'>cliquez-ici</a> " +
                      "ou sur le bouton bleu à la fin de cet e-mail." +
                    '</div>' +
                    '<br />' +
@@ -49,7 +49,7 @@ Meteor.methods
                      "cliquant sur votre nom en haut à droite puis sur \"Changer mon mot de passe\", comme dans l'exemple ci-dessous.<br /><br />" +
                      "<img src='#{Meteor.absoluteUrl('change_password_demo.gif')}' />" +
                    '</div>'
-          buttonUrl: loginUrlTo('', user)
+          buttonUrl: loginUrlTo('/', user)
           buttonText: "Me connecter à la plateforme"
         html = PrettyEmail.render 'call-to-action', options
         mailgun().send
@@ -73,7 +73,7 @@ Meteor.methods
                  'Vous pouvez maintenant vous connecter à la plateforme en ' +
                  'cliquant sur le bouton ci-dessous.' +
                '</div>'
-      buttonUrl: loginUrlTo('', user)
+      buttonUrl: loginUrlTo('/', user)
       buttonText: 'Me connecter à la plateforme'
     html = PrettyEmail.render 'call-to-action', options
     mailgun().send

@@ -14,7 +14,10 @@ generateEmailLoginToken = (user) ->
   tokenRecord.token
 
 emailLoginTokenFor = (user) ->
-  if tokenRecord = user.services.email.verificationTokens.first()
+  if user.services and
+     user.services.email and
+     user.services.verificationTokens and
+     tokenRecord = user.services.email.verificationTokens.first()
     tokenRecord.token
   else
     generateEmailLoginToken(user)
