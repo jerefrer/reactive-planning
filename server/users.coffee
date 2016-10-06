@@ -92,7 +92,7 @@ sendNewUserToConfirmEmailTo = (responsable_inscription, user) ->
                'Pour valider ou refuser son inscription, cliquez sur le bouton bleu ci-dessous.<br /><br />' +
                "<img src='#{Meteor.absoluteUrl('admin_confirm_user_demo.gif')}' style='width: 100%' />" +
              '</div>'
-    buttonUrl: loginUrlTo('users')
+    buttonUrl: Meteor.absoluteUrl('users')
     buttonText: "Accéder à la liste des bénévoles"
   html = PrettyEmail.render 'call-to-action', options
   mailgun().send
