@@ -10,6 +10,16 @@ can work together.**
 
 Just run `meteor`
 
+### Important
+
+Currently the app doesn't work with IE if the JS is minified.
+To prevent this, edit meteor-tools' `bundler.js` to disable minifying:
+```
+nano /home/jeremy/.meteor/packages/meteor-tool/.1.0.44.1msxoe8++os.linux.x86_64+web.browser+web.cordova/mt-os.linux.x86_64/tools/bundler.js
+# Replace line 507 with
+if (false) { //(options.minify) {
+```
+
 ### SMS
 
 En se basant sur le planning de Juin on serait arrivé à 9,40€ pour envoyer un
