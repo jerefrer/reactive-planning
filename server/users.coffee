@@ -82,10 +82,10 @@ Meteor.methods
       subject: 'Bienvenue !'
       html: html
 
-sendNewUserToConfirmEmailTo = (responsable_inscription, user) ->
-  email = responsable_inscription.emails[0].address
+sendNewUserToConfirmEmailTo = (user) ->
+  email = 'noemie.maldorane@gmail.com'
   options = _.extend {},
-    heading: "Bonjour #{responsable_inscription.profile.firstname}"
+    heading: 'Bonjour'
     headingSmall: "<br />Un nouveau bénévole vient de s'inscrire sur la plateforme :<br />" +
                   "#{user.profile.firstname} #{user.profile.lastname} (#{user.emails[0].address})"
     message: '<div style="text-align: center">' +
@@ -103,6 +103,5 @@ sendNewUserToConfirmEmailTo = (responsable_inscription, user) ->
 
 Accounts.onCreateUser (options, user) ->
   user.profile = options.profile if options.profile # Default onCreateUser code from accounts-base.js
-  if responsable_inscription = Meteor.users.findOne('profile.lastname': 'Frere')
-    sendNewUserToConfirmEmailTo(responsable_inscription, user)
+  sendNewUserToConfirmEmailTo(user)
   user
