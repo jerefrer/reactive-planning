@@ -20,36 +20,17 @@ nano /home/jeremy/.meteor/packages/meteor-tool/.1.0.44.1msxoe8++os.linux.x86_64+
 if (false) { //(options.minify) {
 ```
 
-### SMS
+### Déployer l'application
 
-En se basant sur le planning de Juin on serait arrivé à 9,40€ pour envoyer un
-SMS à chacun des participants la veille de chaque jour de distribution.
+```
+# En local
+mup deploy
+```
 
-### TODO
+### Tâches courantes
 
-#### Urgent
+#### Modifier le modèle d'une semaine
 
-#### BUGS
+Modifier `weeklyEvents` dans server/planning.coffee puis pusher et déployer.
 
-* Invalid character in IE. See https://github.com/ongoworks/meteor-speakingurl/issues/7
-* Changer l'API key de Nexmo et l'extraire du code pour la mettre dans une variable d'environnement
-
-#### Nice to have
-
-* Ajouter un message personnalisable par personne
-* Ignorer la casse dans le username au login
-* Débugger le "Modifier les rôles" et utiliser les rôles définis pour ordonner les personnes dans la modal d'ajout d'une tâche
-* Envoyer les emails dans un background job : https://github.com/vsivsi/meteor-job-collection
-* Faire que les Days soient vraiment des dates et non des strings pour pouvoir faire des choses en fonction de leur date et heure
-* Cronjob pour envoyer un SMS les jours de collecte quelques heures avant à tous les concernés.
-* Bouton "renvoyer la demande" pour ceux qui n'ont pas répondu
-* Bouton "Envoyer un message à tous"
-* Remplacer les 'confirm' par http://ethaizone.github.io/Bootstrap-Confirmation/#
-* Penser à des alertes pour l'admin, par exemple :
-  * Si des cases sont vides X jours avant l'event
-  * Quand quelqu'un refuse => beaucoup de mail, faire un récap journalier, hebdomadaire. Est-ce nécessaire ?
-* Add proper restrictions for non-admin users
-
-#### Refactoring
-
-* Unify some methods on collections, maybe with the collection-helpers package ?
+####
