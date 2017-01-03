@@ -35,7 +35,6 @@ percolate:synced-cron
 ecwyne:nexmo-sms
 harrison:papa-parse
 yogiben:pretty-email
-miktam:loggly
 pauldowman:dotenv
 netanelgilad:excel
 netanelgilad:mkdirp
