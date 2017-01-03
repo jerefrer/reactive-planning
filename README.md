@@ -2,9 +2,10 @@
 
 A small Meteor & React app to help build plannings
 
-**If you are interested by this project please file an issue to let me know
-and I'll make the necessary work to remove any client-specific code so we
-can work together.**
+#### Objectif
+
+L'app doit être accessible par le plus grand nombre quelque soient leurs
+competences techniques ou l'ancienneté de leurs materiels.
 
 ### Installation
 
@@ -24,7 +25,7 @@ if (false) { //(options.minify) {
 
 ```
 # En local
-mup deploy
+deb-mup deploy
 ```
 
 ### Tâches courantes
@@ -33,4 +34,11 @@ mup deploy
 
 Modifier `weeklyEvents` dans server/planning.coffee puis pusher et déployer.
 
-####
+#### Ajouter une personne en tant que administrateur
+
+docs/set_someone_as_admin_on_prod
+
+#### Modifier le responsable de la validation des inscriptions
+
+Modifier la variable email dans la methode: `sendNewUserToConfirmEmailTo` dans
+le fichier server/users.coffee (tout en bas)
